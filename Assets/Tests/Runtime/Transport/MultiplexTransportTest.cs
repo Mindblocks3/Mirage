@@ -156,8 +156,7 @@ namespace Mirage.Tests.Runtime
             transport1.Scheme.Returns(new[] { "yomama" });
             transport2.Scheme.Returns(new[] { "kcp" });
 
-            transport1.ConnectAsync(Arg.Any<Uri>())
-                .Returns(UniTask.FromException<IConnection>(new ArgumentException("Invalid protocol")));
+            transport1.Supported.Returns(false);
 
             // transport2 gives a connection
             transport2.ConnectAsync(Arg.Any<Uri>())
@@ -171,12 +170,8 @@ namespace Mirage.Tests.Runtime
         [UnityTest]
         public IEnumerator CannotConnect() => UniTask.ToCoroutine(async () =>
         {
-            transport1.ConnectAsync(Arg.Any<Uri>())
-                .Returns(UniTask.FromException<IConnection>(new ArgumentException("Invalid protocol")));
-
-            // transport2 gives a connection
-            transport2.ConnectAsync(Arg.Any<Uri>())
-                .Returns(UniTask.FromException<IConnection>(new ArgumentException("Invalid protocol")));
+            transport1.Supported.Returns(false);
+            transport2.Supported.Returns(false);
 
             try
             {
