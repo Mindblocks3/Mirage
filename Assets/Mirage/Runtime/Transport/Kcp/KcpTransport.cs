@@ -141,6 +141,7 @@ namespace Mirage.KCP
                 Debug.LogException(ex);
                 connectedClients.Remove(endpoint as IPEndPoint);
                 connection.Disconnect();
+                return;
             }
 
             // once handshake is completed,  then the connection has been accepted
