@@ -32,7 +32,7 @@ namespace Mirage.Tests.Performance.Runtime
         public Transport Transport;
 
         public NetworkIdentity MonsterPrefab;
-
+        private GameObject clientGo;
 
         [UnitySetUp]
         public IEnumerator SetUp() => UniTask.ToCoroutine(async () =>
@@ -74,7 +74,7 @@ namespace Mirage.Tests.Performance.Runtime
 
         private IEnumerator StartClient(int i, Transport transport)
         {
-            var clientGo = new GameObject($"Client {i}", typeof(NetworkClient), typeof(ClientObjectManager));
+            clientGo = new GameObject($"Client {i}", typeof(NetworkClient), typeof(ClientObjectManager));
             NetworkClient client = clientGo.GetComponent<NetworkClient>();
             ClientObjectManager objectManager = clientGo.GetComponent<ClientObjectManager>();
             objectManager.Client = client;
@@ -103,9 +103,16 @@ namespace Mirage.Tests.Performance.Runtime
             Server.Stop();
             yield return null;
 
+            Object.Destroy(clientGo);
+
             // unload scene
             Scene scene = SceneManager.GetSceneByPath(ScenePath);
             yield return SceneManager.UnloadSceneAsync(scene);
+
+            var networkManager = GameObject.Find("NetworkManager");
+            if (networkManager != null)
+                Object.Destroy(networkManager);
+
         }
 
         [UnityTest]

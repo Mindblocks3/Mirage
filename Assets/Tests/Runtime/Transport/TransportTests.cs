@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace Mirage.Tests.Runtime
 {
-    [TestFixture(typeof(KcpTransport), new[] { "kcp" }, "kcp://localhost", 7777)]
+    [TestFixture(typeof(KcpTransport), "kcp", "kcp://localhost", 7777)]
     public class TransportTests<T> where T : Transport
     {
         #region SetUp
@@ -22,9 +22,9 @@ namespace Mirage.Tests.Runtime
         private GameObject transportObj;
         private readonly Uri uri;
         private readonly int port;
-        private readonly string[] scheme;
+        private readonly string scheme;
 
-        public TransportTests(string[] scheme, string uri, int port)
+        public TransportTests(string scheme, string uri, int port)
         {
             this.scheme = scheme;
             this.uri = new Uri(uri);
@@ -204,7 +204,7 @@ namespace Mirage.Tests.Runtime
         [Test]
         public void TestScheme()
         {
-            Assert.That(transport.Scheme, Is.EquivalentTo(scheme));
+            Assert.That(transport.Scheme, Is.EquivalentTo(new []{scheme}));
         }
     }
 }
