@@ -119,19 +119,29 @@ namespace Mirage.KCP
             var connection = new KcpServerConnection(socket, endpoint, delayMode, SendWindowSize, ReceiveWindowSize);
             connectedClients.Add(endpoint as IPEndPoint, connection);
 
-            connection.Disconnected += () =>
+            try
             {
+
+                connection.Disconnected += () =>
+                {
+                    connectedClients.Remove(endpoint as IPEndPoint);
+                };
+
+                connection.DataSent += (length) =>
+                {
+                    sentBytes += length;
+                };
+
+                connection.RawInput(data, msgLength);
+
+                await connection.HandshakeAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
                 connectedClients.Remove(endpoint as IPEndPoint);
-            };
-
-            connection.DataSent += (length) =>
-            {
-                sentBytes += length;
-            };
-
-            connection.RawInput(data, msgLength);
-
-            await connection.HandshakeAsync();
+                connection.Disconnect();
+            }
 
             // once handshake is completed,  then the connection has been accepted
             Connected?.Invoke(connection);

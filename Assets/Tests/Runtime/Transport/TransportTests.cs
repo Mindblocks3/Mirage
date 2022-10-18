@@ -141,6 +141,7 @@ namespace Mirage.Tests.Runtime
         });
 
         [UnityTest]
+        [Repeat(50)]
         public IEnumerator DisconnectServerTest() => UniTask.ToCoroutine(async () =>
         {
             serverConnection.Disconnect();
