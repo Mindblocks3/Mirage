@@ -9,6 +9,11 @@ on:
       - 'doc/**'
       - '*.md'
 
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
 jobs:
   Tests2022:
     name: Test 2022
@@ -28,9 +33,7 @@ jobs:
 
       - uses: game-ci/unity-test-runner@v2
         id: tests
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-      
+
       - uses: actions/upload-artifact@v2
         with:
           name: Test Results
@@ -55,10 +58,6 @@ jobs:
           key: Library-build
 
       - uses: game-ci/unity-builder@v2
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneLinux64
           customParameters: -nographics
