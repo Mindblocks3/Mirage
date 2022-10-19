@@ -1,25 +1,18 @@
-name: RequestActivationFile
-
-on: 
-  workflow_dispatch
-  
+name: Acquire activation file
+on:
+  workflow_dispatch: {}
 jobs:
-  requestActivationFile:
+  activation:
+    name: Request manual activation file 🔑
     runs-on: ubuntu-latest
-    container: unityci/editor:ubuntu-2020.1.17f1-base-0.10.0
     steps:
+      # Request manual activation file
       - name: Request manual activation file
-        continue-on-error: true
-        run: unity-editor -logFile /dev/stdout -createManualActivationFile -quit 
-
-      - name: Upload License Request
-        uses: actions/upload-artifact@v1
+        id: getManualLicenseFile
+        uses: game-ci/unity-request-activation-file@v2
+      # Upload artifact (Unity_v20XX.X.XXXX.alf)
+      - name: Expose as artifact
+        uses: actions/upload-artifact@v2
         with:
-            name: Manual Activation File
-            path: Unity_v2020.1.17f1.alf
-
-      - name: Next Steps
-        run: |
-          echo "Upload the file to https://license.unity3d.com/manual to get a license"
-          echo "Then save the license in a secret called UNITY_LICENSE"
-
+          name: ${{ steps.getManualLicenseFile.outputs.filePath }}
+          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
