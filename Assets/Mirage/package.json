@@ -1,17 +1,17 @@
 {
-    "name": "com.miragenet.mirage",
+    "name": "com.mindblocks3.mirage",
     "displayName": "Mirage",
     "version": "92.0.1",
-    "unity": "2019.1",
+    "unity": "2022.1",
     "description": "Mirage is a high level Networking API for Unity, supporting different low level Transports.",
     "author": "Mirage",
     "repository": {
         "type": "git",
-        "url": "https://github.com/MirageNet/Mirage.git"
+        "url": "https://github.com/Mindblocks3/Mirage.git"
     },
     "dependencies": {
-        "com.unity.nuget.mono-cecil": "1.10.1",
-        "com.cysharp.unitask": "2.0.36"
+        "com.unity.nuget.mono-cecil": "1.10.2",
+        "com.cysharp.unitask": "2.3.1"
     },
     "samples": [
         {
