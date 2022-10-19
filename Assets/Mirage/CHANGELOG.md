@@ -1,3 +1,20 @@
+# [93.0.0](https://github.com/Mindblocks3/Mirage/compare/v92.0.1...v93.0.0) (2022-10-19)
+
+
+### Bug Fixes
+
+* disconnect if handshake fails ([a1bddad](https://github.com/Mindblocks3/Mirage/commit/a1bddadc19b278deb14df04e921f7d68b11fc4d6))
+* don't send connected event if handshake fails ([5384963](https://github.com/Mindblocks3/Mirage/commit/5384963f367bf90c857cbb804ff76165b8ae40bd))
+* remove request rpc,  it crashes unity ([e5c49ab](https://github.com/Mindblocks3/Mirage/commit/e5c49ab72133a74876ad2861eabe508fec8f8101))
+
+
+* change package name to com.mindblocks3.mirage ([364e9dc](https://github.com/Mindblocks3/Mirage/commit/364e9dc4ea22cc33213a00fcc751af1628749a01))
+
+
+### BREAKING CHANGES
+
+* renamed package
+
 ## [92.0.1](https://github.com/MirageNet/Mirage/compare/v92.0.0...v92.0.1) (2021-06-23)
 
 
