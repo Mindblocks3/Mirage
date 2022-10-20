@@ -287,7 +287,7 @@ namespace Mirage
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError("Closed connection: " + this + ". Invalid message " + ex);
+                    logger.LogException(ex);
                     Connection?.Disconnect();
                 }
             }

@@ -28,8 +28,7 @@ namespace Mirage.Tests.Runtime.Host
             spawner.PlayerPrefab = identity;
 
             spawner.AutoSpawn = false;
-
-            spawner.Start();
+            SpawnPlayer = false;
         }
 
         public override void ExtraTearDown()

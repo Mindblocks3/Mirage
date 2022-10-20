@@ -73,7 +73,7 @@ namespace Mirage.Tests.Runtime
                 player.InvokeHandler(messageId, reader, 0);
             });
 
-            Assert.That(exception.Message, Does.StartWith("Unexpected message Mirage.SceneMessage received"));
+            Assert.That(exception.Message, Does.StartWith("Unexpected message Mirage.Tests.Runtime.SceneMessage received"));
         }
 
         [Test]

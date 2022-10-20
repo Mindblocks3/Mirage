@@ -62,7 +62,7 @@ namespace Mirage
 
         private void SendCharacterMessage(INetworkPlayer player)
         {
-            Client.Send(new AddCharacterMessage());
+            RequestServerSpawnPlayer();
         }
 
         void OnDestroy()

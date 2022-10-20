@@ -39,9 +39,10 @@ namespace Mirage.Tests.Runtime.ClientServer
         [UnitySetUp]
         public IEnumerator Setup() => UniTask.ToCoroutine(async () =>
         {
-            testTransport = serverGo.AddComponent<LoopbackTransport>();
+            serverGo = new GameObject("server", typeof(ServerObjectManager), typeof(NetworkServer));
+            clientGo = new GameObject("client", typeof(ClientObjectManager), typeof(NetworkClient));
 
-            await UniTask.Delay(1);
+            testTransport = serverGo.AddComponent<LoopbackTransport>();
 
             server = serverGo.GetComponent<NetworkServer>();
             client = clientGo.GetComponent<NetworkClient>();
@@ -51,11 +52,11 @@ namespace Mirage.Tests.Runtime.ClientServer
 
             serverObjectManager = serverGo.GetComponent<ServerObjectManager>();
             serverObjectManager.Server = server;
-            serverObjectManager.Start();
 
             clientObjectManager = clientGo.GetComponent<ClientObjectManager>();
             clientObjectManager.Client = client;
-            clientObjectManager.Start();
+
+            await UniTask.Delay(1);
 
             ExtraSetup();
 
@@ -109,11 +110,11 @@ namespace Mirage.Tests.Runtime.ClientServer
             await AsyncUtil.WaitUntilWithTimeout(() => !client.Active);
             await AsyncUtil.WaitUntilWithTimeout(() => !server.Active);
 
-            Object.DestroyImmediate(playerPrefab);
-            Object.DestroyImmediate(serverGo);
-            Object.DestroyImmediate(clientGo);
-            Object.DestroyImmediate(serverPlayerGO);
-            Object.DestroyImmediate(clientPlayerGO);
+            Object.Destroy(playerPrefab);
+            Object.Destroy(serverGo);
+            Object.Destroy(clientGo);
+            Object.Destroy(serverPlayerGO);
+            Object.Destroy(clientPlayerGO);
 
             ExtraTearDown();
         });

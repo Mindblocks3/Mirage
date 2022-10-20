@@ -23,6 +23,7 @@ namespace Mirage.Tests.Runtime.Host
         protected T component;
 
         protected virtual bool AutoStartServer => true;
+        protected bool SpawnPlayer = true;
 
         public virtual void ExtraSetup() { }
 
@@ -53,14 +54,17 @@ namespace Mirage.Tests.Runtime.Host
             {
                 await StartHost();
 
-                playerGO = new GameObject("playerGO", typeof(Rigidbody));
-                identity = playerGO.AddComponent<NetworkIdentity>();
-                component = playerGO.AddComponent<T>();
+                if (SpawnPlayer)
+                {
+                    playerGO = new GameObject("playerGO", typeof(Rigidbody));
+                    identity = playerGO.AddComponent<NetworkIdentity>();
+                    component = playerGO.AddComponent<T>();
 
-                serverObjectManager.AddCharacter(server.LocalPlayer, playerGO);
+                    serverObjectManager.AddCharacter(server.LocalPlayer, playerGO);
 
-                // wait for client to spawn it
-                await AsyncUtil.WaitUntilWithTimeout(() => client.Player.Identity != null);
+                    // wait for client to spawn it
+                    await AsyncUtil.WaitUntilWithTimeout(() => client.Player.Identity != null);
+                }
             }
         });
 
