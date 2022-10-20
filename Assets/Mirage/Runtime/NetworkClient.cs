@@ -5,6 +5,7 @@ using Mirage.Events;
 using Mirage.Logging;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 namespace Mirage
 {
@@ -36,7 +37,7 @@ namespace Mirage
         [Header("Events")]
         [SerializeField] NetworkPlayerEvent _connected = new ();
         [SerializeField] NetworkPlayerEvent _authenticated = new ();
-        [SerializeField] AddLateEvent _disconnected = new ();
+        [SerializeField] UnityEvent _disconnected = new ();
 
         /// <summary>
         /// Event fires once the Client has connected its Server.
@@ -51,7 +52,7 @@ namespace Mirage
         /// <summary>
         /// Event fires after the Client has disconnected from its Server and Cleanup has been called.
         /// </summary>
-        public IAddLateEvent Disconnected => _disconnected;
+        public UnityEvent Disconnected => _disconnected;
 
         /// <summary>
         /// The NetworkConnection object this client is using.
@@ -289,8 +290,6 @@ namespace Mirage
                 // if no authenticator, consider connection as authenticated
                 Connected.RemoveListener(OnAuthenticated);
             }
-
-            _disconnected.Reset();
         }
     }
 }
