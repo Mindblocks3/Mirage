@@ -66,7 +66,7 @@ namespace Mirage.Tests.Runtime.ClientServer
             await UniTask.Delay(1);
 
             // start the server
-            server.StartAsync();
+            server.Listen();
 
             // now start the client
             await client.ConnectAsync("localhost");

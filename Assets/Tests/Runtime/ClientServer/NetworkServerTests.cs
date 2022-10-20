@@ -37,7 +37,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         public void ThrowsIfListenIsCalledWhileAlreadyActive()
         {
             Assert.Throws<UnityAssertionException>(
-                () => server.StartAsync(),
+                () => server.Listen(),
                 "NetworkServer is already active. Cannot start again without calling Stop()"
                 );
         }

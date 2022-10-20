@@ -192,7 +192,7 @@ namespace Mirage
         /// </summary>
         /// <param name="localClient">if not null then start the server and client in hostmode</param>
         /// <returns></returns>
-        public void StartAsync(NetworkClient localClient = null)
+        public void Listen(NetworkClient localClient = null)
         {
             Assert.IsFalse(Active, "NetworkServer is already active. Cannot start again without calling Stop()");
             Assert.IsNotNull(Transport, "NetworkServer Transport is not set. Please set it in the inspector for the NetworkServer object.");

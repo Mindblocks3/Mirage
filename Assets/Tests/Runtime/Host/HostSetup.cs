@@ -72,7 +72,7 @@ namespace Mirage.Tests.Runtime.Host
 
         protected void StartHost()
         {
-            manager.Server.StartAsync(client);
+            manager.Server.Listen(client);
         }
 
         public virtual void ExtraTearDown() { }

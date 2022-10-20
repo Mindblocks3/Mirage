@@ -31,7 +31,7 @@ namespace Mirage.Tests.Performance.Runtime
             // load host
             benchmarker = Object.FindObjectOfType<NetworkManager>();
 
-            benchmarker.Server.StartAsync(benchmarker.Client);
+            benchmarker.Server.Listen(benchmarker.Client);
         });
 
         [UnityTearDown]
