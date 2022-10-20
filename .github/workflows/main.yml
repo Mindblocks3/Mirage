@@ -34,7 +34,7 @@ jobs:
       - uses: game-ci/unity-test-runner@v2
         id: tests
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Test Results
           path: ${{ steps.tests.outputs.artifactsPath }}
