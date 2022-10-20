@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Mirage.Logging;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
 namespace Mirage
@@ -33,10 +34,10 @@ namespace Mirage
         // Start is called before the first frame update
         public virtual void Start()
         {
-            Debug.Assert(Client != null, "Client is not set");
-            Debug.Assert(Server != null, "Server is not set");
-            Debug.Assert(ClientObjectManager != null, "ClientObjectManager is not set");
-            Debug.Assert(ServerObjectManager != null, "ServerObjectManager is not set");
+            Assert.IsNotNull(Client, "Client must be set");
+            Assert.IsNotNull(Server, "Server must be set");
+            Assert.IsNotNull(ClientObjectManager, "ClientObjectManager must be set");
+            Assert.IsNotNull(ServerObjectManager, "ServerObjectManager must be set");
 
             Client.Authenticated.AddListener(SendCharacterMessage);
             ClientObjectManager.RegisterPrefab(PlayerPrefab);
@@ -75,10 +76,7 @@ namespace Mirage
         {
             logger.Log("CharacterSpawner.OnServerAddPlayer");
 
-            if (player.Identity != null)
-            {
-                throw new InvalidOperationException("There is already a player for this connection.");
-            }
+            Assert.IsNull(player.Identity, "Player object already exists for connection");
 
             OnServerAddPlayer(player);
         }

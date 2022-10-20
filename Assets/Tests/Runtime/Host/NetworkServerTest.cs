@@ -2,7 +2,9 @@ using System;
 using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.Host
 {
@@ -35,10 +37,9 @@ namespace Mirage.Tests.Runtime.Host
         [Test]
         public void SetLocalConnectionExceptionTest()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                server.SetLocalConnection(null, null);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => server.SetLocalConnection(null, null),
+                "Local connection is already set");
         }
 
         [Test]

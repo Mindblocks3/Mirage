@@ -7,6 +7,8 @@ using UnityEngine.Serialization;
 using Mirage.Logging;
 using Mirage.Serialization;
 using Mirage.Events;
+using System.Security.Principal;
+using UnityEngine.Assertions;
 #if UNITY_EDITOR
 using UnityEditor;
 #if UNITY_2018_3_OR_NEWER
@@ -218,9 +220,8 @@ namespace Mirage
                     return networkBehavioursCache;
 
                 NetworkBehaviour[] components = GetComponentsInChildren<NetworkBehaviour>(true);
-
-                if (components.Length > byte.MaxValue)
-                    throw new InvalidOperationException("Only 255 NetworkBehaviour per gameobject allowed");
+                
+                Assert.IsTrue(components.Length <= byte.MaxValue, "Only 255 NetworkBehaviour per gameobject allowed");
 
                 networkBehavioursCache = components;
                 return networkBehavioursCache;
@@ -290,13 +291,13 @@ namespace Mirage
                 // new is empty
                 if (string.IsNullOrEmpty(newAssetIdString))
                 {
-                    throw new ArgumentException($"Can not set AssetId to empty guid on NetworkIdentity '{name}', old assetId '{oldAssetIdSrting}'");
+                    Assert.IsTrue(!string.IsNullOrEmpty(newAssetIdString), $"Can not set AssetId to empty guid on NetworkIdentity '{name}', old assetId '{oldAssetIdSrting}'");
                 }
 
                 // old not empty
                 if (!string.IsNullOrEmpty(oldAssetIdSrting))
                 {
-                    throw new InvalidOperationException($"Can not Set AssetId on NetworkIdentity '{name}' becasue it already had an assetId, current assetId '{oldAssetIdSrting}', attempted new assetId '{newAssetIdString}'");
+                    Assert.IsTrue(string.IsNullOrEmpty(oldAssetIdSrting), $"Can not Set AssetId on NetworkIdentity '{name}' because it already had an assetId, current assetId '{oldAssetIdSrting}', attempted new assetId '{newAssetIdString}'");
                 }
 
                 // old is empty
@@ -384,7 +385,7 @@ namespace Mirage
             // do nothing if it already has an owner
             if (ConnectionToClient != null && player != ConnectionToClient)
             {
-                throw new InvalidOperationException($"Object {this} netId={NetId} already has an owner. Use RemoveClientAuthority() first");
+                Assert.IsNull(ConnectionToClient, "SetClientOwner " + player + " has an owner already.");
             }
 
             // otherwise set the owner connection
@@ -546,8 +547,7 @@ namespace Mirage
                 //    permanent
                 // => throw an exception to cancel the build and let the user
                 //    know how to fix it!
-                if (BuildPipeline.isBuildingPlayer)
-                    throw new InvalidOperationException("Scene " + gameObject.scene.path + " needs to be opened and resaved before building, because the scene object " + name + " has no valid sceneId yet.");
+                Assert.IsFalse(BuildPipeline.isBuildingPlayer, "Scene " + gameObject.scene.name + " was never opened in the editor, so we can't assign a persistent sceneId. Please open the scene once to fix this.");
 
                 // if we generate the sceneId then we MUST be sure to set dirty
                 // in order to save the scene object properly. otherwise it
@@ -1118,19 +1118,13 @@ namespace Mirage
         /// <param name="player">	The connection of the client to assign authority to.</param>
         public void AssignClientAuthority(INetworkPlayer player)
         {
-            if (!IsServer)
-            {
-                throw new InvalidOperationException("AssignClientAuthority can only be called on the server for spawned objects");
-            }
+            Assert.IsTrue(IsServer, "AssignClientAuthority can only be called on the server for spawned objects.");
+            Assert.IsNotNull(player, "AssignClientAuthority player object is null.");
 
-            if (player == null)
-            {
-                throw new InvalidOperationException("AssignClientAuthority for " + gameObject + " owner cannot be null. Use RemoveClientAuthority() instead");
-            }
 
             if (ConnectionToClient != null && player != ConnectionToClient)
             {
-                throw new InvalidOperationException("AssignClientAuthority for " + gameObject + " already has an owner. Use RemoveClientAuthority() first");
+                Assert.IsTrue(ConnectionToClient != null && player != ConnectionToClient, "AssignClientAuthority cannot change owner while existing owner is still connected.");
             }
 
             SetClientOwner(player);
@@ -1149,15 +1143,8 @@ namespace Mirage
         /// </summary>
         public void RemoveClientAuthority()
         {
-            if (!IsServer)
-            {
-                throw new InvalidOperationException("RemoveClientAuthority can only be called on the server for spawned objects");
-            }
-
-            if (ConnectionToClient?.Identity == this)
-            {
-                throw new InvalidOperationException("RemoveClientAuthority cannot remove authority for a player object");
-            }
+            Assert.IsTrue(IsServer, "RemoveClientAuthority can only be called on the server for spawned objects.");
+            Assert.AreNotEqual(ConnectionToClient?.Identity, this, "RemoveClientAuthority cannot remove authority for a player object.");
 
             if (ConnectionToClient != null)
             {

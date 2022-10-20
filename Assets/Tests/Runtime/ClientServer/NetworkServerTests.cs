@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.TestTools;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.ClientServer
 {
@@ -35,11 +36,10 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ThrowsIfListenIsCalledWhileAlreadyActive()
         {
-            InvalidOperationException expection = Assert.Throws<InvalidOperationException>(() =>
-            {
-                server.StartAsync();
-            });
-            Assert.That(expection, Has.Message.EqualTo("Server is already active"));
+            Assert.Throws<UnityAssertionException>(
+                () => server.StartAsync(),
+                "NetworkServer is already active. Cannot start again without calling Stop()"
+                );
         }
 
         [UnityTest]

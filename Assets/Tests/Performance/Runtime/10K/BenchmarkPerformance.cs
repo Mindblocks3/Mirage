@@ -27,11 +27,11 @@ namespace Mirage.Tests.Performance.Runtime
             Scene scene = SceneManager.GetSceneByPath(ScenePath);
             SceneManager.SetActiveScene(scene);
 
+            await UniTask.Delay(1);
             // load host
             benchmarker = Object.FindObjectOfType<NetworkManager>();
 
             benchmarker.Server.StartAsync(benchmarker.Client);
-
         });
 
         [UnityTearDown]

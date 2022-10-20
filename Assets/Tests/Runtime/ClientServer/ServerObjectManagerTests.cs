@@ -3,9 +3,11 @@ using System.Collections;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using NSubstitute;
+using NSubstitute.Core;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.ClientServer
 {
@@ -13,36 +15,33 @@ namespace Mirage.Tests.Runtime.ClientServer
     [TestFixture]
     public class ServerObjectManagerTests : ClientServerSetup<MockComponent>
     {
-        GameObject playerReplacement;
-
-        void AssertNoIdentityMessage(InvalidOperationException ex, string name) => Assert.That(ex.Message, Is.EqualTo($"Gameobject {name} doesn't have NetworkIdentity."));
-        void AssertNoIdentityMessage(InvalidOperationException ex) => AssertNoIdentityMessage(ex, new GameObject().name);
 
         [Test]
         public void ThrowsIfSpawnCalledWhenServerIsNotAcctive()
         {
-            var obj = new GameObject();
+            var obj = CreatePrefab<MockComponent>();
 
             server.Stop();
 
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.Spawn(new GameObject().AddComponent<NetworkIdentity>(), connectionToClient);
-            });
-
-            Assert.That(ex.Message, Is.EqualTo("NetworkServer is not active. Cannot spawn objects without an active server."));
-            GameObject.DestroyImmediate(obj);
+            Assert.Throws<UnityAssertionException>(
+                () => serverObjectManager.Spawn(obj, connectionToClient),
+                "Spawn() called when server is not active");
+            
+            GameObject.Destroy(obj);
         }
 
         [Test]
         public void ThrowsIfSpawnCalledOwnerHasNoNetworkIdentity()
         {
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.Spawn(new GameObject(), new GameObject());
-            });
+            var badObject = new GameObject();
+            var badOwner = new GameObject();
 
-            AssertNoIdentityMessage(ex);
+            Assert.Throws<UnityAssertionException>(
+                () => { serverObjectManager.Spawn(badObject, badOwner); },
+                "Onwer object must have an identity");
+
+            GameObject.Destroy(badObject);
+            GameObject.Destroy(badOwner);
         }
 
         [UnityTest]
@@ -56,16 +55,16 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ThrowsIfSpawnCalledWithOwnerWithNoOwnerTest()
         {
+            var badObject = new GameObject();
             var badOwner = new GameObject();
             badOwner.AddComponent<NetworkIdentity>();
 
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.Spawn(new GameObject(), badOwner);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => { serverObjectManager.Spawn(badObject, badOwner); },
+                "Player object is not a player in the connection");
 
-            Assert.That(ex.Message, Is.EqualTo("Player object is not a player in the connection"));
-            GameObject.DestroyImmediate(badOwner);
+            GameObject.Destroy(badOwner);
+            GameObject.Destroy(badObject);
         }
 
         [UnityTest]
@@ -156,34 +155,33 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ReplacePlayerBaseTest()
         {
-            playerReplacement = new GameObject("replacement", typeof(NetworkIdentity));
-            NetworkIdentity replacementIdentity = playerReplacement.GetComponent<NetworkIdentity>();
-            replacementIdentity.AssetId = Guid.NewGuid();
-            clientObjectManager.RegisterPrefab(replacementIdentity);
+            var replacementIdentity = CreatePrefab<MockComponent>();
+            var playerReplacement = replacementIdentity.gameObject;
 
             serverObjectManager.ReplaceCharacter(connectionToClient, playerReplacement);
 
             Assert.That(connectionToClient.Identity, Is.EqualTo(replacementIdentity));
+
+            GameObject.Destroy(playerReplacement);
         }
 
         [Test]
         public void ReplacePlayerDontKeepAuthTest()
         {
-            playerReplacement = new GameObject("replacement", typeof(NetworkIdentity));
-            NetworkIdentity replacementIdentity = playerReplacement.GetComponent<NetworkIdentity>();
-            replacementIdentity.AssetId = Guid.NewGuid();
-            clientObjectManager.RegisterPrefab(replacementIdentity);
+            var replacementIdentity = CreatePrefab<MockComponent>();
+            var playerReplacement = replacementIdentity.gameObject;
 
             serverObjectManager.ReplaceCharacter(connectionToClient, playerReplacement, true);
 
             Assert.That(clientIdentity.ConnectionToClient, Is.EqualTo(null));
+            GameObject.Destroy(playerReplacement);
         }
 
         [Test]
         public void ReplacePlayerAssetIdTest()
         {
             var replacementGuid = Guid.NewGuid();
-            playerReplacement = new GameObject("replacement", typeof(NetworkIdentity));
+            var playerReplacement = new GameObject("replacement", typeof(NetworkIdentity));
             NetworkIdentity replacementIdentity = playerReplacement.GetComponent<NetworkIdentity>();
             replacementIdentity.AssetId = replacementGuid;
             clientObjectManager.RegisterPrefab(replacementIdentity);
@@ -191,13 +189,15 @@ namespace Mirage.Tests.Runtime.ClientServer
             serverObjectManager.ReplaceCharacter(connectionToClient, playerReplacement, replacementGuid);
 
             Assert.That(connectionToClient.Identity.AssetId, Is.EqualTo(replacementGuid));
+
+            GameObject.Destroy(playerReplacement);
         }
 
         [Test]
         public void AddPlayerForConnectionAssetIdTest()
         {
             var replacementGuid = Guid.NewGuid();
-            playerReplacement = new GameObject("replacement", typeof(NetworkIdentity));
+            var playerReplacement = new GameObject("replacement", typeof(NetworkIdentity));
             NetworkIdentity replacementIdentity = playerReplacement.GetComponent<NetworkIdentity>();
             replacementIdentity.AssetId = replacementGuid;
             clientObjectManager.RegisterPrefab(replacementIdentity);
@@ -207,6 +207,7 @@ namespace Mirage.Tests.Runtime.ClientServer
             serverObjectManager.AddCharacter(connectionToClient, playerReplacement, replacementGuid);
 
             Assert.That(replacementIdentity == connectionToClient.Identity);
+            GameObject.Destroy(playerReplacement);
         }
 
         [UnityTest]
@@ -225,11 +226,10 @@ namespace Mirage.Tests.Runtime.ClientServer
             serverObjectManager.RemovePlayerForConnection(connectionToClient);
 
             await AsyncUtil.WaitUntilWithTimeout(() => !clientIdentity);
-
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.RemovePlayerForConnection(connectionToClient);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => serverObjectManager.RemovePlayerForConnection(connectionToClient),
+                "Received remove player message but connection has no player"
+                );
         });
 
         [UnityTest]
@@ -245,34 +245,39 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ThrowsIfSpawnedCalledWithoutANetworkIdentity()
         {
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.Spawn(new GameObject(), connectionToServer);
-            });
+            var badObject = new GameObject();
 
-            AssertNoIdentityMessage(ex);
+            Assert.Throws<UnityAssertionException>(
+                () => serverObjectManager.Spawn(badObject, connectionToServer),
+                "Spawning gameobject without identity"
+            );
+
+            GameObject.Destroy(badObject);
         }
 
 
         [Test]
         public void AddCharacterNoIdentityExceptionTest()
         {
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.AddCharacter(connectionToClient, new GameObject());
-            });
-            AssertNoIdentityMessage(ex);
+            var character = new GameObject();
 
+            Assert.Throws<UnityAssertionException>(
+                () => serverObjectManager.AddCharacter(connectionToClient, character),
+                "yada yada");
+
+            GameObject.Destroy(character);
         }
 
         [Test]
         public void ReplacePlayerNoIdentityExceptionTest()
         {
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.ReplaceCharacter(connectionToClient, new GameObject(), true);
-            });
-            AssertNoIdentityMessage(ex);
+            var character = new GameObject();
+
+            Assert.Throws<UnityAssertionException>(
+                () => serverObjectManager.ReplaceCharacter(connectionToClient, character, true),
+                "GameObject New Game Object does not have a network identity");
+
+            GameObject.Destroy(character);
         }
 
         [UnityTest]
@@ -282,12 +287,9 @@ namespace Mirage.Tests.Runtime.ClientServer
 
             await AsyncUtil.WaitUntilWithTimeout(() => !server.Active);
 
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverObjectManager.SpawnObjects();
-            });
-
-            Assert.That(exception, Has.Message.EqualTo("Server was not active"));
+            Assert.Throws<UnityAssertionException>(
+                () => serverObjectManager.SpawnObjects(),
+                "SpawnObjects() called when server is not active");
         });
     }
 }

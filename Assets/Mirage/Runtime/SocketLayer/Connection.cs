@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.SocketLayer
 {
@@ -37,10 +38,6 @@ namespace Mirage.SocketLayer
     /// </summary>
     internal sealed class Connection : IConnection, IRawConnection
     {
-        void Assert(bool condition)
-        {
-            if (!condition) logger.Log(LogType.Assert, "Failed Assertion");
-        }
         readonly ILogger logger;
 
         ConnectionState _state;
@@ -53,19 +50,19 @@ namespace Mirage.SocketLayer
                 switch (value)
                 {
                     case ConnectionState.Connected:
-                        Assert(_state == ConnectionState.Created || _state == ConnectionState.Connecting);
+                        Assert.IsTrue(_state == ConnectionState.Created || _state == ConnectionState.Connecting);
                         break;
 
                     case ConnectionState.Connecting:
-                        Assert(_state == ConnectionState.Created);
+                        Assert.AreEqual(_state, ConnectionState.Created);
                         break;
 
                     case ConnectionState.Disconnected:
-                        Assert(_state == ConnectionState.Connected);
+                        Assert.AreEqual(_state, ConnectionState.Connected);
                         break;
 
                     case ConnectionState.Destroyed:
-                        Assert(_state == ConnectionState.Removing);
+                        Assert.AreEqual(_state, ConnectionState.Removing);
                         break;
                 }
 
@@ -129,20 +126,15 @@ namespace Mirage.SocketLayer
             keepAliveTracker.SetSendTime();
         }
 
-        void ThrowIfNotConnected()
-        {
-            if (_state != ConnectionState.Connected)
-                throw new InvalidOperationException("Connection is not connected");
-        }
         public void SendUnreliable(byte[] packet)
         {
-            ThrowIfNotConnected();
+            Assert.AreEqual(State, ConnectionState.Connected, "Connection is not connected");
             peer.SendUnreliable(this, packet);
         }
 
         public INotifyToken SendNotify(byte[] packet)
         {
-            ThrowIfNotConnected();
+            Assert.AreEqual(State, ConnectionState.Connected, "Connection is not connected");
             return notifySystem.Send(packet);
         }
 
@@ -173,7 +165,7 @@ namespace Mirage.SocketLayer
                     break;
 
                 default:
-                    Assert(false);
+                    Assert.IsTrue(true , "Disconnecting connection that is not connected");
                     break;
             }
         }

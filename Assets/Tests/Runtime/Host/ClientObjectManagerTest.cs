@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.Host
 {
@@ -17,12 +18,10 @@ namespace Mirage.Tests.Runtime.Host
         public void OnSpawnAssetSceneIDFailureExceptionTest()
         {
             var msg = new SpawnMessage();
-            InvalidOperationException ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                clientObjectManager.OnSpawn(msg);
-            });
 
-            Assert.That(ex.Message, Is.EqualTo("OnObjSpawn netId: " + msg.netId + " has invalid asset Id"));
+            Assert.Throws<UnityAssertionException>(
+                () => { clientObjectManager.OnSpawn(msg); },
+                "OnObjSpawn netId: 0 has invalid asset Id");
         }
 
         [UnityTest]
@@ -50,10 +49,9 @@ namespace Mirage.Tests.Runtime.Host
             NetworkIdentity identity = prefabObject.GetComponent<NetworkIdentity>();
             identity.AssetId = Guid.Empty;
 
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                clientObjectManager.RegisterPrefab(identity, TestSpawnDelegate, TestUnspawnDelegate);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => { clientObjectManager.RegisterPrefab(identity, TestSpawnDelegate, TestUnspawnDelegate); },
+                "RegisterPrefab: prefab must have a valid assetId. Use RegisterPrefab(prefab, newAssetId) to assign a new assetId to the prefab.");
 
             Object.Destroy(prefabObject);
         }

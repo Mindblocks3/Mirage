@@ -8,6 +8,7 @@ using UnityEngine.Events;
 using UnityEngine.TestTools;
 using InvalidOperationException = System.InvalidOperationException;
 using Object = UnityEngine.Object;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.Host
 {
@@ -34,10 +35,9 @@ namespace Mirage.Tests.Runtime.Host
         [Test]
         public void AssignClientAuthorityNoServer()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                testIdentity.AssignClientAuthority(server.LocalPlayer);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => testIdentity.AssignClientAuthority(server.LocalPlayer),
+                "AssignClientAuthority can only be called on the server for spawned objects.");
         }
 
         [Test]
@@ -137,12 +137,11 @@ namespace Mirage.Tests.Runtime.Host
             // assign authority
             testIdentity.AssignClientAuthority(server.LocalPlayer);
 
-            // shouldn't be able to assign authority while already owned by
-            // another connection
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                testIdentity.AssignClientAuthority(Substitute.For<INetworkPlayer>());
-            });
+            var player = Substitute.For<INetworkPlayer>();
+
+            Assert.Throws<UnityAssertionException>(
+                () => testIdentity.AssignClientAuthority(player),
+                "AssignClientAuthority cannot change owner while existing owner is still connected.");
         }
 
         [Test]
@@ -151,22 +150,17 @@ namespace Mirage.Tests.Runtime.Host
             // create a networkidentity with our test component
             serverObjectManager.Spawn(gameObject);
 
-            // someone might try to remove authority by assigning null.
-            // make sure this fails.
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                testIdentity.AssignClientAuthority(null);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => testIdentity.AssignClientAuthority(null),
+                "AssignClientAuthority player object is null.");
         }
 
         [Test]
         public void RemoveclientAuthorityNotSpawned()
         {
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                // shoud fail because the server is not active
-                testIdentity.RemoveClientAuthority();
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => testIdentity.RemoveClientAuthority(),
+                "RemoveClientAuthority can only be called on the server for spawned objects.");
         }
 
         [Test]
@@ -174,10 +168,9 @@ namespace Mirage.Tests.Runtime.Host
         {
             serverObjectManager.ReplaceCharacter(server.LocalPlayer, gameObject);
 
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                testIdentity.RemoveClientAuthority();
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => testIdentity.RemoveClientAuthority(),
+                "RemoveClientAuthority cannot remove authority for a player object.");
         }
 
         [Test]

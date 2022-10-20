@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirage.Serialization;
+using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.Collections
 {
@@ -81,10 +83,7 @@ namespace Mirage.Collections
 
         void AddOperation(Operation op, T item)
         {
-            if (IsReadOnly)
-            {
-                throw new InvalidOperationException("SyncSets can only be modified at the server");
-            }
+            Assert.IsFalse(IsReadOnly, "SyncSets can only be modified by the server");
 
             var change = new Change
             {

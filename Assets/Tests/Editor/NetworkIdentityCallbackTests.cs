@@ -5,8 +5,10 @@ using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.TestTools;
 using static Mirage.Tests.LocalConnections;
 using Object = UnityEngine.Object;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage
 {
@@ -195,14 +197,11 @@ namespace Mirage
 
             // assign a guid
             var guid2 = Guid.NewGuid();
-            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() =>
-            {
-                identity.AssetId = guid2;
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => identity.AssetId = guid2,
+                $"Can not Set AssetId on NetworkIdentity '{identity.name}' because it already had an assetId, current assetId '{guid1:N}', attempted new assetId '{guid2:N}'"
+            );
 
-            Assert.That(exception.Message, Is.EqualTo($"Can not Set AssetId on NetworkIdentity '{identity.name}' becasue it already had an assetId, current assetId '{guid1:N}', attempted new assetId '{guid2:N}'"));
-            // guid was changed
-            Assert.That(identity.AssetId, Is.EqualTo(guid1));
         }
 
         [Test]
@@ -213,19 +212,15 @@ namespace Mirage
 
             // assign a guid
             Guid guid2 = Guid.Empty;
-            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
-            {
-                identity.AssetId = guid2;
-            });
 
-            Assert.That(exception.Message, Is.EqualTo($"Can not set AssetId to empty guid on NetworkIdentity '{identity.name}', old assetId '{guid1:N}'"));
-            // guid was NOT changed
-            Assert.That(identity.AssetId, Is.EqualTo(guid1));
+            Assert.Throws<UnityAssertionException>(
+                () => { identity.AssetId = guid2; },
+                $"Can not set AssetId to empty guid on NetworkIdentity 'New Game Object', old assetId '{guid1:N}'");
         }
         [Test]
         public void SetAssetId_DoesNotGiveErrorIfBothOldAndNewAreEmpty()
         {
-            Debug.Assert(identity.AssetId == Guid.Empty, "assetId needs to be empty at the start of this test");
+            Assert.AreEqual(identity.AssetId, Guid.Empty, "assetId needs to be empty at the start of this test");
             // assign a guid
             Guid guid2 = Guid.Empty;
             // expect no errors
@@ -253,13 +248,11 @@ namespace Mirage
 
             // setting it when it's already set shouldn't overwrite the original
             (_, NetworkPlayer overwrite) = PipedConnections();
-            // will log a warning
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                identity.SetClientOwner(overwrite);
-            });
 
-            Assert.That(identity.ConnectionToClient, Is.EqualTo(original));
+            // will log a warning
+            Assert.Throws<UnityAssertionException>(
+                () => identity.SetClientOwner(overwrite),
+                "SetClientOwner connection(127.0.0.1:0) has an owner already.");
         }
 
         [Test]
@@ -522,11 +515,12 @@ namespace Mirage
             {
                 gameObject.AddComponent<SerializeTest1NetworkBehaviour>();
             }
-            // ingore error from creating cache (has its own test)
-            Assert.Throws<InvalidOperationException>(() =>
+
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 _ = identity.NetworkBehaviours;
-            });
+            }, "Only 255 NetworkBehaviour per gameobject allowed");
+            
         }
 
         // OnDeserializeSafely should be able to detect and handle serialization

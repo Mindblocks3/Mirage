@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Mirage.Events;
 using Mirage.Logging;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage
 {
@@ -126,10 +127,7 @@ namespace Mirage
         {
             if (logger.LogEnabled()) logger.Log("Client Connect: " + uri);
 
-            if (Transport == null)
-                Transport = GetComponent<Transport>();
-            if (Transport == null)
-                throw new InvalidOperationException("Transport could not be found for NetworkClient");
+            Assert.IsNotNull(Transport, "Transport is not set. Please set it in the inspector.");
 
             connectState = ConnectState.Connecting;
 

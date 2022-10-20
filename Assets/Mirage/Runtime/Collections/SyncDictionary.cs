@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Mirage.Serialization;
+using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.Collections
 {
@@ -97,10 +99,7 @@ namespace Mirage.Collections
 
         void AddOperation(Operation op, TKey key, TValue item)
         {
-            if (IsReadOnly)
-            {
-                throw new InvalidOperationException("SyncDictionaries can only be modified by the server");
-            }
+            Assert.IsFalse(IsReadOnly, "SyncObjects are readonly after OnDeserializeAll is called");
 
             var change = new Change
             {

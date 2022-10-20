@@ -5,6 +5,7 @@ using Mirage.Logging;
 using Mirage.RemoteCalls;
 using Mirage.Serialization;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
 namespace Mirage
@@ -12,17 +13,15 @@ namespace Mirage
     public static class GameobjectExtension
     {
         /// <summary>
-        /// Gets <see cref="NetworkIdentity"/> on a <see cref="GameObject"/> and throws <see cref="InvalidOperationException"/> if the GameObject does not have one.
+        /// Gets <see cref="NetworkIdentity"/> on a <see cref="GameObject"/> 
         /// </summary>
         /// <param name="gameObject"></param>
         /// <returns>attached NetworkIdentity</returns>
-        /// <exception cref="InvalidOperationException">Throws when <paramref name="gameObject"/> does not have a NetworkIdentity attached</exception>
         public static NetworkIdentity GetNetworkIdentity(this GameObject gameObject)
         {
-            if (!gameObject.TryGetComponent(out NetworkIdentity identity))
-            {
-                throw new InvalidOperationException($"Gameobject {gameObject.name} doesn't have NetworkIdentity.");
-            }
+            var identity = gameObject.GetComponent<NetworkIdentity>();
+            if (identity == null)
+                Assert.IsNotNull(identity, "GameObject " + gameObject.name + " does not have a network identity");
             return identity;
         }
     }
@@ -51,13 +50,11 @@ namespace Mirage
 
         public void Start()
         {
-            if (Server != null)
-            {
-                Server.Started.AddListener(OnServerStarted);
-                Server.OnStartHost.AddListener(StartedHost);
-                Server.Authenticated.AddListener(OnAuthenticated);
-                Server.Stopped.AddListener(OnServerStopped);
-            }
+            Assert.IsNotNull(Server, "Server is not set");
+            Server.Started.AddListener(OnServerStarted);
+            Server.OnStartHost.AddListener(StartedHost);
+            Server.Authenticated.AddListener(OnAuthenticated);
+            Server.Stopped.AddListener(OnServerStopped);
         }
 
         // The user should never need to pump the update loop manually
@@ -175,9 +172,11 @@ namespace Mirage
         /// <returns></returns>
         public void ReplaceCharacter(INetworkPlayer player, NetworkIdentity identity, bool keepAuthority = false)
         {
+            Assert.IsNotNull(identity, "Trying to replace player with gameobject with no NetworkIdentity");
+
             if (identity.ConnectionToClient != null && identity.ConnectionToClient != player)
             {
-                throw new ArgumentException($"Cannot replace player for connection. New player is already owned by a different connection {identity}");
+                Assert.IsTrue(true, $"Cannot replace player for connection. New player is already owned by a different connection {identity}");
             }
 
             //NOTE: there can be an existing player
@@ -278,10 +277,8 @@ namespace Mirage
         public void AddCharacter(INetworkPlayer player, NetworkIdentity identity)
         {
             // cannot have an existing player object while trying to Add another.
-            if (player.Identity != null)
-            {
-                throw new ArgumentException("AddPlayer: player object already exists");
-            }
+            Assert.IsNull(player.Identity, "There is already a player object for this connection.");
+            Assert.IsNotNull(identity, "Character must have a network Identity");
 
             // make sure we have a controller before we call SetClientReady
             // because the observers will be rebuilt only if we have a controller
@@ -337,18 +334,11 @@ namespace Mirage
         /// </summary>
         /// <param name="player">The connection of the client to remove from</param>
         /// <param name="destroyServerObject">Indicates whether the server object should be destroyed</param>
-        /// <exception cref="InvalidOperationException">Received remove player message but connection has no player</exception>
         public void RemovePlayerForConnection(INetworkPlayer player, bool destroyServerObject = false)
         {
-            if (player.Identity != null)
-            {
-                Destroy(player.Identity.gameObject, destroyServerObject);
-                player.Identity = null;
-            }
-            else
-            {
-                throw new InvalidOperationException("Received remove player message but connection has no player");
-            }
+            Assert.IsNotNull(player.Identity, "Received remove player message but connection has no player");
+            Destroy(player.Identity.gameObject, destroyServerObject);
+            player.Identity = null;
         }
 
         /// <summary>
@@ -395,11 +385,8 @@ namespace Mirage
         public void Spawn(GameObject obj, GameObject ownerObject)
         {
             NetworkIdentity ownerIdentity = ownerObject.GetNetworkIdentity();
-
-            if (ownerIdentity.ConnectionToClient == null)
-            {
-                throw new InvalidOperationException("Player object is not a player in the connection");
-            }
+            Assert.IsNotNull(ownerIdentity, "Onwer object must have an identity");
+            Assert.IsNotNull(ownerIdentity.ConnectionToClient, "Player object is not a player in the connection");
 
             Spawn(obj, ownerIdentity.ConnectionToClient);
         }
@@ -448,10 +435,8 @@ namespace Mirage
         /// </summary>
         public void Spawn(NetworkIdentity identity, INetworkPlayer owner)
         {
-            if (!Server || !Server.Active)
-            {
-                throw new InvalidOperationException("NetworkServer is not active. Cannot spawn objects without an active server.");
-            }
+            Assert.IsTrue(Server.Active, "Spawn() called when server is not active");
+            Assert.IsNotNull(identity, "Spawning gameobject without identity");
 
             ThrowIfPrefab(identity.gameObject);
 
@@ -531,15 +516,11 @@ namespace Mirage
         /// Prefabs are not allowed to be spawbned, they most be instantiated first
         /// <para>This check does nothing in builds</para>
         /// </summary>
-        /// <exception cref="InvalidOperationException">Throws in the editor if object is part of a prefab</exception>
         static void ThrowIfPrefab(GameObject obj)
         {
-#if UNITY_EDITOR
-            if (UnityEditor.PrefabUtility.IsPartOfPrefabAsset(obj))
-            {
-                throw new InvalidOperationException($"GameObject {obj.name} is a prefab, it can't be spawned.");
-            }
-#endif
+            #if UNITY_EDITOR
+            Assert.IsFalse(UnityEditor.PrefabUtility.IsPartOfPrefabAsset(obj), "Spawnable prefabs are not allowed to be spawned directly. Instantiate the prefab first.");
+            #endif
         }
 
         void DestroyObject(NetworkIdentity identity, bool destroyServerObject)
@@ -614,12 +595,9 @@ namespace Mirage
         ///     It is like calling NetworkServer.Spawn() for each of them.
         /// </para>
         /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown when server is not active</exception>
         public void SpawnObjects()
         {
-            // only if server active
-            if (!Server || !Server.Active)
-                throw new InvalidOperationException("Server was not active");
+            Assert.IsTrue(Server.Active, "SpawnObjects() called when server is not active");
 
             NetworkIdentity[] identities = Resources.FindObjectsOfTypeAll<NetworkIdentity>();
             Array.Sort(identities, new NetworkIdentityComparer());

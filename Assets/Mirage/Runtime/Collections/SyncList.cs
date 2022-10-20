@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Mirage.Serialization;
+using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.Collections
 {
@@ -100,10 +102,7 @@ namespace Mirage.Collections
 
         void AddOperation(Operation op, int itemIndex, T newItem)
         {
-            if (IsReadOnly)
-            {
-                throw new InvalidOperationException("Synclists can only be modified at the server");
-            }
+            Assert.IsFalse(IsReadOnly, "SyncList can only be modified at the server");
 
             var change = new Change
             {

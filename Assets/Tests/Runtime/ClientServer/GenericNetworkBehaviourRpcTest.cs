@@ -6,6 +6,7 @@ using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.ClientServer
 {
@@ -119,11 +120,9 @@ namespace Mirage.Tests.Runtime.ClientServer
             Action<GameObject> callback = Substitute.For<Action<GameObject>>();
             clientComponent.onSendGameObjectCalled += callback;
 
-            // this object does not have a NI, so this should error out
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverComponent.SendGameObject(serverGo);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => serverComponent.SendGameObject(serverGo),
+                "GameObject has no NetworkIdentity");
         }
 
         [UnityTest]
@@ -220,11 +219,9 @@ namespace Mirage.Tests.Runtime.ClientServer
             Action<GameObject> callback = Substitute.For<Action<GameObject>>();
             serverComponent.onSendGameObjectCalled += callback;
 
-            // this object does not have a NI, so this should error out
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                clientComponent.SendGameObjectToServer(clientGo);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => clientComponent.SendGameObjectToServer(clientGo),
+                "GameObject has no NetworkIdentity");
         }
     }
 }

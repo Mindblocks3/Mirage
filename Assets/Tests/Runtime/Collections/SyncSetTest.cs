@@ -4,6 +4,7 @@ using Mirage.Collections;
 using Mirage.Serialization;
 using NSubstitute;
 using NUnit.Framework;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime
 {
@@ -293,7 +294,9 @@ namespace Mirage.Tests.Runtime
         [Test]
         public void WritingToReadOnlyThrows()
         {
-            Assert.Throws<InvalidOperationException>(() => { clientSyncSet.Add("5"); });
+            Assert.Throws<UnityAssertionException>(
+                () => { clientSyncSet.Add("5"); }, 
+                "SyncSets can only be modified by the server");
         }
 
         [Test]

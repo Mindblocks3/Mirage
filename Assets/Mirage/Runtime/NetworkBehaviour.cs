@@ -6,6 +6,7 @@ using Mirage.Logging;
 using Mirage.RemoteCalls;
 using Mirage.Serialization;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage
 {
@@ -248,9 +249,10 @@ namespace Mirage
             // this was in Weaver before
             // NOTE: we could remove this later to allow calling Cmds on Server
             //       to avoid Wrapper functions. a lot of people requested this.
+
             if (!Client.Active)
             {
-                throw new InvalidOperationException($"ServerRpc Function {cmdName} called on server without an active client.");
+                Assert.IsTrue(Client.Active, $"ServerRpc Function {cmdName} called on server without an active client.");
             }
 
             // local players can always send ServerRpcs, regardless of authority, other objects must have authority.
@@ -261,7 +263,7 @@ namespace Mirage
 
             if (Client.Player == null)
             {
-                throw new InvalidOperationException("Send ServerRpc attempted with no client connection.");
+                Assert.IsNotNull(Client.Player, $"ServerRpc Function {cmdName} called on server without a player object");
             }
         }
 
@@ -293,11 +295,13 @@ namespace Mirage
         #region Client RPCs
         protected internal void SendRpcInternal(Type invokeClass, string rpcName, NetworkWriter writer, int channelId, bool excludeOwner)
         {
-            // this was in Weaver before
-            if (Server == null || !Server.Active)
+            if (Server == null)
             {
-                throw new InvalidOperationException($"RPC Function {rpcName} called when server is not active.");
+                Assert.IsNotNull(Server, $"Rpc Function {rpcName} called on client without server running.");
             }
+
+            Assert.IsTrue(Server.Active, $"Rpc Function {rpcName} called on client without server running.");
+            // this was in Weaver before
             // This cannot use Server.active, as that is not specific to this object.
             if (!IsServer)
             {
@@ -324,10 +328,13 @@ namespace Mirage
 
         protected internal void SendTargetRpcInternal(INetworkPlayer player, Type invokeClass, string rpcName, NetworkWriter writer, int channelId)
         {
-            // this was in Weaver before
-            if (Server == null || !Server.Active)
+            if (Server == null)
             {
-                throw new InvalidOperationException($"RPC Function {rpcName} called when server is not active.");
+                Assert.IsNotNull(Server, $"Rpc Function {rpcName} called on client without server running.");
+            }
+
+            if (!Server.Active) {
+                Assert.IsTrue(Server.Active, $"Rpc Function {rpcName} called on client without server running.");
             }
 
             // connection parameter is optional. assign if null.

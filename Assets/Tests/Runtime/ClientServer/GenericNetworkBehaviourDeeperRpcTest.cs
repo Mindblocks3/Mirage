@@ -6,6 +6,7 @@ using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.ClientServer
 {
@@ -175,11 +176,9 @@ namespace Mirage.Tests.Runtime.ClientServer
             Action<GameObject> callback = Substitute.For<Action<GameObject>>();
             clientComponent.onSendGameObjectCalled += callback;
 
-            // this object does not have a NI, so this should error out
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverComponent.SendGameObject(serverGo);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => serverComponent.SendGameObject(serverGo),
+                "GameObject is not a NetworkIdentity");
         }
 
         [UnityTest]
@@ -276,11 +275,9 @@ namespace Mirage.Tests.Runtime.ClientServer
             Action<GameObject> callback = Substitute.For<Action<GameObject>>();
             serverComponent.onSendGameObjectCalled += callback;
 
-            // this object does not have a NI, so this should error out
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                clientComponent.SendGameObjectToServer(clientGo);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => clientComponent.SendGameObjectToServer(clientGo),
+                "GameObject is not a NetworkIdentity");
         }
 
         [UnityTest]
@@ -333,11 +330,11 @@ namespace Mirage.Tests.Runtime.ClientServer
             Action<GameObject> callback = Substitute.For<Action<GameObject>>();
             clientComponent.onSendDeeperGameObjectCalled += callback;
 
-            // this object does not have a NI, so this should error out
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                serverComponent.SendDeeperGameObject(serverGo);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => serverComponent.SendDeeperGameObject(serverGo),
+                "GameObject has no NetworkIdentity"
+            );
+
         }
 
         [UnityTest]
@@ -434,11 +431,10 @@ namespace Mirage.Tests.Runtime.ClientServer
             Action<GameObject> callback = Substitute.For<Action<GameObject>>();
             serverComponent.onSendDeeperGameObjectCalled += callback;
 
-            // this object does not have a NI, so this should error out
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                clientComponent.SendDeeperGameObjectToServer(clientGo);
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => clientComponent.SendDeeperGameObjectToServer(clientGo),
+                "GameObject has no NetworkIdentity"
+            );
         }
     }
 }

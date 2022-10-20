@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.Serialization
 {
@@ -175,10 +176,11 @@ namespace Mirage.Serialization
         public void Write<T>(T value)
         {
             if (Writer<T>.Write == null)
-                Debug.AssertFormat(
-                    Writer<T>.Write != null,
-                    @"No writer found for {0}. See https://miragenet.github.io/Mirage/Articles/General/Troubleshooting.html for details",
-                    typeof(T));
+            {
+                Assert.IsNotNull(
+                    Writer<T>.Write,
+                    $"No writer found for {typeof(T)}. See https://miragenet.github.io/Mirage/Articles/General/Troubleshooting.html for details");
+            }
 
             Writer<T>.Write(this, value);
         }
@@ -531,8 +533,7 @@ namespace Mirage.Serialization
                 return;
             }
             NetworkIdentity identity = value.GetComponent<NetworkIdentity>();
-            if (identity == null)
-                throw new InvalidOperationException($"Cannot send GameObject without a NetworkIdentity {value.name}");
+            Assert.IsNotNull(identity, "GameObject has no NetworkIdentity");
             writer.WriteNetworkIdentity(identity);
         }
 

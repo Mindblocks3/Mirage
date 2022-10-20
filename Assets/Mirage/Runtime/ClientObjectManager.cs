@@ -6,6 +6,7 @@ using Mirage.Logging;
 using Mirage.RemoteCalls;
 using Mirage.Serialization;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
 namespace Mirage
@@ -49,11 +50,9 @@ namespace Mirage
 
         public void Start()
         {
-            if (Client != null)
-            {
-                Client.Connected.AddListener(OnClientConnected);
-                Client.Disconnected.AddListener(OnClientDisconnected);
-            }
+            Assert.IsNotNull(Client, "Client must be set");
+            Client.Connected.AddListener(OnClientConnected);
+            Client.Disconnected.AddListener(OnClientDisconnected);
         }
 
         void OnClientConnected(INetworkPlayer player)
@@ -206,11 +205,7 @@ namespace Mirage
         /// <param name="unspawnHandler">A method to use as a custom un-spawnhandler on clients.</param>
         public void RegisterPrefab(NetworkIdentity identity, SpawnHandlerDelegate spawnHandler, UnSpawnDelegate unspawnHandler)
         {
-            if (identity.AssetId == Guid.Empty)
-            {
-                throw new InvalidOperationException("RegisterPrefab game object " + identity.name + " has no " + nameof(identity) + ". Use RegisterSpawnHandler() instead?");
-            }
-
+            Assert.AreNotEqual(identity.AssetId, Guid.Empty, "RegisterPrefab: prefab must have a valid assetId. Use RegisterPrefab(prefab, newAssetId) to assign a new assetId to the prefab.");
             if (logger.LogEnabled()) logger.Log("Registering custom prefab '" + identity.name + "' as asset:" + identity.AssetId + " " + spawnHandler.Method.Name + "/" + unspawnHandler.Method.Name);
 
             spawnHandlers[identity.AssetId] = spawnHandler;
@@ -345,8 +340,10 @@ namespace Mirage
         {
             if (msg.assetId == Guid.Empty && msg.sceneId == 0)
             {
-                throw new InvalidOperationException("OnObjSpawn netId: " + msg.netId + " has invalid asset Id");
+                Assert.AreNotEqual(msg.assetId, Guid.Empty, "OnObjSpawn netId: " + msg.netId + " has invalid asset Id");
+                Assert.AreNotEqual(msg.sceneId, 0, "OnObjSpawn asset ID " + msg.assetId + " has invalid sceneId.");
             }
+
             if (logger.LogEnabled()) logger.Log($"Client spawn handler instantiating netId={msg.netId} assetID={msg.assetId} sceneId={msg.sceneId} pos={msg.position}");
 
             // was the object already spawned?
@@ -363,7 +360,7 @@ namespace Mirage
             if (identity == null)
             {
                 //object could not be found.
-                throw new InvalidOperationException($"Could not spawn assetId={msg.assetId} scene={msg.sceneId} netId={msg.netId}");
+                Assert.IsNotNull(identity, $"Could not spawn assetId={msg.assetId} scene={msg.sceneId} netId={msg.netId}");
             }
 
             ApplySpawnPayload(identity, msg);

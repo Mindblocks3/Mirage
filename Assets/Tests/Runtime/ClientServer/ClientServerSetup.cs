@@ -60,10 +60,7 @@ namespace Mirage.Tests.Runtime.ClientServer
             ExtraSetup();
 
             // create and register a prefab
-            playerPrefab = new GameObject("serverPlayer", typeof(NetworkIdentity), typeof(T));
-            NetworkIdentity identity = playerPrefab.GetComponent<NetworkIdentity>();
-            identity.AssetId = Guid.NewGuid();
-            clientObjectManager.RegisterPrefab(identity);
+            var identity = CreatePrefab<T>();
 
             // wait for client and server to initialize themselves
             await UniTask.Delay(1);
@@ -93,6 +90,15 @@ namespace Mirage.Tests.Runtime.ClientServer
             clientPlayerGO = clientIdentity.gameObject;
             clientComponent = clientPlayerGO.GetComponent<T>();
         });
+
+        protected NetworkIdentity CreatePrefab<T2>()
+        {
+            playerPrefab = new GameObject("serverPlayer", typeof(NetworkIdentity), typeof(T2));
+            NetworkIdentity identity = playerPrefab.GetComponent<NetworkIdentity>();
+            identity.AssetId = Guid.NewGuid();
+            clientObjectManager.RegisterPrefab(identity);
+            return identity;
+        }
 
         public virtual void ExtraTearDown() { }
 

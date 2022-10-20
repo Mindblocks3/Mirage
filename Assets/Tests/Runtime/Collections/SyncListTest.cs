@@ -4,6 +4,7 @@ using Mirage.Collections;
 using Mirage.Serialization;
 using NSubstitute;
 using NUnit.Framework;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime
 {
@@ -420,7 +421,9 @@ namespace Mirage.Tests.Runtime
         [Test]
         public void WritingToReadOnlyThrows()
         {
-            Assert.Throws<InvalidOperationException>(() => { clientSyncList.Add("fail"); });
+            Assert.Throws<UnityAssertionException>(
+                () => { clientSyncList.Add("fail"); }, 
+                "SyncList can only be modified at the server");
         }
 
         [Test]

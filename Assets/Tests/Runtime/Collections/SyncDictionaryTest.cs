@@ -4,6 +4,7 @@ using Mirage.Collections;
 using Mirage.Serialization;
 using NSubstitute;
 using NUnit.Framework;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime
 {
@@ -313,7 +314,9 @@ namespace Mirage.Tests.Runtime
         [Test]
         public void WritingToReadOnlyThrows()
         {
-            Assert.Throws<InvalidOperationException>(() => clientSyncDictionary.Add(50, "fail"));
+            Assert.Throws<UnityAssertionException>(
+                () => clientSyncDictionary.Add(50, "fail"),
+                "whatever");
         }
 
         [Test]

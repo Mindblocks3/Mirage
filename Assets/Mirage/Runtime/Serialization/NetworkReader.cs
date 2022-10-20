@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using Mirage.Logging;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.Serialization
 {
@@ -137,10 +138,9 @@ namespace Mirage.Serialization
         public T Read<T>()
         {
             if (Reader<T>.Read == null)
-                Debug.AssertFormat(
-                    Reader<T>.Read != null,
-                    @"No reader found for {0}. See https://miragenet.github.io/Mirage/Articles/General/Troubleshooting.html for details",
-                    typeof(T));
+                Assert.IsNotNull(
+                    Reader<T>.Read,
+                    $"No reader found for {typeof(T)}. See https://miragenet.github.io/Mirage/Articles/General/Troubleshooting.html for details");
 
             return Reader<T>.Read(this);
         }

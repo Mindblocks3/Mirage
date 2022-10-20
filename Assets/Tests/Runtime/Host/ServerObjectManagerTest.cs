@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using static Mirage.Tests.LocalConnections;
 using Object = UnityEngine.Object;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime.Host
 {
@@ -25,14 +26,10 @@ namespace Mirage.Tests.Runtime.Host
             // create a GameObject without NetworkIdentity
             var goWithout = new GameObject();
 
-            // GetNetworkIdentity for GO without identity
-            // (error log is expected)
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                _ = goWithout.GetNetworkIdentity();
-            });
+            Assert.Throws<UnityAssertionException>(
+                () => goWithout.GetNetworkIdentity(),
+                "GameObject New Game Object does not have a network identity");
 
-            // clean up
             Object.Destroy(goWithout);
         }
 

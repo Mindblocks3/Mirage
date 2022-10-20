@@ -6,6 +6,7 @@ using Mirage.Events;
 using Mirage.Logging;
 using Mirage.Serialization;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
 namespace Mirage
@@ -170,10 +171,7 @@ namespace Mirage
             //Make sure connections are cleared in case any old connections references exist from previous sessions
             Players.Clear();
 
-            if (Transport is null)
-                Transport = GetComponent<Transport>();
-            if (Transport == null)
-                throw new InvalidOperationException("Transport could not be found for NetworkServer");
+            Assert.IsNotNull(Transport, "NetworkServer Transport is not set. Please set it in the inspector for the NetworkServer object.");
 
             if (authenticator != null)
             {
@@ -196,7 +194,8 @@ namespace Mirage
         /// <returns></returns>
         public void StartAsync(NetworkClient localClient = null)
         {
-            if (Active) throw new InvalidOperationException("Server is already active");
+            Assert.IsFalse(Active, "NetworkServer is already active. Cannot start again without calling Stop()");
+            Assert.IsNotNull(Transport, "NetworkServer Transport is not set. Please set it in the inspector for the NetworkServer object.");
 
             LocalClient = localClient;
 
@@ -312,10 +311,7 @@ namespace Mirage
         /// <param name="connection">The connection to the client</param>
         internal void SetLocalConnection(INetworkClient client, IConnection connection)
         {
-            if (LocalPlayer != null)
-            {
-                throw new InvalidOperationException("Local Connection already exists");
-            }
+            Assert.IsNull(LocalPlayer, "Local connection is already set");
 
             var player = new NetworkPlayer(connection);
             LocalPlayer = player;
