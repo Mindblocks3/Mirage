@@ -1,3 +1,13 @@
+# [95.0.0](https://github.com/Mindblocks3/Mirage/compare/v94.0.0...v95.0.0) (2022-10-20)
+
+
+* Rename StartAsync -> Listen ([20a594c](https://github.com/Mindblocks3/Mirage/commit/20a594c7c553538a7dc45a592dcc17ebaf0f6029))
+
+
+### BREAKING CHANGES
+
+* renamed NetworkServer.StartAsync -> Listen
+
 # [94.0.0](https://github.com/Mindblocks3/Mirage/compare/v93.0.0...v94.0.0) (2022-10-20)
 
 
