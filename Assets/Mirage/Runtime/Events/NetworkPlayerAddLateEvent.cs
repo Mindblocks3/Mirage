@@ -9,6 +9,4 @@ namespace Mirage.Events
     /// </summary>
     [Serializable] public class NetworkPlayerEvent : UnityEvent<INetworkPlayer> { }
 
-    [Serializable]
-    public class NetworkPlayerAddLateEvent : AddLateEvent<INetworkPlayer, NetworkPlayerEvent> { }
 }

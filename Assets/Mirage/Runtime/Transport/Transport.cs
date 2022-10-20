@@ -24,7 +24,6 @@ namespace Mirage
         /// <summary>
         /// Raised when the transport starts
         /// </summary>
-        public UnityEvent Started = new UnityEvent();
         public UnityEvent Stopped = new UnityEvent();
 
         /// <summary>

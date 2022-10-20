@@ -1,4 +1,5 @@
 using Mirage.Events;
+using UnityEngine.Events;
 
 namespace Mirage
 {
@@ -8,17 +9,17 @@ namespace Mirage
         /// <summary>
         /// Event fires once the Client has connected its Server.
         /// </summary>
-        IAddLateEvent<INetworkPlayer> Connected { get; }
+        NetworkPlayerEvent Connected { get; }
 
         /// <summary>
         /// Event fires after the Client connection has sucessfully been authenticated with its Server.
         /// </summary>
-        IAddLateEvent<INetworkPlayer> Authenticated { get; }
+        NetworkPlayerEvent Authenticated { get; }
 
         /// <summary>
         /// Event fires after the Client has disconnected from its Server and Cleanup has been called.
         /// </summary>
-        IAddLateEvent Disconnected { get; }
+        UnityEvent Disconnected { get; }
 
         /// <summary>
         /// The NetworkConnection object this client is using.

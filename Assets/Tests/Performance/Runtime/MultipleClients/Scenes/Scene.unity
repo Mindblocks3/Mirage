@@ -253,7 +253,6 @@ MonoBehaviour:
   Transport: {fileID: 1193428350}
   authenticator: {fileID: 0}
   _started:
-    _event:
       m_PersistentCalls:
         m_Calls: []
   _connected:
@@ -266,15 +265,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _stopped:
-    _event:
       m_PersistentCalls:
         m_Calls: []
   _onStartHost:
-    _event:
       m_PersistentCalls:
         m_Calls: []
   _onStopHost:
-    _event:
       m_PersistentCalls:
         m_Calls: []
 --- !u!114 &1193428350
