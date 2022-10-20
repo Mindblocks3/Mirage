@@ -57,26 +57,6 @@ namespace Mirage
         }
 
         [Test]
-        public void StartExceptionTest()
-        {
-            spawner.PlayerPrefab = null;
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                spawner.Start();
-            });
-        }
-
-        [Test]
-        public void StartExceptionMissingServerObjectManagerTest()
-        {
-            spawner.ServerObjectManager = null;
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                spawner.Start();
-            });
-        }
-
-        [Test]
         public void AutoConfigureClient()
         {
             spawner.Start();
@@ -118,16 +98,6 @@ namespace Mirage
 
             spawner.startPositions.Clear();
             Assert.That(spawner.GetStartPosition(), Is.SameAs(null));
-        }
-
-        [Test]
-        public void MissingClientObjectSpawnerExceptionTest()
-        {
-            spawner.ClientObjectManager = null;
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                spawner.Start();
-            });
         }
     }
 }

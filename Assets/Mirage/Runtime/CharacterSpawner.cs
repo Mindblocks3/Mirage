@@ -33,31 +33,14 @@ namespace Mirage
         // Start is called before the first frame update
         public virtual void Start()
         {
-            if (PlayerPrefab == null)
-            {
-                throw new InvalidOperationException("Assign a player in the CharacterSpawner");
-            }
-            if (Client != null)
-            {
-                Client.Authenticated.AddListener(SendCharacterMessage);
+            Debug.Assert(Client != null, "Client is not set");
+            Debug.Assert(Server != null, "Server is not set");
+            Debug.Assert(ClientObjectManager != null, "ClientObjectManager is not set");
+            Debug.Assert(ServerObjectManager != null, "ServerObjectManager is not set");
 
-                if (ClientObjectManager != null)
-                {
-                    ClientObjectManager.RegisterPrefab(PlayerPrefab);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Assign a ClientObjectManager");
-                }
-            }
-            if (Server != null)
-            {
-                Server.Authenticated.AddListener(OnServerAuthenticated);
-                if (ServerObjectManager == null)
-                {
-                    throw new InvalidOperationException("Assign a ServerObjectManager");
-                }
-            }
+            Client.Authenticated.AddListener(SendCharacterMessage);
+            ClientObjectManager.RegisterPrefab(PlayerPrefab);
+            Server.Authenticated.AddListener(OnServerAuthenticated);
         }
 
         private void SendCharacterMessage(INetworkPlayer player)
