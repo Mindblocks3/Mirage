@@ -48,9 +48,6 @@ namespace Mirage.KCP
                 DualMode = true
             };
             socket.Bind(new IPEndPoint(IPAddress.IPv6Any, Port));
-
-            // transport started
-            Started?.Invoke();
         }
 
         EndPoint newClientEP = new IPEndPoint(IPAddress.IPv6Any, 0);

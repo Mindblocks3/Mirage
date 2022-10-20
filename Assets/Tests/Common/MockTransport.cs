@@ -24,7 +24,6 @@ namespace Mirage.Tests
 
         public override void Listen()
         {
-            Started.Invoke();
         }
 
         public override IEnumerable<Uri> ServerUri()

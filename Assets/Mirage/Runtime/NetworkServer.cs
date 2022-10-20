@@ -210,7 +210,6 @@ namespace Mirage
 
             try
             {
-                Transport.Started.AddListener(TransportStarted);
                 Transport.Connected.AddListener(TransportConnected);
                 Transport.Stopped.AddListener(TransportStopped);
                 Transport.Listen();
