@@ -1,3 +1,15 @@
+# [96.0.0](https://github.com/Mindblocks3/Mirage/compare/v95.0.0...v96.0.0) (2022-10-20)
+
+
+### Bug Fixes
+
+* use regular unity events ([#4](https://github.com/Mindblocks3/Mirage/issues/4)) ([b5e38cc](https://github.com/Mindblocks3/Mirage/commit/b5e38cc96e8540ad194da6a609654c70a3d15363))
+
+
+### BREAKING CHANGES
+
+* the events get invoked immediately
+
 # [95.0.0](https://github.com/Mindblocks3/Mirage/compare/v94.0.0...v95.0.0) (2022-10-20)
 
 
