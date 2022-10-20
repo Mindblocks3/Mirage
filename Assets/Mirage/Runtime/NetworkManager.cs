@@ -23,9 +23,6 @@ namespace Mirage
         public NetworkServer Server;
         [FormerlySerializedAs("client")]
         public NetworkClient Client;
-        [FormerlySerializedAs("sceneManager")]
-        [FormerlySerializedAs("SceneManager")]
-        public NetworkSceneManager NetworkSceneManager;
         [FormerlySerializedAs("serverObjectManager")]
         public ServerObjectManager ServerObjectManager;
         [FormerlySerializedAs("clientObjectManager")]

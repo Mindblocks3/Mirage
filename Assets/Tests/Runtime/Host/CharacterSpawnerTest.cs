@@ -20,7 +20,6 @@ namespace Mirage.Tests.Runtime.Host
 
             spawner.Client = client;
             spawner.Server = server;
-            spawner.SceneManager = sceneManager;
             spawner.ClientObjectManager = clientObjectManager;
             spawner.ServerObjectManager = serverObjectManager;
 
@@ -38,20 +37,6 @@ namespace Mirage.Tests.Runtime.Host
             bundle.Unload(true);
             Object.Destroy(player);
         }
-
-        [UnityTest]
-        public IEnumerator DontAutoSpawnTest() => UniTask.ToCoroutine(async () =>
-        {
-            bool invokeAddPlayerMessage = false;
-            server.LocalPlayer.RegisterHandler<AddCharacterMessage>(msg => invokeAddPlayerMessage = true);
-
-            sceneManager.ChangeServerScene("Assets/Mirror/Tests/Runtime/testScene.unity");
-            // wait for messages to be processed
-            await UniTask.Yield();
-
-            Assert.That(invokeAddPlayerMessage, Is.False);
-
-        });
 
         [Test]
         public void ManualSpawnTest()

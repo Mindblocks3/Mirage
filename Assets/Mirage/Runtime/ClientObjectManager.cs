@@ -19,8 +19,6 @@ namespace Mirage
 
         [FormerlySerializedAs("client")]
         public NetworkClient Client;
-        [FormerlySerializedAs("networkSceneManager")]
-        public NetworkSceneManager NetworkSceneManager;
 
         // spawn handlers. internal for testing purposes. do not use directly.
         internal readonly Dictionary<Guid, SpawnHandlerDelegate> spawnHandlers = new Dictionary<Guid, SpawnHandlerDelegate>();
@@ -55,9 +53,6 @@ namespace Mirage
             {
                 Client.Connected.AddListener(OnClientConnected);
                 Client.Disconnected.AddListener(OnClientDisconnected);
-
-                if (NetworkSceneManager != null)
-                    NetworkSceneManager.ClientSceneChanged.AddListener(OnClientSceneChanged);
             }
         }
 
@@ -81,11 +76,6 @@ namespace Mirage
             ClearSpawners();
             DestroyAllClientObjects();
             syncVarReceiver = null;
-        }
-
-        void OnClientSceneChanged(string scenePath, SceneOperation sceneOperation)
-        {
-            PrepareToSpawnSceneObjects();
         }
 
         internal void RegisterHostHandlers()

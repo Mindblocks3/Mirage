@@ -16,7 +16,6 @@ namespace Mirage.Tests.Runtime.ClientServer
         #region Setup
         protected GameObject serverGo;
         protected NetworkServer server;
-        protected NetworkSceneManager serverSceneManager;
         protected ServerObjectManager serverObjectManager;
         protected GameObject serverPlayerGO;
         protected NetworkIdentity serverIdentity;
@@ -24,7 +23,6 @@ namespace Mirage.Tests.Runtime.ClientServer
 
         protected GameObject clientGo;
         protected NetworkClient client;
-        protected NetworkSceneManager clientSceneManager;
         protected ClientObjectManager clientObjectManager;
         protected GameObject clientPlayerGO;
         protected NetworkIdentity clientIdentity;
@@ -41,8 +39,6 @@ namespace Mirage.Tests.Runtime.ClientServer
         [UnitySetUp]
         public IEnumerator Setup() => UniTask.ToCoroutine(async () =>
         {
-            serverGo = new GameObject("server", typeof(NetworkSceneManager), typeof(ServerObjectManager), typeof(NetworkServer));
-            clientGo = new GameObject("client", typeof(NetworkSceneManager), typeof(ClientObjectManager), typeof(NetworkClient));
             testTransport = serverGo.AddComponent<LoopbackTransport>();
 
             await UniTask.Delay(1);
@@ -53,21 +49,12 @@ namespace Mirage.Tests.Runtime.ClientServer
             server.Transport = testTransport;
             client.Transport = testTransport;
 
-            serverSceneManager = serverGo.GetComponent<NetworkSceneManager>();
-            clientSceneManager = clientGo.GetComponent<NetworkSceneManager>();
-            serverSceneManager.Server = server;
-            clientSceneManager.Client = client;
-            serverSceneManager.Start();
-            clientSceneManager.Start();
-
             serverObjectManager = serverGo.GetComponent<ServerObjectManager>();
             serverObjectManager.Server = server;
-            serverObjectManager.NetworkSceneManager = serverSceneManager;
             serverObjectManager.Start();
 
             clientObjectManager = clientGo.GetComponent<ClientObjectManager>();
             clientObjectManager.Client = client;
-            clientObjectManager.NetworkSceneManager = clientSceneManager;
             clientObjectManager.Start();
 
             ExtraSetup();

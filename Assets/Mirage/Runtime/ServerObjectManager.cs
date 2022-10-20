@@ -43,8 +43,6 @@ namespace Mirage
 
         [FormerlySerializedAs("server")]
         public NetworkServer Server;
-        [FormerlySerializedAs("networkSceneManager")]
-        public NetworkSceneManager NetworkSceneManager;
 
         uint nextNetworkId = 1;
         uint GetNextNetworkId() => checked(nextNetworkId++);
@@ -59,12 +57,6 @@ namespace Mirage
                 Server.OnStartHost.AddListener(StartedHost);
                 Server.Authenticated.AddListener(OnAuthenticated);
                 Server.Stopped.AddListener(OnServerStopped);
-
-                if (NetworkSceneManager != null)
-                {
-                    NetworkSceneManager.ServerChangeScene.AddListener(OnServerChangeScene);
-                    NetworkSceneManager.ServerSceneChanged.AddListener(OnServerSceneChanged);
-                }
             }
         }
 
@@ -103,16 +95,6 @@ namespace Mirage
             SyncVarSender = null;
             // reset so ids stay small in each session
             nextNetworkId = 1;
-        }
-
-        void OnServerChangeScene(string scenePath, SceneOperation sceneOperation)
-        {
-            SetAllClientsNotReady();
-        }
-
-        void OnServerSceneChanged(string scenePath, SceneOperation sceneOperation)
-        {
-            SpawnOrActivate();
         }
 
         void SpawnOrActivate()

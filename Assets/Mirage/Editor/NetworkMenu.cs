@@ -18,7 +18,6 @@ namespace Mirage
                 typeof(NetworkManager),
                 typeof(NetworkServer),
                 typeof(NetworkClient),
-                typeof(NetworkSceneManager),
                 typeof(ServerObjectManager),
                 typeof(ClientObjectManager),
                 typeof(CharacterSpawner),
@@ -28,7 +27,6 @@ namespace Mirage
             var go = new GameObject("NetworkManager", components);
 
             KcpTransport transport = go.GetComponent<KcpTransport>();
-            NetworkSceneManager nsm = go.GetComponent<NetworkSceneManager>();
 
             NetworkClient networkClient = go.GetComponent<NetworkClient>();
             networkClient.Transport = transport;
@@ -38,28 +36,22 @@ namespace Mirage
 
             ServerObjectManager serverObjectManager = go.GetComponent<ServerObjectManager>();
             serverObjectManager.Server = networkServer;
-            serverObjectManager.NetworkSceneManager = nsm;
 
             ClientObjectManager clientObjectManager = go.GetComponent<ClientObjectManager>();
             clientObjectManager.Client = networkClient;
-            clientObjectManager.NetworkSceneManager = nsm;
 
             NetworkManager networkManager = go.GetComponent<NetworkManager>();
             networkManager.Client = networkClient;
             networkManager.Server = networkServer;
             networkManager.ServerObjectManager = serverObjectManager;
             networkManager.ClientObjectManager = clientObjectManager;
-            networkManager.NetworkSceneManager = nsm;
 
             CharacterSpawner playerSpawner = go.GetComponent<CharacterSpawner>();
             playerSpawner.Client = networkClient;
             playerSpawner.Server = networkServer;
-            playerSpawner.SceneManager = nsm;
             playerSpawner.ServerObjectManager = serverObjectManager;
             playerSpawner.ClientObjectManager = clientObjectManager;
 
-            nsm.Client = networkClient;
-            nsm.Server = networkServer;
             return go;
         }
     }

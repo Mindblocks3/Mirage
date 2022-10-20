@@ -12,7 +12,6 @@ namespace Mirage
         private NetworkClient client;
         private NetworkServer server;
         private CharacterSpawner spawner;
-        private NetworkSceneManager sceneManager;
         private ServerObjectManager serverObjectManager;
         private ClientObjectManager clientObjectManager;
         private GameObject playerPrefab;
@@ -27,15 +26,10 @@ namespace Mirage
             client = go.AddComponent<NetworkClient>();
             server = go.AddComponent<NetworkServer>();
             spawner = go.AddComponent<CharacterSpawner>();
-            sceneManager = go.AddComponent<NetworkSceneManager>();
             serverObjectManager = go.AddComponent<ServerObjectManager>();
             clientObjectManager = go.AddComponent<ClientObjectManager>();
-            spawner.SceneManager = sceneManager;
-            sceneManager.Client = client;
-            sceneManager.Server = server;
             serverObjectManager.Server = server;
             clientObjectManager.Client = client;
-            clientObjectManager.NetworkSceneManager = sceneManager;
             spawner.Client = client;
             spawner.Server = server;
             spawner.ServerObjectManager = serverObjectManager;

@@ -83,20 +83,5 @@ namespace Mirage.Tests.Runtime.Host
             Assert.That(server.LocalClientActive, Is.False);
         });
 
-        [UnityTest]
-        public IEnumerator ClientSceneChangedOnReconnect() => UniTask.ToCoroutine(async () =>
-        {
-            server.Stop();
-
-            // wait for server to disconnect
-            await UniTask.WaitUntil(() => !server.Active);
-
-            UnityAction<string, SceneOperation> mockListener = Substitute.For<UnityAction<string, SceneOperation>>();
-            sceneManager.ClientChangeScene.AddListener(mockListener);
-            await StartHost();
-
-            client.Update();
-            mockListener.Received().Invoke(Arg.Any<string>(), Arg.Any<SceneOperation>());
-        });
     }
 }

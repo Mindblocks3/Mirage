@@ -98,18 +98,14 @@ namespace Mirage.HeadlessBenchmark
         {
             if (!string.IsNullOrEmpty(GetArg("-server")))
             {
-                var serverGo = new GameObject($"Server", typeof(NetworkServer), typeof(ServerObjectManager), typeof(NetworkSceneManager), typeof(CharacterSpawner));
+                var serverGo = new GameObject($"Server", typeof(NetworkServer), typeof(ServerObjectManager), typeof(CharacterSpawner));
 
                 server = serverGo.GetComponent<NetworkServer>();
                 server.MaxConnections = 9999;
                 server.Transport = transport;
                 serverObjectManager = serverGo.GetComponent<ServerObjectManager>();
 
-                NetworkSceneManager networkSceneManager = serverGo.GetComponent<NetworkSceneManager>();
-                networkSceneManager.Server = server;
-
                 serverObjectManager.Server = server;
-                serverObjectManager.NetworkSceneManager = networkSceneManager;
                 serverObjectManager.Start();
 
                 CharacterSpawner spawner = serverGo.GetComponent<CharacterSpawner>();
@@ -159,15 +155,12 @@ namespace Mirage.HeadlessBenchmark
 
         async UniTask StartClient(int i, string networkAddress)
         {
-            var clientGo = new GameObject($"Client {i}", typeof(NetworkClient), typeof(ClientObjectManager), typeof(CharacterSpawner), typeof(NetworkSceneManager));
+            var clientGo = new GameObject($"Client {i}", typeof(NetworkClient), typeof(ClientObjectManager), typeof(CharacterSpawner));
             NetworkClient client = clientGo.GetComponent<NetworkClient>();
             ClientObjectManager objectManager = clientGo.GetComponent<ClientObjectManager>();
             CharacterSpawner spawner = clientGo.GetComponent<CharacterSpawner>();
-            NetworkSceneManager networkSceneManager = clientGo.GetComponent<NetworkSceneManager>();
-            networkSceneManager.Client = client;
 
             objectManager.Client = client;
-            objectManager.NetworkSceneManager = networkSceneManager;
             objectManager.Start();
             objectManager.RegisterPrefab(MonsterPrefab.GetComponent<NetworkIdentity>());
             objectManager.RegisterPrefab(PlayerPrefab.GetComponent<NetworkIdentity>());
@@ -175,7 +168,6 @@ namespace Mirage.HeadlessBenchmark
             spawner.Client = client;
             spawner.PlayerPrefab = PlayerPrefab.GetComponent<NetworkIdentity>();
             spawner.ClientObjectManager = objectManager;
-            spawner.SceneManager = networkSceneManager;
 
             client.Transport = transport;
 

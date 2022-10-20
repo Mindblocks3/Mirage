@@ -18,8 +18,6 @@ namespace Mirage
         public NetworkClient Client;
         [FormerlySerializedAs("server")]
         public NetworkServer Server;
-        [FormerlySerializedAs("sceneManager")]
-        public NetworkSceneManager SceneManager;
         [FormerlySerializedAs("clientObjectManager")]
         public ClientObjectManager ClientObjectManager;
         [FormerlySerializedAs("serverObjectManager")]
@@ -41,14 +39,7 @@ namespace Mirage
             }
             if (Client != null)
             {
-                if (SceneManager != null)
-                {
-                    SceneManager.ClientSceneChanged.AddListener(OnClientSceneChanged);
-                }
-                else
-                {
-                    Client.Authenticated.AddListener(SendAddCharacterMessage);
-                }
+                Client.Authenticated.AddListener(SendCharacterMessage);
 
                 if (ClientObjectManager != null)
                 {
@@ -69,15 +60,16 @@ namespace Mirage
             }
         }
 
-        private void SendAddCharacterMessage(INetworkPlayer player) {
+        private void SendCharacterMessage(INetworkPlayer player)
+        {
             Client.Send(new AddCharacterMessage());
         }
+
         void OnDestroy()
         {
-            if (Client != null && SceneManager != null)
+            if (Client != null )
             {
-                SceneManager.ClientSceneChanged.RemoveListener(OnClientSceneChanged);
-                Client.Authenticated.RemoveListener(SendAddCharacterMessage);
+                Client.Authenticated.RemoveListener(SendCharacterMessage);
             }
             if (Server != null)
             {
@@ -89,17 +81,6 @@ namespace Mirage
         {
             // wait for client to send us an AddPlayerMessage
             player.RegisterHandler<AddCharacterMessage>(OnServerAddPlayerInternal);
-        }
-
-        /// <summary>
-        /// Called on the client when a normal scene change happens.
-        /// <para>The default implementation of this function sets the client as ready and adds a player. Override the function to dictate what happens when the client connects.</para>
-        /// </summary>
-        /// <param name="conn">Connection to the server.</param>
-        private void OnClientSceneChanged(string sceneName, SceneOperation sceneOperation)
-        {
-            if (AutoSpawn && sceneOperation == SceneOperation.Normal)
-                RequestServerSpawnPlayer();
         }
 
         public virtual void RequestServerSpawnPlayer()

@@ -6,6 +6,14 @@ using NUnit.Framework;
 
 namespace Mirage.Tests.Runtime
 {
+     [NetworkMessage]
+    public struct SceneMessage
+    {
+        public string scenePath;
+        // Normal = 0, LoadAdditive = 1, UnloadAdditive = 2
+        public string[] additiveScenes;
+    }
+
     public class NetworkPlayerTest
     {
         private NetworkPlayer player;

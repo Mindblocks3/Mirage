@@ -16,15 +16,6 @@ namespace Mirage
     public struct AddCharacterMessage { }
 
     [NetworkMessage]
-    public struct SceneMessage
-    {
-        public string scenePath;
-        // Normal = 0, LoadAdditive = 1, UnloadAdditive = 2
-        public SceneOperation sceneOperation;
-        public string[] additiveScenes;
-    }
-
-    [NetworkMessage]
     public struct SceneReadyMessage { }
 
     #endregion

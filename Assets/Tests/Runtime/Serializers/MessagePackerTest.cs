@@ -16,7 +16,6 @@ namespace Mirage.Tests.Runtime
             var message = new SceneMessage
             {
                 scenePath = "Hello world",
-                sceneOperation = SceneOperation.LoadAdditive
             };
 
             byte[] data = MessagePacker.Pack(message);
@@ -24,7 +23,6 @@ namespace Mirage.Tests.Runtime
             SceneMessage unpacked = MessagePacker.Unpack<SceneMessage>(data);
 
             Assert.That(unpacked.scenePath, Is.EqualTo("Hello world"));
-            Assert.That(unpacked.sceneOperation, Is.EqualTo(SceneOperation.LoadAdditive));
         }
 
         [Test]
@@ -49,7 +47,6 @@ namespace Mirage.Tests.Runtime
             var message = new SceneMessage
             {
                 scenePath = "Hello world",
-                sceneOperation = SceneOperation.LoadAdditive
             };
 
             byte[] data = MessagePacker.Pack(message);
@@ -72,7 +69,6 @@ namespace Mirage.Tests.Runtime
             var message = new SceneMessage
             {
                 scenePath = "Hello world",
-                sceneOperation = SceneOperation.LoadAdditive
             };
 
             byte[] data = MessagePacker.Pack(message);

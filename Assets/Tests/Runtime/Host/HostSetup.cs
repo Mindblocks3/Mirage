@@ -15,7 +15,6 @@ namespace Mirage.Tests.Runtime.Host
         protected NetworkManager manager;
         protected NetworkServer server;
         protected NetworkClient client;
-        protected NetworkSceneManager sceneManager;
         protected ServerObjectManager serverObjectManager;
         protected ClientObjectManager clientObjectManager;
 
@@ -35,7 +34,6 @@ namespace Mirage.Tests.Runtime.Host
             networkManagerGo.name = TestContext.CurrentContext.Test.MethodName;
 
             networkManagerGo.AddComponent<MockTransport>();
-            sceneManager = networkManagerGo.AddComponent<NetworkSceneManager>();
             serverObjectManager = networkManagerGo.AddComponent<ServerObjectManager>();
             clientObjectManager = networkManagerGo.AddComponent<ClientObjectManager>();
             manager = networkManagerGo.AddComponent<NetworkManager>();
@@ -43,12 +41,8 @@ namespace Mirage.Tests.Runtime.Host
             manager.Server = networkManagerGo.GetComponent<NetworkServer>();
             server = manager.Server;
             client = manager.Client;
-            sceneManager.Client = client;
-            sceneManager.Server = server;
             serverObjectManager.Server = server;
-            serverObjectManager.NetworkSceneManager = sceneManager;
             clientObjectManager.Client = client;
-            clientObjectManager.NetworkSceneManager = sceneManager;
 
             ExtraSetup();
 
