@@ -35,7 +35,7 @@ namespace Mirage.Tests.Performance.Runtime
         });
 
         [UnityTearDown]
-        public IEnumerator TearDown()
+        public IEnumerator TearDown() 
         {
             // shutdown
             benchmarker.Server.Stop();

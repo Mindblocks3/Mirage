@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311915, g: 0.3807396, b: 0.35872662, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -193,6 +193,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -230,8 +231,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   server: {fileID: 0}
   serverObjectManager: {fileID: 0}
-  MonsterPrefab: {fileID: 6374416922608025457, guid: 28d1af38d0173324ea03798dd86eac8f, type: 3}
-  PlayerPrefab: {fileID: 7039704267495960125, guid: bebeb0dfd33f4074894ef25112ab4a8d, type: 3}
+  MonsterPrefab: {fileID: 6374416922608025457, guid: 28d1af38d0173324ea03798dd86eac8f,
+    type: 3}
+  PlayerPrefab: {fileID: 7039704267495960125, guid: bebeb0dfd33f4074894ef25112ab4a8d,
+    type: 3}
   editorArgs: -transport kcp -server -port 3333 -client 1
   transport: {fileID: 0}
 --- !u!4 &2043118187
@@ -244,6 +247,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -276,27 +280,57 @@ MonoBehaviour:
   Levels:
   - Name: NetworkBehaviour
     level: 2
-  - Name: HeadlessFrameLimiter
-    level: 2
   - Name: NetworkIdentity
     level: 2
-  - Name: RemoteCallHelper
-    level: 2
-  - Name: ClientObjectManager
+  - Name: CharacterSpawner
     level: 2
   - Name: NetworkClient
     level: 2
   - Name: NetworkTime
     level: 2
+  - Name: ServerObjectManager
+    level: 2
   - Name: NetworkServer
     level: 2
-  - Name: PlayerSpawner
+  - Name: ClientObjectManager
+    level: 2
+  - Name: RemoteCallHelper
+    level: 2
+  - Name: NetworkProximityChecker
     level: 2
   - Name: NetworkSceneManager
     level: 2
-  - Name: ServerObjectManager
+  - Name: PlayerSpawner
     level: 2
-  - Name: NetworkProximityChecker
+  - Name: NetworkBehaviourInspector
+    level: 2
+  - Name: WelcomeWindow
+    level: 2
+  - Name: NetworkReaderExtensions
+    level: 2
+  - Name: NetworkScenePostProcess
+    level: 2
+  - Name: NetworkWorld
+    level: 2
+  - Name: NetworkPlayer
+    level: 2
+  - Name: SyncVarReceiver
+    level: 2
+  - Name: NetworkWriterPool
+    level: 2
+  - Name: NetworkReaderPool
+    level: 2
+  - Name: KcpConnection
+    level: 2
+  - Name: 
+    level: 0
+  - Name: BasicAuthenticator
+    level: 2
+  - Name: NetworkRigidbody
+    level: 2
+  - Name: EnterPlayModeSettingsCheck
+    level: 2
+  - Name: NetworkConnection
     level: 2
   - Name: NetworkAnimator
     level: 2
@@ -304,35 +338,25 @@ MonoBehaviour:
     level: 2
   - Name: Reward
     level: 2
-  - Name: NetworkBehaviourInspector
+  - Name: HeadlessFrameLimiter
     level: 2
-  - Name: NetworkRigidbody
+  - Name: LogFactoryTests
+    level: 0
+  - Name: NetworkManager
     level: 2
-  - Name: ZoneHandler
+  - Name: WeaverTests
+    level: 4
+  - Name: ChatWindow
     level: 2
   - Name: AdditiveNetworkManager
     level: 2
-  - Name: EnterPlayModeSettingsCheck
-    level: 2
-  - Name: NetworkScenePostProcess
-    level: 2
-  - Name: NetworkConnection
-    level: 2
-  - Name: NetworkWriterPool
-    level: 2
-  - Name: NetworkReaderExtensions
-    level: 2
-  - Name: NetworkReaderPool
-    level: 2
-  - Name: BasicAuthenticator
+  - Name: ZoneHandler
     level: 2
   - Name: SceneDrawer
-    level: 2
-  - Name: ChatWindow
     level: 2
   - Name: NetworkDiscovery
     level: 2
   - Name: NetworkDiscoveryBase`2
     level: 2
-  - Name: KcpConnection
-    level: 2
+  - Name: Tests
+    level: 4
