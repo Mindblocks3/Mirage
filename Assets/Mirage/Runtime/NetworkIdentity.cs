@@ -9,6 +9,7 @@ using Mirage.Serialization;
 using Mirage.Events;
 using System.Security.Principal;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 #if UNITY_EDITOR
 using UnityEditor;
 #if UNITY_2018_3_OR_NEWER
@@ -312,12 +313,12 @@ namespace Mirage
         /// </summary>
         static readonly Dictionary<ulong, NetworkIdentity> sceneIds = new Dictionary<ulong, NetworkIdentity>();
 
-        [SerializeField] AddLateEvent _onStartServer = new AddLateEvent();
-        [SerializeField] AddLateEvent _onStartClient = new AddLateEvent();
-        [SerializeField] AddLateEvent _onStartLocalPlayer = new AddLateEvent();
-        [SerializeField] BoolAddLateEvent _onAuthorityChanged = new BoolAddLateEvent();
-        [SerializeField] AddLateEvent _onStopClient = new AddLateEvent();
-        [SerializeField] AddLateEvent _onStopServer = new AddLateEvent();
+        [SerializeField] UnityEvent _onStartServer = new ();
+        [SerializeField] UnityEvent _onStartClient = new ();
+        [SerializeField] UnityEvent _onStartLocalPlayer = new ();
+        [SerializeField] BoolUnityEvent _onAuthorityChanged = new ();
+        [SerializeField] UnityEvent _onStopClient = new ();
+        [SerializeField] UnityEvent _onStopServer = new ();
 
         bool clientStarted;
         bool localPlayerStarted;
@@ -329,19 +330,19 @@ namespace Mirage
         /// <para>This will be called for objects on a "host" as well as for object on a dedicated server.</para>
         /// <para>OnStartServer is invoked before this object is added to collection of spawned objects</para>
         /// </summary>
-        public IAddLateEvent OnStartServer => _onStartServer;
+        public UnityEvent OnStartServer => _onStartServer;
 
         /// <summary>
         /// Called on every NetworkBehaviour when it is activated on a client.
         /// <para>Objects on the host have this function called, as there is a local client on the host. The values of SyncVars on object are guaranteed to be initialized correctly with the latest state from the server when this function is called on the client.</para>
         /// </summary>
-        public IAddLateEvent OnStartClient => _onStartClient;
+        public UnityEvent OnStartClient => _onStartClient;
 
         /// <summary>
         /// Called when the local player object has been set up.
         /// <para>This happens after OnStartClient(), as it is triggered by an ownership message from the server. This is an appropriate place to activate components or functionality that should only be active for the local player, such as cameras and input.</para>
         /// </summary>
-        public IAddLateEvent OnStartLocalPlayer => _onStartLocalPlayer;
+        public UnityEvent OnStartLocalPlayer => _onStartLocalPlayer;
 
         /// <summary>
         /// This is invoked on behaviours that have authority given or removed, see <see cref="HasAuthority">NetworkIdentity.hasAuthority</see>
@@ -354,20 +355,20 @@ namespace Mirage
         /// this will be called on the client that owns the object.
         /// </para>
         /// </summary>
-        public IAddLateEvent<bool> OnAuthorityChanged => _onAuthorityChanged;
+        public BoolUnityEvent OnAuthorityChanged => _onAuthorityChanged;
 
         /// <summary>
         /// This is invoked on clients when the server has caused this object to be destroyed.
         /// <para>This can be used as a hook to invoke effects or do client specific cleanup.</para>
         /// </summary>
         ///<summary>Called on clients when the server destroys the GameObject.</summary>
-        public IAddLateEvent OnStopClient => _onStopClient;
+        public UnityEvent OnStopClient => _onStopClient;
 
         /// <summary>
         /// This is called on the server when the object is unspawned
         /// </summary>
         /// <remarks>Can be used as hook to save player information</remarks>
-        public IAddLateEvent OnStopServer => _onStopServer;
+        public UnityEvent OnStopServer => _onStopServer;
 
         /// <summary>
         /// Gets the NetworkIdentity from the sceneIds dictionary with the corresponding id
@@ -1184,18 +1185,6 @@ namespace Mirage
             networkBehavioursCache = null;
 
             ClearObservers();
-            ResetEvents();
-        }
-
-        private void ResetEvents()
-        {
-            // resets stored args and invoked flag
-            _onStartServer.Reset();
-            _onStartClient.Reset();
-            _onStartLocalPlayer.Reset();
-            _onAuthorityChanged.Reset();
-            _onStopClient.Reset();
-            _onStopServer.Reset();
         }
 
         internal void UpdateVars()
