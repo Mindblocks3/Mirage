@@ -35,7 +35,7 @@ namespace Mirage
 
         [Header("Events")]
         [SerializeField] NetworkPlayerEvent _connected = new ();
-        [SerializeField] NetworkPlayerAddLateEvent _authenticated = new ();
+        [SerializeField] NetworkPlayerEvent _authenticated = new ();
         [SerializeField] AddLateEvent _disconnected = new ();
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Mirage
         /// <summary>
         /// Event fires after the Client connection has sucessfully been authenticated with its Server.
         /// </summary>
-        public IAddLateEvent<INetworkPlayer> Authenticated => _authenticated;
+        public NetworkPlayerEvent Authenticated => _authenticated;
 
         /// <summary>
         /// Event fires after the Client has disconnected from its Server and Cleanup has been called.
@@ -290,7 +290,6 @@ namespace Mirage
                 Connected.RemoveListener(OnAuthenticated);
             }
 
-            _authenticated.Reset();
             _disconnected.Reset();
         }
     }

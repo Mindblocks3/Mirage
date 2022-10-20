@@ -13,7 +13,7 @@ namespace Mirage
         /// <summary>
         /// Event fires after the Client connection has sucessfully been authenticated with its Server.
         /// </summary>
-        IAddLateEvent<INetworkPlayer> Authenticated { get; }
+        NetworkPlayerEvent Authenticated { get; }
 
         /// <summary>
         /// Event fires after the Client has disconnected from its Server and Cleanup has been called.
