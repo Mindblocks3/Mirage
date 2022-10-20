@@ -1,3 +1,23 @@
+# [94.0.0](https://github.com/Mindblocks3/Mirage/compare/v93.0.0...v94.0.0) (2022-10-20)
+
+
+* Start server synchronously ([c014621](https://github.com/Mindblocks3/Mirage/commit/c0146216d2a82883d8d394b9ff59ef5d3e8b2052))
+* remove DontDestroyOnLoad ([f92485f](https://github.com/Mindblocks3/Mirage/commit/f92485f19fed51f9a66890c839c7079e30b14511))
+* remove scene multiple scene support ([aa64627](https://github.com/Mindblocks3/Mirage/commit/aa64627b664d7d8e9a5e2ecb4cf9403c4ed504e2))
+
+
+### Features
+
+* validate precondition with unity assertions ([8251083](https://github.com/Mindblocks3/Mirage/commit/8251083e53578698bf4682707a118c5e4e06cb28))
+
+
+### BREAKING CHANGES
+
+* methods no longer throw InvalidOperationException
+* StartAsync no longer returns a Task
+* network manager no longer survives scene loads
+* remove multiple scene
+
 # [93.0.0](https://github.com/Mindblocks3/Mirage/compare/v92.0.1...v93.0.0) (2022-10-19)
 
 
