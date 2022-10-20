@@ -44,11 +44,6 @@ namespace Mirage.Tests.Performance.Runtime
             // unload scene
             Scene scene = SceneManager.GetSceneByPath(ScenePath);
             yield return SceneManager.UnloadSceneAsync(scene);
-
-            Object.Destroy(benchmarker.gameObject);
-            var hud = GameObject.Find("NetworkManagerHudInCanvas");
-            if (hud != null)
-                Object.Destroy(hud);
         }
 
         static void EnableHealth(bool value)

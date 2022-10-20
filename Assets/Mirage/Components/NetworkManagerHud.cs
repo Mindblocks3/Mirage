@@ -17,7 +17,6 @@ namespace Mirage
 
         private void Start()
         {
-            DontDestroyOnLoad(transform.root.gameObject);
             Application.runInBackground = true;
         }
 

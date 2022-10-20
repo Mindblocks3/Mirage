@@ -6,10 +6,16 @@ EditorUserSettings:
   serializedVersion: 4
   m_ConfigSettings:
     RecentlyUsedSceneGuid-0:
-      value: 0102045f55015e0e5c575c771470594412161b2e297e74312e714836e1b7376a
+      value: 5b02525f01070f595a580a7747770d44424f1b7c297d77367f7c4560b0b7356a
       flags: 0
     RecentlyUsedSceneGuid-1:
-      value: 5b02525f01070f595a580a7747770d44424f1b7c297d77367f7c4560b0b7356a
+      value: 0102045f55015e0e5c575c771470594412161b2e297e74312e714836e1b7376a
+      flags: 0
+    RecentlyUsedSceneGuid-2:
+      value: 0106525006060d595c59547145770c484f164c297f7c70342c714b62bbe26568
+      flags: 0
+    RecentlyUsedSceneGuid-3:
+      value: 015051535d540d5f5c0c087047775d41424f1a737e2e7e667e7f1b6bb7b1313a
       flags: 0
     UIBuilder.HideNotificationAboutMissingUITKPackage:
       value: 37434103

@@ -42,12 +42,6 @@ namespace Mirage.Tests.Performance.Runtime
             // unload scene
             Scene scene = SceneManager.GetSceneByPath(ScenePath);
             yield return SceneManager.UnloadSceneAsync(scene);
-
-            GameObject.Destroy(benchmarker.gameObject);
-            var hud = GameObject.Find("NetworkManagerHudInCanvas");
-            if (hud != null)
-                Object.Destroy(hud);
-
         }
 
         [UnityTest]
