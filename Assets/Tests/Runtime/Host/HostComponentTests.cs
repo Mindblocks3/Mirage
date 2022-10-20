@@ -82,6 +82,5 @@ namespace Mirage.Tests.Runtime.Host
             Assert.That(server.LocalPlayer, Is.Null);
             Assert.That(server.LocalClientActive, Is.False);
         });
-
     }
 }

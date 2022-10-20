@@ -52,9 +52,13 @@ namespace Mirage
             }
         }
 
-        public override UniTask ListenAsync()
+        public override void Listen()
         {
-            return UniTask.WhenAll(transports.Select(t => t.ListenAsync()));
+            foreach (Transport transport in transports)
+            {
+                if (transport.Supported)
+                    transport.Listen();
+            }
         }
 
         public override IEnumerable<Uri> ServerUri() =>

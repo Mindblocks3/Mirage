@@ -21,18 +21,14 @@ namespace Mirage.Tests
             return UniTask.FromResult(c1);
         }
 
-        UniTaskCompletionSource listenCompletionSource;
-
         public override void Disconnect()
         {
-            listenCompletionSource?.TrySetResult();
+            Stopped.Invoke();
         }
 
-        public override UniTask ListenAsync()
+        public override void Listen()
         {
             Started.Invoke();
-            listenCompletionSource = new UniTaskCompletionSource();
-            return listenCompletionSource.Task;
         }
 
         public override IEnumerable<Uri> ServerUri()

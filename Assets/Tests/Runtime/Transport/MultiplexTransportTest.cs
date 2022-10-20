@@ -101,17 +101,15 @@ namespace Mirage.Tests.Runtime
             connectedDelegate.Received().Invoke(conn2);
         }
 
-        [UnityTest]
-        public IEnumerator Listen() => UniTask.ToCoroutine(async () =>
+        [Test]
+        public void Listen() 
         {
-            transport1.ListenAsync().Returns(UniTask.CompletedTask);
-            transport2.ListenAsync().Returns(UniTask.CompletedTask);
-            await transport.ListenAsync();
+            transport.Listen();
 
-            transport1.Received().ListenAsync().Forget();
-            transport2.Received().ListenAsync().Forget();
+            transport1.Received().Listen();
+            transport2.Received().Listen();
 
-        });
+        }
 
         [Test]
         public void Disconnect()

@@ -1042,6 +1042,7 @@ namespace Mirage
                 newObservers.Add(ConnectionToClient);
             }
 
+
             // if no NetworkVisibility component, then add all server connections.
             if (!rebuildOverwritten)
             {

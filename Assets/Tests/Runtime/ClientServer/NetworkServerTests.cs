@@ -37,7 +37,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         {
             InvalidOperationException expection = Assert.Throws<InvalidOperationException>(() =>
             {
-                server.StartAsync().GetAwaiter().GetResult();
+                server.StartAsync();
             });
             Assert.That(expection, Has.Message.EqualTo("Server is already active"));
         }
@@ -143,7 +143,6 @@ namespace Mirage.Tests.Runtime.ClientServer
 
         [UnityTest]
         public IEnumerator StoppedInvokeTest() => UniTask.ToCoroutine(async () =>
-
         {
             UnityAction func1 = Substitute.For<UnityAction>();
             server.Stopped.AddListener(func1);

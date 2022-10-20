@@ -25,6 +25,7 @@ namespace Mirage
         /// Raised when the transport starts
         /// </summary>
         public UnityEvent Started = new UnityEvent();
+        public UnityEvent Stopped = new UnityEvent();
 
         /// <summary>
         /// Open up the port and listen for connections
@@ -33,7 +34,7 @@ namespace Mirage
         /// </summary>
         /// <exception>If we cannot start the transport</exception>
         /// <returns></returns>
-        public abstract UniTask ListenAsync();
+        public abstract void Listen();
 
         /// <summary>
         /// Stop listening to the port

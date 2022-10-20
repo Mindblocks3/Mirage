@@ -43,7 +43,7 @@ namespace Mirage.Tests.Runtime
 
             transport.Connected.AddListener(connection => serverConnection = (KcpConnection)connection);
 
-            listenTask = transport.ListenAsync();
+            transport.Listen();
 
             var uriBuilder = new UriBuilder
             {
@@ -69,16 +69,14 @@ namespace Mirage.Tests.Runtime
         });
 
         [UnityTearDown]
-        public IEnumerator TearDown() => UniTask.ToCoroutine(async () =>
+        public void TearDown()
         {
             clientConnection?.Disconnect();
             serverConnection?.Disconnect();
             transport.Disconnect();
-
-            await listenTask;
             UnityEngine.Object.Destroy(transport.gameObject);
             // wait a frame so object will be destroyed
-        });
+        }
 
         // A Test behaves as an ordinary method
         [Test]

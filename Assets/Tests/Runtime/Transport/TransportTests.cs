@@ -46,23 +46,22 @@ namespace Mirage.Tests.Runtime
             transport.Connected.AddListener((connection) =>
                 serverConnection = connection);
 
-            listenTask = transport.ListenAsync();
+            transport.Listen();
             clientConnection = await transport.ConnectAsync(uri);
 
             await UniTask.WaitUntil(() => serverConnection != null);
         });
 
 
-        [UnityTearDown]
-        public IEnumerator TearDown() => UniTask.ToCoroutine(async () =>
+        [TearDown]
+        public void TearDown()
         {
             clientConnection.Disconnect();
             serverConnection.Disconnect();
             transport.Disconnect();
 
-            await listenTask;
             Object.Destroy(transportObj);
-        });
+        }
 
         #endregion
 

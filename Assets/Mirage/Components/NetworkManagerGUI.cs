@@ -165,12 +165,12 @@ namespace Mirage
 
         private void ClickHost()
         {
-            NetworkManager.Server.StartAsync(NetworkManager.Client).Forget();
+            NetworkManager.Server.StartAsync(NetworkManager.Client);
         }
 
         private void ClickServerOnly()
         {
-            NetworkManager.Server.StartAsync().Forget();
+            NetworkManager.Server.StartAsync();
         }
 
         private void ClickClient()

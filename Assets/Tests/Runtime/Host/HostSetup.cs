@@ -52,7 +52,7 @@ namespace Mirage.Tests.Runtime.Host
 
             if (AutoStartServer)
             {
-                await StartHost();
+                StartHost();
 
                 if (SpawnPlayer)
                 {
@@ -68,20 +68,9 @@ namespace Mirage.Tests.Runtime.Host
             }
         });
 
-        protected async UniTask StartHost()
+        protected void StartHost()
         {
-            var completionSource = new UniTaskCompletionSource();
-
-            void Started()
-            {
-                completionSource.TrySetResult();
-            }
-
-            server.Started.AddListener(Started);
-            // now start the host
-            manager.Server.StartAsync(client).Forget();
-
-            await completionSource.Task;
+            manager.Server.StartAsync(client);
         }
 
         public virtual void ExtraTearDown() { }

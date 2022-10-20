@@ -194,7 +194,7 @@ namespace Mirage
         /// </summary>
         /// <param name="localClient">if not null then start the server and client in hostmode</param>
         /// <returns></returns>
-        public async UniTask StartAsync(NetworkClient localClient = null)
+        public void StartAsync(NetworkClient localClient = null)
         {
             if (Active) throw new InvalidOperationException("Server is already active");
 
@@ -212,18 +212,22 @@ namespace Mirage
             {
                 Transport.Started.AddListener(TransportStarted);
                 Transport.Connected.AddListener(TransportConnected);
-                await Transport.ListenAsync();
+                Transport.Stopped.AddListener(TransportStopped);
+                Transport.Listen();
+                TransportStarted();
             }
             catch (Exception ex)
             {
                 logger.LogException(ex);
+                TransportStopped();
             }
-            finally
-            {
-                Transport.Connected.RemoveListener(TransportConnected);
-                Transport.Started.RemoveListener(TransportStarted);
-                Cleanup();
-            }
+        }
+
+        private void TransportStopped()
+        {
+            Transport.Stopped.RemoveListener(TransportStopped);
+            Transport.Connected.RemoveListener(TransportConnected);
+            Cleanup();
         }
 
         private void TransportStarted()

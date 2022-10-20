@@ -35,34 +35,22 @@ namespace Mirage.KCP
         private long receivedBytes;
         private long sentBytes;
 
-        private UniTaskCompletionSource ListenCompletionSource;
-
         /// <summary>
         ///     Open up the port and listen for connections
         ///     Use in servers.
         /// </summary>
         /// <exception>If we cannot start the transport</exception>
         /// <returns></returns>
-        public override UniTask ListenAsync()
+        public override void Listen()
         {
-            try
+            socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)
             {
-                socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Dgram, ProtocolType.Udp)
-                {
-                    DualMode = true
-                };
-                socket.Bind(new IPEndPoint(IPAddress.IPv6Any, Port));
+                DualMode = true
+            };
+            socket.Bind(new IPEndPoint(IPAddress.IPv6Any, Port));
 
-                // transport started
-                Started?.Invoke();
-
-                ListenCompletionSource = new UniTaskCompletionSource();
-                return ListenCompletionSource.Task;
-            }
-            catch (Exception ex)
-            {
-                return UniTask.FromException(ex);
-            }
+            // transport started
+            Started?.Invoke();
         }
 
         EndPoint newClientEP = new IPEndPoint(IPAddress.IPv6Any, 0);
@@ -198,9 +186,12 @@ namespace Mirage.KCP
         /// </summary>
         public override void Disconnect()
         {
-            socket?.Close();
-            socket = null;
-            ListenCompletionSource?.TrySetResult();
+            if (socket != null)
+            {
+                socket.Close();
+                socket = null;
+                Stopped.Invoke();
+            }
         }
 
         /// <summary>

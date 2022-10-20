@@ -12,7 +12,6 @@ namespace Mirage.Tests.Runtime.ClientServer
     // set's up a client and a server
     public class ClientServerSetup<T> where T : NetworkBehaviour
     {
-
         #region Setup
         protected GameObject serverGo;
         protected NetworkServer server;
@@ -70,11 +69,7 @@ namespace Mirage.Tests.Runtime.ClientServer
             await UniTask.Delay(1);
 
             // start the server
-            var started = new UniTaskCompletionSource();
-            server.Started.AddListener(() => started.TrySetResult());
-            server.StartAsync().Forget();
-
-            await started.Task;
+            server.StartAsync();
 
             // now start the client
             await client.ConnectAsync("localhost");
