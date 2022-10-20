@@ -8,7 +8,7 @@ namespace Mirage
         /// <summary>
         /// Event fires once the Client has connected its Server.
         /// </summary>
-        IAddLateEvent<INetworkPlayer> Connected { get; }
+        NetworkPlayerEvent Connected { get; }
 
         /// <summary>
         /// Event fires after the Client connection has sucessfully been authenticated with its Server.

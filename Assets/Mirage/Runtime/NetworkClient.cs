@@ -34,14 +34,14 @@ namespace Mirage
         public NetworkAuthenticator authenticator;
 
         [Header("Events")]
-        [SerializeField] NetworkPlayerAddLateEvent _connected = new NetworkPlayerAddLateEvent();
-        [SerializeField] NetworkPlayerAddLateEvent _authenticated = new NetworkPlayerAddLateEvent();
-        [SerializeField] AddLateEvent _disconnected = new AddLateEvent();
+        [SerializeField] NetworkPlayerEvent _connected = new ();
+        [SerializeField] NetworkPlayerAddLateEvent _authenticated = new ();
+        [SerializeField] AddLateEvent _disconnected = new ();
 
         /// <summary>
         /// Event fires once the Client has connected its Server.
         /// </summary>
-        public IAddLateEvent<INetworkPlayer> Connected => _connected;
+        public NetworkPlayerEvent Connected => _connected;
 
         /// <summary>
         /// Event fires after the Client connection has sucessfully been authenticated with its Server.
@@ -290,7 +290,6 @@ namespace Mirage
                 Connected.RemoveListener(OnAuthenticated);
             }
 
-            _connected.Reset();
             _authenticated.Reset();
             _disconnected.Reset();
         }
