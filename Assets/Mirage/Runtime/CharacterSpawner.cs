@@ -47,7 +47,7 @@ namespace Mirage
                 }
                 else
                 {
-                    Client.Authenticated.AddListener(c => Client.Send(new AddCharacterMessage()));
+                    Client.Authenticated.AddListener(SendAddCharacterMessage);
                 }
 
                 if (ClientObjectManager != null)
@@ -69,12 +69,15 @@ namespace Mirage
             }
         }
 
+        private void SendAddCharacterMessage(INetworkPlayer player) {
+            Client.Send(new AddCharacterMessage());
+        }
         void OnDestroy()
         {
             if (Client != null && SceneManager != null)
             {
                 SceneManager.ClientSceneChanged.RemoveListener(OnClientSceneChanged);
-                Client.Authenticated.RemoveListener(c => Client.Send(new AddCharacterMessage()));
+                Client.Authenticated.RemoveListener(SendAddCharacterMessage);
             }
             if (Server != null)
             {
