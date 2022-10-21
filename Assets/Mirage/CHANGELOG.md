@@ -1,3 +1,10 @@
+## [96.0.2](https://github.com/Mindblocks3/Mirage/compare/v96.0.1...v96.0.2) (2022-10-21)
+
+
+### Bug Fixes
+
+* don't sync child objects ([6655a8c](https://github.com/Mindblocks3/Mirage/commit/6655a8c2c34872dd93fbb68a6e76d36d16c53792))
+
 ## [96.0.1](https://github.com/Mindblocks3/Mirage/compare/v96.0.0...v96.0.1) (2022-10-21)
 
 
