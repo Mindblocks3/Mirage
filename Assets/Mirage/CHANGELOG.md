@@ -1,3 +1,10 @@
+## [96.0.1](https://github.com/Mindblocks3/Mirage/compare/v96.0.0...v96.0.1) (2022-10-21)
+
+
+### Bug Fixes
+
+* spawning scene objects ([7e0a89e](https://github.com/Mindblocks3/Mirage/commit/7e0a89e761bc6738506010aff42d2216fb071cda))
+
 # [96.0.0](https://github.com/Mindblocks3/Mirage/compare/v95.0.0...v96.0.0) (2022-10-20)
 
 
