@@ -42,7 +42,7 @@ namespace Mirage
         /// This is dictionary of the disabled NetworkIdentity objects in the scene that could be spawned by messages from the server.
         /// <para>The key to the dictionary is the NetworkIdentity sceneId.</para>
         /// </summary>
-        public readonly Dictionary<ulong, NetworkIdentity> spawnableObjects = new Dictionary<ulong, NetworkIdentity>();
+        public readonly Dictionary<ulong, NetworkIdentity> sceneObjects = new Dictionary<ulong, NetworkIdentity>();
 
         internal ServerObjectManager ServerObjectManager;
 
@@ -59,7 +59,9 @@ namespace Mirage
         {
             syncVarReceiver = new SyncVarReceiver(Client, Client.World);
             RegisterSpawnPrefabs();
+            PrepareToSpawnSceneObjects();
 
+            
             if (Client.IsLocalClient)
             {
                 RegisterHostHandlers();
@@ -123,14 +125,14 @@ namespace Mirage
         public void PrepareToSpawnSceneObjects()
         {
             // add all unspawned NetworkIdentities to spawnable objects
-            spawnableObjects.Clear();
+            this.sceneObjects.Clear();
             IEnumerable<NetworkIdentity> sceneObjects =
                 Resources.FindObjectsOfTypeAll<NetworkIdentity>()
                                .Where(ConsiderForSpawning);
 
             foreach (NetworkIdentity obj in sceneObjects)
             {
-                spawnableObjects.Add(obj.sceneId, obj);
+                this.sceneObjects.Add(obj.sceneId, obj);
             }
         }
 
@@ -280,7 +282,6 @@ namespace Mirage
             {
                 identity.Reset();
                 identity.gameObject.SetActive(false);
-                spawnableObjects[identity.sceneId] = identity;
             }
 
             Client.World.RemoveIdentity(identity);
@@ -397,35 +398,7 @@ namespace Mirage
             return null;
         }
 
-        internal NetworkIdentity SpawnSceneObject(SpawnMessage msg)
-        {
-            NetworkIdentity spawnedId = SpawnSceneObject(msg.sceneId);
-            if (spawnedId == null)
-            {
-                logger.LogError("Spawn scene object not found for " + msg.sceneId.ToString("X") + " SpawnableObjects.Count=" + spawnableObjects.Count);
-
-                // dump the whole spawnable objects dict for easier debugging
-                if (logger.LogEnabled())
-                {
-                    foreach (KeyValuePair<ulong, NetworkIdentity> kvp in spawnableObjects)
-                        logger.Log("Spawnable: SceneId=" + kvp.Key + " name=" + kvp.Value.name);
-                }
-            }
-
-            if (logger.LogEnabled()) logger.Log("Client spawn for [netId:" + msg.netId + "] [sceneId:" + msg.sceneId + "] obj:" + spawnedId);
-            return spawnedId;
-        }
-
-        NetworkIdentity SpawnSceneObject(ulong sceneId)
-        {
-            if (spawnableObjects.TryGetValue(sceneId, out NetworkIdentity identity))
-            {
-                spawnableObjects.Remove(sceneId);
-                return identity;
-            }
-            logger.LogWarning("Could not find scene object with sceneid:" + sceneId.ToString("X"));
-            return null;
-        }
+        internal NetworkIdentity SpawnSceneObject(SpawnMessage msg) => sceneObjects[msg.sceneId];
 
         internal void OnObjectHide(ObjectHideMessage msg)
         {

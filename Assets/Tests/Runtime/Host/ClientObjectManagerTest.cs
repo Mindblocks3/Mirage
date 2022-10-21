@@ -196,7 +196,7 @@ namespace Mirage.Tests.Runtime.Host
             var prefabObject = new GameObject("prefab", typeof(NetworkIdentity));
             NetworkIdentity identity = prefabObject.GetComponent<NetworkIdentity>();
             identity.AssetId = guid;
-            clientObjectManager.spawnableObjects.Add(0, identity);
+            clientObjectManager.sceneObjects.Add(0, identity);
 
             NetworkIdentity result = clientObjectManager.SpawnSceneObject(new SpawnMessage { sceneId = 0, assetId = guid });
 
