@@ -220,7 +220,7 @@ namespace Mirage
                 if (networkBehavioursCache != null)
                     return networkBehavioursCache;
 
-                NetworkBehaviour[] components = GetComponentsInChildren<NetworkBehaviour>(true);
+                NetworkBehaviour[] components = GetComponents<NetworkBehaviour>();
                 
                 Assert.IsTrue(components.Length <= byte.MaxValue, "Only 255 NetworkBehaviour per gameobject allowed");
 
