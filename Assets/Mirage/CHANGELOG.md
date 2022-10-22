@@ -1,3 +1,10 @@
+## [96.0.3](https://github.com/Mindblocks3/Mirage/compare/v96.0.2...v96.0.3) (2022-10-22)
+
+
+### Bug Fixes
+
+* log spam ([c97e13b](https://github.com/Mindblocks3/Mirage/commit/c97e13b0b83d6108e56136ce682097053c362c27))
+
 ## [96.0.2](https://github.com/Mindblocks3/Mirage/compare/v96.0.1...v96.0.2) (2022-10-21)
 
 
