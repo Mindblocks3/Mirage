@@ -474,8 +474,6 @@ namespace Mirage
 
                 ArraySegment<byte> payload = CreateSpawnMessagePayload(isOwner, identity, ownerWriter, observersWriter);
 
-                Debug.Log($"Spawn object {identity.name} with sceneId {identity.sceneId} and netId {identity.NetId} for player {player}");
-
                 player.Send(new SpawnMessage
                 {
                     netId = identity.NetId,
