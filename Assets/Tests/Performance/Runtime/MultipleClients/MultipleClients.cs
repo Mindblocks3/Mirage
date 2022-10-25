@@ -119,7 +119,12 @@ namespace Mirage.Tests.Performance.Runtime
         [Performance]
         public IEnumerator SyncMonsters()
         {
-            yield return Measure.Frames().MeasurementCount(MeasureCount).WarmupCount(Warmup).Run();
+            yield return 
+                Measure
+                .Frames()
+                .MeasurementCount(MeasureCount)
+                .WarmupCount(Warmup)
+                .Run();
         }
     }
 }

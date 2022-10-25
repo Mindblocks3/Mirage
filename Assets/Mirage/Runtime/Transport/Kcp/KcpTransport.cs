@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using Cysharp.Threading.Tasks;
+using Unity.Profiling;
 using UnityEngine;
 
 namespace Mirage.KCP
@@ -24,7 +25,7 @@ namespace Mirage.KCP
         public int ReceiveWindowSize = 8192;
 
         public KcpDelayMode delayMode = KcpDelayMode.Fast3;
-        internal readonly Dictionary<IPEndPoint, KcpServerConnection> connectedClients = new Dictionary<IPEndPoint, KcpServerConnection>(new IPEndpointComparer());
+        internal readonly Dictionary<IPEndPoint, KcpServerConnection> connectedClients = new Dictionary<IPEndPoint, KcpServerConnection>();
 
         public override IEnumerable<string> Scheme => new[] { "kcp" };
 
@@ -70,8 +71,11 @@ namespace Mirage.KCP
             }
         }
 
+        static readonly ProfilerMarker inputProfileMarker = new ProfilerMarker("KCP Input");
+
         void RawInput(EndPoint endpoint, byte[] data, int msgLength)
         {
+            using var rawInputProfileMarker = inputProfileMarker.Auto();
             // is this a new connection?                    
             if (!connectedClients.TryGetValue(endpoint as IPEndPoint, out KcpServerConnection connection))
             {
