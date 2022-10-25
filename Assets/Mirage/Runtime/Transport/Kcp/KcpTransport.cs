@@ -81,7 +81,7 @@ namespace Mirage.KCP
             {
                 // very first message from this endpoint.
                 // lets validate it before we start KCP
-                if (!Validate(data, msgLength))
+                if (!Validate(data.AsSpan(0,msgLength)))
                     return;
 
                 int channel = KcpConnection.GetChannel(data);
@@ -140,14 +140,14 @@ namespace Mirage.KCP
         private readonly HashSet<HashCash> used = new HashSet<HashCash>();
         private readonly Queue<HashCash> expireQueue = new Queue<HashCash>();
 
-        private bool Validate(byte[] data, int msgLength)
+        private bool Validate(ReadOnlySpan<byte> data)
         {
             // do we have enough data in the buffer for a HashCash token?
-            if (msgLength < Kcp.OVERHEAD + KcpConnection.RESERVED + HashCashEncoding.SIZE)
+            if (data.Length < Kcp.OVERHEAD + KcpConnection.RESERVED + HashCashEncoding.SIZE)
                 return false;
 
             // read the token
-            HashCash token = HashCashEncoding.Decode(data.AsSpan(Kcp.OVERHEAD + KcpConnection.RESERVED));
+            HashCash token = HashCashEncoding.Decode(data.Slice(Kcp.OVERHEAD + KcpConnection.RESERVED));
 
             RemoveExpiredTokens();
 
