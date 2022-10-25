@@ -214,7 +214,7 @@ namespace Mirage.KCP
         /// <returns>the length of the written data</returns>
         public static HashCash Decode(byte[] buffer, int index)
         {
-            var decoder = new Decoder(buffer, index);
+            var decoder = new Decoder(buffer.AsSpan(index));
             long ticks = (long)decoder.Decode64U();
             int resource = (int)decoder.Decode32U();
             ulong salt = decoder.Decode64U();

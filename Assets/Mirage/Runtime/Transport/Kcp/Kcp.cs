@@ -458,7 +458,7 @@ namespace Mirage.KCP
 
             while (size >= OVERHEAD)
             {
-                var decoder = new Decoder(data, reservedOffset);
+                var decoder = new Decoder(data.AsSpan(reservedOffset));
                 uint conv_ = decoder.Decode32U();
                 var cmd = (CommandType)decoder.Decode8U();
                 byte frg = decoder.Decode8U();
@@ -468,7 +468,7 @@ namespace Mirage.KCP
                 uint una = decoder.Decode32U();
                 int len = (int)decoder.Decode32U();
 
-                reservedOffset = decoder.Position;
+                reservedOffset = decoder.Position + reservedOffset;
                 size -= OVERHEAD;
 
                 if (!ValidateSegment(size, conv_, cmd, len))

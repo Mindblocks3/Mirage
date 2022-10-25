@@ -171,7 +171,7 @@ namespace Mirage.KCP
         private bool Validate(byte[] buffer, int msgLength)
         {
             // Recalculate CRC64 and check against checksum in the head
-            var decoder = new Decoder(buffer, 0);
+            var decoder = new Decoder(buffer);
             ulong receivedCrc = decoder.Decode64U();
             ulong calculatedCrc = Crc64.Compute(buffer, decoder.Position, msgLength - decoder.Position);
             return receivedCrc == calculatedCrc;
@@ -318,7 +318,7 @@ namespace Mirage.KCP
 
         public static int GetChannel(byte[] data)
         {
-            var decoder = new Decoder(data, RESERVED);
+            var decoder = new Decoder(data.AsSpan(RESERVED));
             return (int)decoder.Decode32U();
         }
     }

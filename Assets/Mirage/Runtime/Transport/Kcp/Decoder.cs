@@ -10,9 +10,9 @@ namespace Mirage.KCP
 
         private readonly ReadOnlySpan<byte> buffer;
 
-        public Decoder(ReadOnlySpan<byte> buffer, int position)
+        public Decoder(ReadOnlySpan<byte> buffer)
         {
-            Position = position;
+            Position = 0;
             this.buffer = buffer;
         }
 
