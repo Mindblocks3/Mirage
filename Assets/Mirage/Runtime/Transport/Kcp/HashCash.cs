@@ -212,9 +212,9 @@ namespace Mirage.KCP
         /// <param name="index">the index in the buffer where to put it</param>
         /// <param name="hashCash">the token to be encoded</param>
         /// <returns>the length of the written data</returns>
-        public static HashCash Decode(byte[] buffer, int index)
+        public static HashCash Decode(ReadOnlySpan<byte> buffer, int index)
         {
-            var decoder = new Decoder(buffer.AsSpan(index));
+            var decoder = new Decoder(buffer.Slice(index));
             long ticks = (long)decoder.Decode64U();
             int resource = (int)decoder.Decode32U();
             ulong salt = decoder.Decode64U();
