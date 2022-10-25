@@ -316,9 +316,9 @@ namespace Mirage.KCP
             return remoteEndpoint;
         }
 
-        public static int GetChannel(byte[] data)
+        public static int GetChannel(ReadOnlySpan<byte> data)
         {
-            var decoder = new Decoder(data.AsSpan(RESERVED));
+            var decoder = new Decoder(data.Slice(RESERVED));
             return (int)decoder.Decode32U();
         }
     }
