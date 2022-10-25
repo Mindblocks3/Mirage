@@ -229,8 +229,10 @@ namespace Mirage.KCP
 
         // ikcp_send
         // sends byte[] to the other end.
-        public void Send(byte[] buffer, int offset, int length)
+        public void Send(ReadOnlySpan<byte> buffer)
         {
+            int length = buffer.Length;
+
             if (length <= 0)
                 throw new ArgumentException($"You cannot send a packet with a {nameof(length)} of 0.");
 
@@ -249,13 +251,15 @@ namespace Mirage.KCP
             if (count == 0)
                 count = 1;
 
+            int offset = 0;
+
             // fragment
             for (int i = 0; i < count; i++)
             {
                 int size = Math.Min(length, (int)Mss);
                 var seg = Segment.Lease();
 
-                seg.data.Write(buffer, offset, size);
+                seg.data.Write(buffer.Slice(offset, size));
 
                 // seg.len = size: WriteBytes sets segment.Position!
                 seg.fragment = (byte)(count - i - 1);
