@@ -1,14 +1,16 @@
-﻿namespace Mirage.KCP
+﻿using System;
+
+namespace Mirage.KCP
 {
 
     // encode data into a byte[]
-    struct Decoder
+    ref struct Decoder
     {
         public int Position { get; set; }
 
-        private readonly byte[] buffer;
+        private readonly ReadOnlySpan<byte> buffer;
 
-        public Decoder(byte[] buffer, int position)
+        public Decoder(ReadOnlySpan<byte> buffer, int position)
         {
             Position = position;
             this.buffer = buffer;
