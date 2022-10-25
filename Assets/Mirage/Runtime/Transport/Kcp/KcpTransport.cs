@@ -147,7 +147,7 @@ namespace Mirage.KCP
                 return false;
 
             // read the token
-            HashCash token = HashCashEncoding.Decode(data, Kcp.OVERHEAD + KcpConnection.RESERVED);
+            HashCash token = HashCashEncoding.Decode(data.AsSpan(Kcp.OVERHEAD + KcpConnection.RESERVED));
 
             RemoveExpiredTokens();
 

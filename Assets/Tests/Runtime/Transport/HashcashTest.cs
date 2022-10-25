@@ -26,7 +26,7 @@ namespace Mirage.Tests.Runtime
             byte[] buffer = new byte[1000];
             _ = HashCashEncoding.Encode(buffer, 0, hashCash);
 
-            HashCash decoded = HashCashEncoding.Decode(buffer, 0);
+            HashCash decoded = HashCashEncoding.Decode(buffer);
 
             Assert.That(decoded, Is.EqualTo(hashCash));
         }
