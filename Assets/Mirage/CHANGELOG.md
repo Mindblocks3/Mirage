@@ -1,3 +1,10 @@
+## [96.0.4](https://github.com/Mindblocks3/Mirage/compare/v96.0.3...v96.0.4) (2022-10-25)
+
+
+### Performance Improvements
+
+* better hashing of incomming connections ([2d9284f](https://github.com/Mindblocks3/Mirage/commit/2d9284fe8d739cd7f3e273afc28e62971ce4804c))
+
 ## [96.0.3](https://github.com/Mindblocks3/Mirage/compare/v96.0.2...v96.0.3) (2022-10-22)
 
 
