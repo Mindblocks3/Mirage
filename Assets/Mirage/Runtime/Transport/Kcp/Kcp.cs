@@ -443,7 +443,7 @@ namespace Mirage.KCP
 
         // ikcp_input
         /// used when you receive a low level packet (eg. UDP packet)
-        public int Input(byte[] data, int size)
+        public int Input(ReadOnlySpan<byte> data, int size)
         {
             uint prev_una = snd_una;
             uint maxack = 0;
@@ -458,7 +458,7 @@ namespace Mirage.KCP
 
             while (size >= OVERHEAD)
             {
-                var decoder = new Decoder(data.AsSpan(reservedOffset));
+                var decoder = new Decoder(data.Slice(reservedOffset));
                 uint conv_ = decoder.Decode32U();
                 var cmd = (CommandType)decoder.Decode8U();
                 byte frg = decoder.Decode8U();
@@ -503,7 +503,8 @@ namespace Mirage.KCP
                         seg.timeStamp = ts;
                         seg.serialNumber = sn;
                         seg.unacknowledged = una;
-                        seg.data.Write(data, reservedOffset, len);
+                        
+                        seg.data.Write(data.Slice(reservedOffset, len));
                         ParseData(seg);
                         break;
                     case CommandType.WindowAsk:
