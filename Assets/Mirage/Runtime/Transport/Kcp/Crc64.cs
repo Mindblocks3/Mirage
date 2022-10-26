@@ -39,6 +39,8 @@
 
 // Ported to C# By Fredrik Holmström
 
+using System;
+
 namespace Mirage.KCP
 {
     static class Crc64
@@ -174,15 +176,13 @@ namespace Mirage.KCP
             0x536fa08fdfd90e51, 0x29b7d047efec8728,
         };
 
-        public static ulong Compute(byte[] data, int offset, int length)
+        public static ulong Compute(ReadOnlySpan<byte> data)
         {
             ulong crc = 0;
 
-            length += offset;
-
-            for (int i = offset; i < length; ++i)
+            foreach (byte b in data)
             {
-                crc = _tab[((byte)crc) ^ data[i]] ^ (crc >> 8);
+                crc = _tab[((byte)crc) ^ b] ^ (crc >> 8);
             }
 
             return crc;

@@ -173,7 +173,7 @@ namespace Mirage.KCP
             // Recalculate CRC64 and check against checksum in the head
             var decoder = new Decoder(buffer);
             ulong receivedCrc = decoder.Decode64U();
-            ulong calculatedCrc = Crc64.Compute(buffer, decoder.Position, msgLength - decoder.Position);
+            ulong calculatedCrc = Crc64.Compute(buffer.AsSpan(decoder.Position, msgLength - decoder.Position));
             return receivedCrc == calculatedCrc;
         }
 
@@ -182,7 +182,7 @@ namespace Mirage.KCP
         private void SendWithChecksum(byte[] data, int length)
         {
             // add a CRC64 checksum in the reserved space
-            ulong crc = Crc64.Compute(data, RESERVED, length - RESERVED);
+            ulong crc = Crc64.Compute(data.AsSpan(RESERVED, length - RESERVED));
             var encoder = new Encoder(data, 0);
             encoder.Encode64U(crc);
             RawSend(data, length);
