@@ -702,7 +702,7 @@ namespace Mirage.KCP
                     int need = (int)(OVERHEAD + segment.data.Length);
                     MakeSpace(need);
 
-                    offset = segment.Encode(buffer, offset);
+                    offset += segment.Encode(buffer.AsSpan(offset));
 
                     segment.data.Position = 0;
                     segment.data.Read(buffer, offset, (int)segment.data.Length);
@@ -806,7 +806,7 @@ namespace Mirage.KCP
             {
                 seg.cmd = CommandType.WindowAsk;
                 MakeSpace(OVERHEAD);
-                offset = seg.Encode(buffer, offset);
+                offset += seg.Encode(buffer.AsSpan(offset));
             }
 
             // flush window probing commands
@@ -814,7 +814,7 @@ namespace Mirage.KCP
             {
                 seg.cmd = CommandType.WindowTell;
                 MakeSpace(OVERHEAD);
-                offset = seg.Encode(buffer, offset);
+                offset += seg.Encode(buffer.AsSpan(offset));
             }
 
             probe = 0;
@@ -828,7 +828,7 @@ namespace Mirage.KCP
                 // ikcp_ack_get assigns ack[i] to seg.sn, seg.ts
                 seg.serialNumber = ack.serialNumber;
                 seg.timeStamp = ack.timestamp;
-                offset = seg.Encode(buffer, offset);
+                offset += seg.Encode(buffer.AsSpan(offset));
             }
 
             acklist.Clear();

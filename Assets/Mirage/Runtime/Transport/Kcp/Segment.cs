@@ -44,9 +44,9 @@ namespace Mirage.KCP
         }
 
         // encode a segment into buffer
-        internal int Encode(byte[] ptr, int offset)
+        internal int Encode(Span<byte> ptr)
         {
-            var encoder = new Encoder(ptr.AsSpan(offset));
+            var encoder = new Encoder(ptr);
             encoder.Encode32U(conversation);
             encoder.Encode8U((byte)cmd);
             encoder.Encode8U((byte)fragment);
@@ -56,7 +56,7 @@ namespace Mirage.KCP
             encoder.Encode32U(unacknowledged);
             encoder.Encode32U((uint)data.Length);
 
-            return encoder.Position + offset;
+            return encoder.Position;
         }
 
         internal void Reset()
