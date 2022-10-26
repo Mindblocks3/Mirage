@@ -48,7 +48,7 @@ namespace Mirage.KCP
                     while (socket.Poll(0, SelectMode.SelectRead))
                     {
                         int msgLength = socket.ReceiveFrom(buffer, ref remoteEndpoint);
-                        RawInput(buffer, msgLength);
+                        RawInput(buffer.AsSpan(0, msgLength));
                     }
 
                     // wait a few MS to poll again

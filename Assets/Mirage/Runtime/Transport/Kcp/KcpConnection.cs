@@ -130,17 +130,17 @@ namespace Mirage.KCP
 
         AutoResetUniTaskCompletionSource dataAvailable;
 
-        internal void RawInput(byte[] buffer, int msgLength)
+        internal void RawInput(ReadOnlySpan<byte> buffer)
         {
             // check packet integrity
-            if (!Validate(buffer, msgLength))
+            if (!Validate(buffer))
                 return;
 
             int channel = GetChannel(buffer);
             if (channel == Channel.Reliable)
-                InputReliable(buffer.AsSpan(0, msgLength));
+                InputReliable(buffer);
             else if (channel == Channel.Unreliable)
-                InputUnreliable(buffer.AsSpan(0, msgLength));
+                InputUnreliable(buffer);
         }
 
         private void InputUnreliable(ReadOnlySpan<byte> buffer)
@@ -168,12 +168,12 @@ namespace Mirage.KCP
             }
         }
 
-        private bool Validate(byte[] buffer, int msgLength)
+        private bool Validate(ReadOnlySpan<byte> buffer)
         {
             // Recalculate CRC64 and check against checksum in the head
             var decoder = new Decoder(buffer);
             ulong receivedCrc = decoder.Decode64U();
-            ulong calculatedCrc = Crc64.Compute(buffer.AsSpan(decoder.Position, msgLength - decoder.Position));
+            ulong calculatedCrc = Crc64.Compute(buffer.Slice(decoder.Position));
             return receivedCrc == calculatedCrc;
         }
 

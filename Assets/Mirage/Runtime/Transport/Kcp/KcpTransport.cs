@@ -99,7 +99,7 @@ namespace Mirage.KCP
             else
             {
                 receivedBytes += msgLength;
-                connection.RawInput(data, msgLength);
+                connection.RawInput(data.AsSpan(0, msgLength));
             }
         }
 
@@ -121,7 +121,7 @@ namespace Mirage.KCP
                     sentBytes += length;
                 };
 
-                connection.RawInput(data, msgLength);
+                connection.RawInput(data.AsSpan(0, msgLength));
 
                 await connection.HandshakeAsync();
             }
