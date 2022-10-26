@@ -2,7 +2,7 @@ namespace Mirage.KCP
 {
 
     // encode data into a byte[]
-    struct Encoder
+    ref struct Encoder
     {
         public int Position { get; set; }
 
