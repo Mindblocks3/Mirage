@@ -26,13 +26,14 @@ namespace Mirage.KCP
         /// <param name="data"></param>
         /// <param name="index"></param>
         /// <param name="size"></param>
-        public int Input(byte[] data, int size)
+        public int Input(ReadOnlySpan<byte> data)
         {
+            int size = data.Length;
             if (size <= OVERHEAD)
                 return -3;
 
             var seg = Segment.Lease();
-            seg.data.Write(data, Reserved + OVERHEAD, size - OVERHEAD - Reserved);
+            seg.data.Write(data.Slice(Reserved + OVERHEAD, size - OVERHEAD - Reserved));
 
             messages.Enqueue(seg);
 

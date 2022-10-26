@@ -145,7 +145,7 @@ namespace Mirage.KCP
 
         private void InputUnreliable(byte[] buffer, int msgLength)
         {
-            unreliable.Input(buffer, msgLength);
+            unreliable.Input(buffer.AsSpan(0 , msgLength));
             Thread.VolatileWrite(ref lastReceived, stopWatch.ElapsedMilliseconds);
 
             if (isWaiting && unreliable.PeekSize() > 0)
