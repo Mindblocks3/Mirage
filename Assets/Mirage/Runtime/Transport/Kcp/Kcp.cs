@@ -451,10 +451,11 @@ namespace Mirage.KCP
             bool flag = false;
 
             // the data is expected to have the reserved space
+            size -= Reserved;
             if (size < OVERHEAD)
                 return -1;
 
-            int reservedOffset = 0;
+            int reservedOffset = Reserved;
 
             while (size >= OVERHEAD)
             {
