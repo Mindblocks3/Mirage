@@ -81,10 +81,10 @@ namespace Mirage.KCP
 
             sendBuffer.SetLength(length + Reserved + OVERHEAD);
 
-            var encoder = new Encoder(sendBuffer.GetBuffer(), Reserved);
+            var encoder = new Encoder(sendBuffer.GetBuffer().AsSpan(Reserved));
             encoder.Encode32U(Channel.Unreliable);
 
-            sendBuffer.Position = encoder.Position;
+            sendBuffer.Position = encoder.Position + Reserved;
 
             sendBuffer.Write(buffer, offset, length);
             output(sendBuffer.GetBuffer(), length + Reserved + OVERHEAD);

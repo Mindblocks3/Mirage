@@ -10,9 +10,9 @@ namespace Mirage.KCP
 
         private readonly Span<byte> buffer;
 
-        public Encoder(Span<byte> buffer, int position)
+        public Encoder(Span<byte> buffer)
         {
-            Position = position;
+            Position = 0;
             this.buffer = buffer;
         }
 

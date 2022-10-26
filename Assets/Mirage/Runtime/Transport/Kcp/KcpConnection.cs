@@ -185,7 +185,7 @@ namespace Mirage.KCP
         {
             // add a CRC64 checksum in the reserved space
             ulong crc = Crc64.Compute(data.AsSpan(RESERVED, length - RESERVED));
-            var encoder = new Encoder(data, 0);
+            var encoder = new Encoder(data);
             encoder.Encode64U(crc);
             RawSend(data, length);
 

@@ -195,14 +195,14 @@ namespace Mirage.KCP
         /// <returns>the length of the written data</returns>
         public static int Encode(byte[] buffer, int index, HashCash hashCash)
         {
-            var encoder = new Encoder(buffer, index);
+            var encoder = new Encoder(buffer.AsSpan(index));
 
             encoder.Encode64U((ulong)hashCash.dt.Ticks);
             encoder.Encode32U((uint)hashCash.resource);
             encoder.Encode64U(hashCash.salt);
             encoder.Encode64U(hashCash.counter);
 
-            return encoder.Position - index;
+            return encoder.Position;
         }
 
         /// <summary>
