@@ -1,3 +1,13 @@
+## [96.0.5](https://github.com/Mindblocks3/Mirage/compare/v96.0.4...v96.0.5) (2022-10-26)
+
+
+### Reverts
+
+* Revert "more span conversion" ([4f6f64e](https://github.com/Mindblocks3/Mirage/commit/4f6f64efec04ffb2e646f0f2d60b14a326192277))
+* Revert "pass span instead of array + length" ([ab4ea76](https://github.com/Mindblocks3/Mirage/commit/ab4ea76ccffe2f81dd93422ed98da065a8bfc009))
+* Revert "Send is no longer async" ([7b91dd7](https://github.com/Mindblocks3/Mirage/commit/7b91dd74d9225a3fc5055807ef4b205b3a7febd2))
+* Revert "send span" ([94212d2](https://github.com/Mindblocks3/Mirage/commit/94212d238e632fe3df6a031eced2635ff757b799))
+
 ## [96.0.4](https://github.com/Mindblocks3/Mirage/compare/v96.0.3...v96.0.4) (2022-10-25)
 
 
