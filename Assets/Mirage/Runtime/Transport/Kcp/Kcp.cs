@@ -705,7 +705,7 @@ namespace Mirage.KCP
                     offset += segment.Encode(buffer.AsSpan(offset));
 
                     segment.data.Position = 0;
-                    segment.data.Read(buffer, offset, (int)segment.data.Length);
+                    segment.data.Read(buffer.AsSpan(offset, (int)segment.data.Length));
                     offset += (int)segment.data.Length;
                 }
             }
