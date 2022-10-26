@@ -12,7 +12,7 @@ namespace Mirage.Tests.Runtime
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                server.Send(null, 0, 0);
+                server.Send(new Span<byte>());
             });
         }
 

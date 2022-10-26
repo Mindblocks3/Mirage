@@ -229,8 +229,10 @@ namespace Mirage.KCP
 
         // ikcp_send
         // sends byte[] to the other end.
-        public void Send(ReadOnlySpan<byte> buffer, int offset, int length)
+        public void Send(ReadOnlySpan<byte> buffer)
         {
+            int offset = 0;
+            int length = buffer.Length;
             if (length <= 0)
                 throw new ArgumentException($"You cannot send a packet with a {nameof(length)} of 0.");
 

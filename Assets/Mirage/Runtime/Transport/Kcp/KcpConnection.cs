@@ -196,7 +196,7 @@ namespace Mirage.KCP
         public void Send(ArraySegment<byte> data, int channel = Channel.Reliable)
         {
             if (channel == Channel.Reliable)
-                kcp.Send(data.Array, data.Offset, data.Count);
+                kcp.Send(data);
             else if (channel == Channel.Unreliable)
                 unreliable.Send(data.Array, data.Offset, data.Count);
         }
