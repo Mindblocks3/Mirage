@@ -456,11 +456,11 @@ namespace Mirage.KCP
             if (size < OVERHEAD)
                 return -1;
 
-            int reservedOffset = 0;
+            int offset = 0;
 
             while (size >= OVERHEAD)
             {
-                var decoder = new Decoder(data.Slice(reservedOffset));
+                var decoder = new Decoder(data.Slice(offset));
                 uint conv_ = decoder.Decode32U();
                 var cmd = (CommandType)decoder.Decode8U();
                 byte frg = decoder.Decode8U();
@@ -470,7 +470,7 @@ namespace Mirage.KCP
                 uint una = decoder.Decode32U();
                 int len = (int)decoder.Decode32U();
 
-                reservedOffset = decoder.Position + reservedOffset;
+                offset = decoder.Position + offset;
                 size -= OVERHEAD;
 
                 if (!ValidateSegment(size, conv_, cmd, len))
@@ -505,7 +505,7 @@ namespace Mirage.KCP
                         seg.timeStamp = ts;
                         seg.serialNumber = sn;
                         seg.unacknowledged = una;
-                        seg.data.Write(data.Slice(reservedOffset, len));
+                        seg.data.Write(data.Slice(offset, len));
                         ParseData(seg);
                         break;
                     case CommandType.WindowAsk:
@@ -516,7 +516,7 @@ namespace Mirage.KCP
                         break;
                 }
 
-                reservedOffset += len;
+                offset += len;
                 size -= len;
             }
 
