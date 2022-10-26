@@ -138,14 +138,14 @@ namespace Mirage.KCP
 
             int channel = GetChannel(buffer);
             if (channel == Channel.Reliable)
-                InputReliable(buffer, msgLength);
+                InputReliable(buffer.AsSpan(0, msgLength));
             else if (channel == Channel.Unreliable)
-                InputUnreliable(buffer, msgLength);
+                InputUnreliable(buffer.AsSpan(0, msgLength));
         }
 
-        private void InputUnreliable(byte[] buffer, int msgLength)
+        private void InputUnreliable(ReadOnlySpan<byte> buffer)
         {
-            unreliable.Input(buffer.AsSpan(0 , msgLength));
+            unreliable.Input(buffer);
             Thread.VolatileWrite(ref lastReceived, stopWatch.ElapsedMilliseconds);
 
             if (isWaiting && unreliable.PeekSize() > 0)
@@ -154,9 +154,9 @@ namespace Mirage.KCP
             }
         }
 
-        private void InputReliable(byte[] buffer, int msgLength)
+        private void InputReliable(ReadOnlySpan<byte> buffer)
         {
-            kcp.Input(buffer.AsSpan(0, msgLength));
+            kcp.Input(buffer);
 
             Thread.VolatileWrite(ref lastReceived, stopWatch.ElapsedMilliseconds);
 
