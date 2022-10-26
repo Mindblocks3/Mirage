@@ -42,17 +42,19 @@ namespace Mirage.Tests.Runtime
         /// <param name="data"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public virtual void Send(Kcp target, ReadOnlySpan<byte> data, CancellationToken token)
+        public virtual void Send(Kcp target, byte[] data, int length, CancellationToken token)
         {
             // drop some packets
             if (Random.value < pdrop)
                 return;
 
-            target.Input(data.Slice(KcpConnection.RESERVED));
+            int latency = Random.Range(0, maxLat);
+
+            target.Input(data.AsSpan(KcpConnection.RESERVED, length - KcpConnection.RESERVED));
 
             // duplicate some packets (udp can duplicate packets)
             if (Random.value < pdup)
-                target.Input(data.Slice(KcpConnection.RESERVED));
+                target.Input(data.AsSpan(KcpConnection.RESERVED, length - KcpConnection.RESERVED));
         }
 
         public virtual async UniTaskVoid Tick(Kcp kcp, CancellationToken token)
@@ -74,7 +76,7 @@ namespace Mirage.Tests.Runtime
 
             client = new Kcp(0, (data, length) =>
             {
-                Send(server, data.AsSpan(0,length), token);
+                Send(server, data, length, token);
             });
             // fast mode so that we finish quicker
             client.SetNoDelay(KcpDelayMode.Fast3);
@@ -83,7 +85,7 @@ namespace Mirage.Tests.Runtime
 
             server = new Kcp(0, (data, length) =>
             {
-                Send(client, data.AsSpan(0, length), token);
+                Send(client, data, length, token);
             });
             // fast mode so that we finish quicker
             server.SetNoDelay(KcpDelayMode.Fast3);

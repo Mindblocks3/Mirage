@@ -26,7 +26,7 @@ namespace Mirage.Tests.Runtime
             for (int i = 950; i < 1100; i++)
             {
                 byte[] data = MakeRandomData(i);
-                client.Send(data);
+                client.Send(data, 0, data.Length);
 
                 // receive the packets,  they should come in the same order as received
                 byte[] buffer = new byte[data.Length];
