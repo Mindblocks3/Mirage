@@ -137,10 +137,12 @@ namespace Mirage.KCP
                 return;
 
             int channel = GetChannel(buffer);
+            ReadOnlySpan<byte> data = buffer.Slice(RESERVED);
+
             if (channel == Channel.Reliable)
-                InputReliable(buffer);
+                InputReliable(data);
             else if (channel == Channel.Unreliable)
-                InputUnreliable(buffer);
+                InputUnreliable(data);
         }
 
         private void InputUnreliable(ReadOnlySpan<byte> buffer)

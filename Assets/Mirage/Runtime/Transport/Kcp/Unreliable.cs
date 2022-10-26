@@ -33,7 +33,7 @@ namespace Mirage.KCP
                 return -3;
 
             var seg = Segment.Lease();
-            seg.data.Write(data.Slice(Reserved + OVERHEAD, size - OVERHEAD - Reserved));
+            seg.data.Write(data.Slice(OVERHEAD));
 
             messages.Enqueue(seg);
 
