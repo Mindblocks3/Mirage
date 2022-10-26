@@ -1,3 +1,5 @@
+using System;
+
 namespace Mirage.KCP
 {
 
@@ -6,9 +8,9 @@ namespace Mirage.KCP
     {
         public int Position { get; set; }
 
-        private readonly byte[] buffer;
+        private readonly Span<byte> buffer;
 
-        public Encoder(byte[] buffer, int position)
+        public Encoder(Span<byte> buffer, int position)
         {
             Position = position;
             this.buffer = buffer;
