@@ -137,14 +137,9 @@ namespace Mirage.Serialization
         // (like a packet opcode that's always the same)
         public void WriteBytes(byte[] buffer, int offset, int count)
         {
-            WriteBytes(buffer.AsSpan(offset, count));
-        }
-
-        public void WriteBytes(ReadOnlySpan<byte> buffer)
-        {
-            EnsureLength(position + buffer.Length);
-            buffer.CopyTo(this.buffer.AsSpan(position));
-            position += buffer.Length;
+            EnsureLength(position + count);
+            Array.ConstrainedCopy(buffer, offset, this.buffer, position, count);
+            position += count;
         }
 
         public void WriteUInt32(uint value)
@@ -288,16 +283,8 @@ namespace Mirage.Serialization
                 writer.WritePackedUInt32(0u);
                 return;
             }
-            writer.WriteBytesAndSize(buffer.AsSpan(offset, count));
-        }
-
-        public static void WriteBytesAndSize(this NetworkWriter writer, ReadOnlySpan<byte> buffer)
-        {
-            // write size
-            writer.WritePackedUInt32(checked((uint)buffer.Length) + 1u);
-
-            // write bytes
-            writer.WriteBytes(buffer);
+            writer.WritePackedUInt32(checked((uint)count) + 1u);
+            writer.WriteBytes(buffer, offset, count);
         }
 
         // Weaver needs a write function with just one byte[] parameter
@@ -311,11 +298,6 @@ namespace Mirage.Serialization
         public static void WriteBytesAndSizeSegment(this NetworkWriter writer, ArraySegment<byte> buffer)
         {
             writer.WriteBytesAndSize(buffer.Array, buffer.Offset, buffer.Count);
-        }
-
-        public static void WriteBytesAndSizeSegment(this NetworkWriter writer, ReadOnlySpan<byte> buffer)
-        {
-            writer.WriteBytesAndSize(buffer);
         }
 
         // zigzag encoding https://gist.github.com/mfuerstenau/ba870a29e16536fdbaba
