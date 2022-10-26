@@ -156,7 +156,7 @@ namespace Mirage.KCP
 
         private void InputReliable(byte[] buffer, int msgLength)
         {
-            kcp.Input(buffer.AsSpan(0, msgLength));
+            kcp.Input(buffer, msgLength);
 
             Thread.VolatileWrite(ref lastReceived, stopWatch.ElapsedMilliseconds);
 

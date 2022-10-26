@@ -1,11 +1,9 @@
-using System;
 using System.Diagnostics;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Mirage.KCP;
 using NUnit.Framework;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Mirage.Tests.Runtime
 {
@@ -53,11 +51,11 @@ namespace Mirage.Tests.Runtime
             if (latency > 0)
                 await UniTask.Delay(latency, false, PlayerLoopTiming.Update, token);
 
-            target.Input(data.AsSpan(0, length));
+            target.Input(data, length);
 
             // duplicate some packets (udp can duplicate packets)
             if (Random.value < pdup)
-                target.Input(data.AsSpan(0, length));
+                target.Input(data, length);
         }
 
         public virtual async UniTaskVoid Tick(Kcp kcp, CancellationToken token)

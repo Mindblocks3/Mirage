@@ -443,9 +443,8 @@ namespace Mirage.KCP
 
         // ikcp_input
         /// used when you receive a low level packet (eg. UDP packet)
-        public int Input(ReadOnlySpan<byte> data)
+        public int Input(ReadOnlySpan<byte> data, int size)
         {
-            int size = data.Length;
             uint prev_una = snd_una;
             uint maxack = 0;
             bool flag = false;
