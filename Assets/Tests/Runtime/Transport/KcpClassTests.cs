@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests.Runtime
 {
@@ -33,10 +34,10 @@ namespace Mirage.Tests.Runtime
         [Test]
         public void ReserveExceptionTest()
         {
-            Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 server.Reserved = int.MaxValue;
-            });
+            }, "Reserved must be less than MTU - OVERHEAD");
         }
     }
 }

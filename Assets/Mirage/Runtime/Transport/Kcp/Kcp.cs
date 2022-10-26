@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Mirage.KCP
 {
@@ -57,8 +58,7 @@ namespace Mirage.KCP
             }
             set
             {
-                if (value >= (mtu - OVERHEAD))
-                    throw new ArgumentException(nameof(Reserved) + " must be lower than MTU.");
+                Assert.IsTrue(value <= (mtu - OVERHEAD), "Reserved must be less than MTU - OVERHEAD");
                 reserved = value;
             }
 
