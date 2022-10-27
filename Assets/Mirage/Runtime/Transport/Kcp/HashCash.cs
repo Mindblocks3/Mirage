@@ -40,6 +40,8 @@ namespace Mirage.KCP
         /// </summary>
         public readonly ulong counter;
 
+        public const int HASH_SIZE= 32;
+
         public HashCash(DateTime dt, int resource, ulong salt, ulong counter)
         {
             this.dt = dt;
@@ -101,13 +103,16 @@ namespace Mirage.KCP
             // note we create these here so Mine does not depend
             // on static state.  This way Mine is thread safe
             HashAlgorithm hashAlg = SHA256.Create();
-            byte[] buf = new byte[HashCashEncoding.SIZE];
+            Span<byte> buf = stackalloc byte[HashCashEncoding.SIZE];
+
+            Span<byte> hash = stackalloc byte[HASH_SIZE];
 
             // calculate hash after hash until
             // we find one that validaes
             while (true)
             {
-                byte[] hash = token.Hash(hashAlg, buf);
+                
+                token.Hash(hashAlg, buf, hash);
 
                 if (Validate(hash, bits))
                     return token;
@@ -121,21 +126,27 @@ namespace Mirage.KCP
         #region Validation
         private static readonly HashAlgorithm hashAlgorithm = SHA256.Create();
 
-        private static readonly byte[] buffer = new byte[HashCashEncoding.SIZE];
 
-        // not thread safe
-        internal byte[] Hash() => Hash(hashAlgorithm, buffer);
+        internal byte[] Hash() {
+            Span<byte> hash = stackalloc byte[HASH_SIZE];
+            Hash(hash);
+            return hash.ToArray();
+        }
+
+        internal void Hash(Span<byte> hash) {
+            Span<byte> buffer = stackalloc byte[HashCashEncoding.SIZE];
+            Hash(hashAlgorithm, buffer, hash);
+        } 
 
         // calculate the hash of a hashcash token
-        private byte[] Hash(HashAlgorithm hashAlgorithm, byte[] buffer)
+        private void Hash(HashAlgorithm hashAlgorithm, Span<byte> buffer, Span<byte> hash)
         {
             int length = HashCashEncoding.Encode(buffer, this);
-
-            return hashAlgorithm.ComputeHash(buffer, 0, length);
+            hashAlgorithm.TryComputeHash(buffer, hash, out int bytesWritten);
         }
 
         // validate that the first n bits in a hash are zero
-        internal static bool Validate(byte[] hash, int bits = 18)
+        internal static bool Validate(Span<byte> hash, int bits = 18)
         {
             int bytesToCheck = bits >> 3;
             int remainderBitsToCheck = bits & 0b111;
@@ -155,7 +166,9 @@ namespace Mirage.KCP
 
         internal bool ValidateHash(int bits = 20)
         {
-            return Validate(Hash(), bits);
+            Span<byte> hash = stackalloc byte[HASH_SIZE];
+            Hash(hash);
+            return Validate(hash, bits);
         }
 
         public bool Validate(string resource, int bits = 18)
