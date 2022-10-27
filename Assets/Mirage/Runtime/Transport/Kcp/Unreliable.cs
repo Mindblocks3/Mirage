@@ -73,21 +73,21 @@ namespace Mirage.KCP
             return bytes;
         }
 
-        public void Send(byte[] buffer, int offset, int length)
+        public void Send(ReadOnlySpan<byte> buffer)
         {
             var segment = Segment.Lease();
 
             System.IO.MemoryStream sendBuffer = segment.data;
 
-            sendBuffer.SetLength(length + Reserved + OVERHEAD);
+            sendBuffer.SetLength(buffer.Length + Reserved + OVERHEAD);
 
             var encoder = new Encoder(sendBuffer.GetBuffer().AsSpan(Reserved));
             encoder.Encode32U(Channel.Unreliable);
 
             sendBuffer.Position = encoder.Position + Reserved;
 
-            sendBuffer.Write(buffer, offset, length);
-            output(sendBuffer.GetBuffer(), length + Reserved + OVERHEAD);
+            sendBuffer.Write(buffer);
+            output(sendBuffer.GetBuffer(), buffer.Length + Reserved + OVERHEAD);
 
             Segment.Release(segment);
         }

@@ -129,7 +129,7 @@ namespace Mirage.KCP
         // calculate the hash of a hashcash token
         private byte[] Hash(HashAlgorithm hashAlgorithm, byte[] buffer)
         {
-            int length = HashCashEncoding.Encode(buffer, 0, this);
+            int length = HashCashEncoding.Encode(buffer, this);
 
             return hashAlgorithm.ComputeHash(buffer, 0, length);
         }
@@ -193,9 +193,9 @@ namespace Mirage.KCP
         /// <param name="index">the index in the buffer where to put it</param>
         /// <param name="hashCash">the token to be encoded</param>
         /// <returns>the length of the written data</returns>
-        public static int Encode(byte[] buffer, int index, HashCash hashCash)
+        public static int Encode(Span<byte> buffer, HashCash hashCash)
         {
-            var encoder = new Encoder(buffer.AsSpan(index));
+            var encoder = new Encoder(buffer);
 
             encoder.Encode64U((ulong)hashCash.dt.Ticks);
             encoder.Encode32U((uint)hashCash.resource);

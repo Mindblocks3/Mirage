@@ -24,7 +24,7 @@ namespace Mirage.Tests.Runtime
         public void EncodingDecoding()
         {
             byte[] buffer = new byte[1000];
-            _ = HashCashEncoding.Encode(buffer, 0, hashCash);
+            _ = HashCashEncoding.Encode(buffer, hashCash);
 
             HashCash decoded = HashCashEncoding.Decode(buffer);
 

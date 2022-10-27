@@ -200,7 +200,7 @@ namespace Mirage.KCP
             if (channel == Channel.Reliable)
                 kcp.Send(data);
             else if (channel == Channel.Unreliable)
-                unreliable.Send(data.Array, data.Offset, data.Count);
+                unreliable.Send(data);
         }
 
         /// <summary>

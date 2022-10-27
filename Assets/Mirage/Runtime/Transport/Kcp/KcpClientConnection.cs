@@ -81,7 +81,7 @@ namespace Mirage.KCP
 
             HashCash token = await UniTask.RunOnThreadPool(() => HashCash.Mine(applicationName, bits));
             byte[] hello = new byte[1000];
-            int length = HashCashEncoding.Encode(hello, 0, token);
+            int length = HashCashEncoding.Encode(hello, token);
 
             var data = new ArraySegment<byte>(hello, 0, length);
             // send a greeting and see if the server replies
