@@ -1,3 +1,10 @@
+## [96.0.6](https://github.com/Mindblocks3/Mirage/compare/v96.0.5...v96.0.6) (2022-10-27)
+
+
+### Performance Improvements
+
+* faster hash cash with span ([eaa1fad](https://github.com/Mindblocks3/Mirage/commit/eaa1fad75f3177a1980bb862382fdc861495123d))
+
 ## [96.0.5](https://github.com/Mindblocks3/Mirage/compare/v96.0.4...v96.0.5) (2022-10-26)
 
 
