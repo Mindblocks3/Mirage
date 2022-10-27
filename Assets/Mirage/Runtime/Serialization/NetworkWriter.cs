@@ -135,11 +135,11 @@ namespace Mirage.Serialization
 
         // for byte arrays with consistent size, where the reader knows how many to read
         // (like a packet opcode that's always the same)
-        public void WriteBytes(byte[] buffer, int offset, int count)
+        public void WriteBytes(Span<byte> buffer)
         {
-            EnsureLength(position + count);
-            Array.ConstrainedCopy(buffer, offset, this.buffer, position, count);
-            position += count;
+            EnsureLength(position + buffer.Length);
+            buffer.CopyTo(this.buffer.AsSpan(position));
+            position += buffer.Length;
         }
 
         public void WriteUInt32(uint value)
@@ -268,7 +268,7 @@ namespace Mirage.Serialization
 
             // write size and bytes
             writer.WriteUInt16(checked((ushort)(size + 1)));
-            writer.WriteBytes(stringBuffer, 0, size);
+            writer.WriteBytes(stringBuffer.AsSpan(0, size));
         }
 
         // for byte arrays with dynamic size, where the reader doesn't know how many will come
@@ -284,7 +284,7 @@ namespace Mirage.Serialization
                 return;
             }
             writer.WritePackedUInt32(checked((uint)count) + 1u);
-            writer.WriteBytes(buffer, offset, count);
+            writer.WriteBytes(buffer.AsSpan(offset, count));
         }
 
         // Weaver needs a write function with just one byte[] parameter
@@ -467,7 +467,7 @@ namespace Mirage.Serialization
         public static void WriteGuid(this NetworkWriter writer, Guid value)
         {
             byte[] data = value.ToByteArray();
-            writer.WriteBytes(data, 0, data.Length);
+            writer.WriteBytes(data);
         }
 
         public static void WriteNetworkIdentity(this NetworkWriter writer, NetworkIdentity value)

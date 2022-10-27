@@ -51,7 +51,7 @@ namespace Mirage.Tests.Runtime
         public void TestWritingBytesSegment()
         {
             byte[] data = { 1, 2, 3 };
-            writer.WriteBytes(data, 0, data.Length);
+            writer.WriteBytes(data);
 
             var reader = new NetworkReader(writer.ToArray());
             ArraySegment<byte> deserialized = reader.ReadBytesSegment(data.Length);
@@ -161,7 +161,7 @@ namespace Mirage.Tests.Runtime
         [Test]
         public void TestReading0LengthBytes()
         {
-            writer.WriteBytes(new byte[] { }, 0, 0);
+            writer.WriteBytes(new Span<byte>());
             var reader = new NetworkReader(writer.ToArray());
             Assert.That(reader.ReadBytes(0).Length, Is.EqualTo(0));
         }
@@ -955,7 +955,7 @@ namespace Mirage.Tests.Runtime
             writer.WriteString("");
             writer.WriteString("13");
             // just the byte array, no size info etc.
-            writer.WriteBytes(new byte[] { 14, 15 }, 0, 2);
+            writer.WriteBytes(new byte[] { 14, 15 });
             // [SyncVar] struct values can have uninitialized byte arrays, null needs to be supported
             writer.WriteBytesAndSize(null);
 

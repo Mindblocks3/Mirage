@@ -847,7 +847,7 @@ namespace Mirage
                     {
                         var segment = ownerWriter.ToArraySegment();
                         int length = ownerWriter.Position - startPosition;
-                        observersWriter.WriteBytes(segment.Array, startPosition, length);
+                        observersWriter.WriteBytes(segment.Array.AsSpan(startPosition, length));
                         ++observersWritten;
                     }
                 }
