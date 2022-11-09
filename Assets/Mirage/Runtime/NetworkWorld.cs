@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using Mirage.Logging;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 namespace Mirage
 {
+    public class SpawnUnityEvent : UnityEvent<NetworkIdentity> { }
+
     public class NetworkWorld : IObjectLocator
     {
         static readonly ILogger logger = LogFactory.GetLogger<NetworkWorld>();
@@ -12,12 +16,12 @@ namespace Mirage
         /// <summary>
         /// Raised when the client spawns an object
         /// </summary>
-        public event Action<NetworkIdentity> onSpawn;
+        public SpawnUnityEvent onSpawn = new SpawnUnityEvent();
 
         /// <summary>
         /// Raised when the client unspawns an object
         /// </summary>
-        public event Action<NetworkIdentity> onUnspawn;
+        public SpawnUnityEvent onUnspawn = new SpawnUnityEvent();
 
         private readonly Dictionary<uint, NetworkIdentity> SpawnedObjects = new Dictionary<uint, NetworkIdentity>();
 
@@ -40,13 +44,13 @@ namespace Mirage
             if (netId != identity.NetId) throw new ArgumentException("NetworkIdentity did not have matching netId", nameof(identity));
 
             SpawnedObjects.Add(netId, identity);
-            onSpawn?.Invoke(identity);
+            onSpawn.Invoke(identity);
         }
         internal void RemoveIdentity(NetworkIdentity identity)
         {
             uint netId = identity.NetId;
             SpawnedObjects.Remove(netId);
-            onUnspawn?.Invoke(identity);
+            onUnspawn.Invoke(identity);
         }
         internal void RemoveIdentity(uint netId)
         {
@@ -55,7 +59,7 @@ namespace Mirage
 
             SpawnedObjects.TryGetValue(netId, out NetworkIdentity identity);
             SpawnedObjects.Remove(netId);
-            onUnspawn?.Invoke(identity);
+            onUnspawn.Invoke(identity);
         }
 
 

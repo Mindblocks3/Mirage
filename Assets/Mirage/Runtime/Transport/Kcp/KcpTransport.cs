@@ -13,7 +13,7 @@ namespace Mirage.KCP
         Socket socket;
 
         [Header("Transport Configuration")]
-        public ushort Port = 7777;
+        public ushort Port = 7778;
 
         [Range(15, 20)]
         [Tooltip("Used for DoS prevention,  clients must mine a HashCash with these many bits in order to connect, higher means more secure, but slower for the clients")]

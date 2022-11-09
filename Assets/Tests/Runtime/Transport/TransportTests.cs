@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace Mirage.Tests.Runtime
 {
-    [TestFixture(typeof(KcpTransport), "kcp", "kcp://localhost", 7777)]
+    [TestFixture(typeof(KcpTransport), "kcp", "kcp://localhost", 7778)]
     public class TransportTests<T> where T : Transport
     {
         #region SetUp

@@ -4,6 +4,7 @@ using NSubstitute;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using UnityEngine;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -12,18 +13,18 @@ namespace Mirage.Tests
     public class NetworkWorldTests
     {
         private NetworkWorld world;
-        private Action<NetworkIdentity> spawnListener;
-        private Action<NetworkIdentity> unspawnListener;
+        private UnityAction<NetworkIdentity> spawnListener;
+        private UnityAction<NetworkIdentity> unspawnListener;
         HashSet<uint> existingIds;
 
         [SetUp]
         public void SetUp()
         {
             world = new NetworkWorld();
-            spawnListener = Substitute.For<Action<NetworkIdentity>>();
-            unspawnListener = Substitute.For<Action<NetworkIdentity>>();
-            world.onSpawn += spawnListener;
-            world.onUnspawn += unspawnListener;
+            spawnListener = Substitute.For<UnityAction<NetworkIdentity>>();
+            unspawnListener = Substitute.For<UnityAction<NetworkIdentity>>();
+            world.onSpawn.AddListener(spawnListener);
+            world.onUnspawn.AddListener(unspawnListener);
             existingIds = new HashSet<uint>();
         }
 

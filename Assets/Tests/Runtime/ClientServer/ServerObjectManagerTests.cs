@@ -6,6 +6,7 @@ using NSubstitute;
 using NSubstitute.Core;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.TestTools;
 using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
@@ -105,8 +106,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void SpawnEvent()
         {
-            Action<NetworkIdentity> mockHandler = Substitute.For<Action<NetworkIdentity>>();
-            server.World.onSpawn += mockHandler;
+            var mockHandler = Substitute.For<UnityAction<NetworkIdentity>>();
+            server.World.onSpawn.AddListener(mockHandler);
             var newObj = GameObject.Instantiate(playerPrefab);
             serverObjectManager.Spawn(newObj);
 
@@ -117,8 +118,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         [UnityTest]
         public IEnumerator ClientSpawnEvent() => UniTask.ToCoroutine(async () =>
         {
-            Action<NetworkIdentity> mockHandler = Substitute.For<Action<NetworkIdentity>>();
-            client.World.onSpawn += mockHandler;
+            var mockHandler = Substitute.For<UnityAction<NetworkIdentity>>();
+            client.World.onSpawn.AddListener(mockHandler);
             var newObj = GameObject.Instantiate(playerPrefab);
             serverObjectManager.Spawn(newObj);
 
@@ -131,8 +132,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         [UnityTest]
         public IEnumerator ClientUnSpawnEvent() => UniTask.ToCoroutine(async () =>
         {
-            Action<NetworkIdentity> mockHandler = Substitute.For<Action<NetworkIdentity>>();
-            client.World.onUnspawn += mockHandler;
+            var mockHandler = Substitute.For<UnityAction<NetworkIdentity>>();
+            client.World.onUnspawn.AddListener(mockHandler);
             var newObj = GameObject.Instantiate(playerPrefab);
             serverObjectManager.Spawn(newObj);
             serverObjectManager.Destroy(newObj);
@@ -144,8 +145,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void UnSpawnEvent()
         {
-            Action<NetworkIdentity> mockHandler = Substitute.For<Action<NetworkIdentity>>();
-            server.World.onUnspawn += mockHandler;
+            var mockHandler = Substitute.For<UnityAction<NetworkIdentity>>();
+            server.World.onUnspawn.AddListener(mockHandler);
             var newObj = GameObject.Instantiate(playerPrefab);
             serverObjectManager.Spawn(newObj);
             serverObjectManager.Destroy(newObj);
