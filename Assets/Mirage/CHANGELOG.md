@@ -1,3 +1,15 @@
+# [97.0.0](https://github.com/Mindblocks3/Mirage/compare/v96.0.6...v97.0.0) (2022-11-09)
+
+
+* use assertion to check preconditions ([5b5ea33](https://github.com/Mindblocks3/Mirage/commit/5b5ea332c46ab1f31e96bf6012af9bf85a1f3c8c))
+* use unity event instead of c# event ([7f77426](https://github.com/Mindblocks3/Mirage/commit/7f77426132f4d59bf38eca438170ab8f4d1e76e0))
+
+
+### BREAKING CHANGES
+
+* NetworkWorld uses Assertions instead of ArgumentExceptions
+* NetworkWorld now uses UnityEvents instead of C# events
+
 ## [96.0.6](https://github.com/Mindblocks3/Mirage/compare/v96.0.5...v96.0.6) (2022-10-27)
 
 
