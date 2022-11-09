@@ -38,10 +38,10 @@ namespace Mirage
         /// <param name="identity"></param>
         internal void AddIdentity(uint netId, NetworkIdentity identity)
         {
-            if (netId == 0) throw new ArgumentException("id can not be zero", nameof(netId));
-            if (SpawnedObjects.ContainsKey(netId)) throw new ArgumentException("An item with same id already exists", nameof(netId));
-            if (identity == null) throw new ArgumentNullException(nameof(identity));
-            if (netId != identity.NetId) throw new ArgumentException("NetworkIdentity did not have matching netId", nameof(identity));
+            Assert.IsTrue(netId != 0, "NetId cannot be zero");
+            Assert.IsNotNull(identity, "Identity cannot be null");
+            Assert.IsFalse(SpawnedObjects.ContainsKey(netId), $"NetId {netId} already exists");
+            Assert.AreEqual(netId, identity.NetId, $"NetId {netId} does not match identity's netId {identity.NetId}");
 
             SpawnedObjects.Add(netId, identity);
             onSpawn.Invoke(identity);
@@ -54,7 +54,7 @@ namespace Mirage
         }
         internal void RemoveIdentity(uint netId)
         {
-            if (netId == 0) throw new ArgumentException("id can not be zero", nameof(netId));
+            Assert.IsTrue(netId != 0, "id can not be zero");
 
 
             SpawnedObjects.TryGetValue(netId, out NetworkIdentity identity);

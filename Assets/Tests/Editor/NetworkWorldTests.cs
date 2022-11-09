@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using UnityAssertionException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.Tests
 {
@@ -141,14 +142,10 @@ namespace Mirage.Tests
         {
             uint id = getValidId();
 
-            ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() =>
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 world.AddIdentity(id, null);
-            });
-
-            var expected = new ArgumentNullException("identity");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
-
+            }, "Identity cannot be null");
             spawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
         }
         [Test]
@@ -156,13 +153,10 @@ namespace Mirage.Tests
         {
             AddValidIdentity(out uint id, out NetworkIdentity identity);
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 world.AddIdentity(id, identity);
-            });
-
-            var expected = new ArgumentException("An item with same id already exists", "netId");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
+            }, $"NetId {id} already exists");
         }
         [Test]
         public void AddThrowsIfIdIs0()
@@ -171,13 +165,10 @@ namespace Mirage.Tests
             NetworkIdentity identity = new GameObject("WorldTest").AddComponent<NetworkIdentity>();
             identity.NetId = id;
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 world.AddIdentity(id, identity);
-            });
-
-            var expected = new ArgumentException("id can not be zero", "netId");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
+            }, "NetId cannot be zero");
 
             spawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
         }
@@ -191,13 +182,10 @@ namespace Mirage.Tests
             identity.NetId = id1;
 
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 world.AddIdentity(id2, identity);
-            });
-
-            var expected = new ArgumentException("NetworkIdentity did not have matching netId", "identity");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
+            }, $"NetId {id2} does not match identity's netId {id1}");
 
             spawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
         }
@@ -267,13 +255,10 @@ namespace Mirage.Tests
         {
             uint id = 0;
 
-            ArgumentException exception = Assert.Throws<ArgumentException>(() =>
+            Assert.Throws<UnityAssertionException>(() =>
             {
                 world.RemoveIdentity(id);
-            });
-
-            var expected = new ArgumentException("id can not be zero", "netId");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
+            }, "id can not be zero");
 
             unspawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
         }
