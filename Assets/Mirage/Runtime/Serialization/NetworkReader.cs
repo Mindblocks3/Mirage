@@ -385,7 +385,7 @@ namespace Mirage.Serialization
 
         public static NetworkIdentity ReadNetworkIdentity(this NetworkReader reader)
         {
-            uint netId = reader.ReadPackedUInt32();
+            ushort netId = reader.ReadUInt16();
             if (netId == 0)
                 return null;
 

@@ -23,11 +23,11 @@ namespace Mirage
         /// </summary>
         public SpawnUnityEvent onUnspawn = new SpawnUnityEvent();
 
-        private readonly Dictionary<uint, NetworkIdentity> SpawnedObjects = new Dictionary<uint, NetworkIdentity>();
+        internal readonly Dictionary<ushort, NetworkIdentity> SpawnedObjects = new Dictionary<ushort, NetworkIdentity>();
 
         public IReadOnlyCollection<NetworkIdentity> SpawnedIdentities => SpawnedObjects.Values;
 
-        public bool TryGetIdentity(uint netId, out NetworkIdentity identity)
+        public bool TryGetIdentity(ushort netId, out NetworkIdentity identity)
         {
             return SpawnedObjects.TryGetValue(netId, out identity) && identity != null;
         }
@@ -36,7 +36,7 @@ namespace Mirage
         /// </summary>
         /// <param name="netId"></param>
         /// <param name="identity"></param>
-        internal void AddIdentity(uint netId, NetworkIdentity identity)
+        internal void AddIdentity(ushort netId, NetworkIdentity identity)
         {
             Assert.IsTrue(netId != 0, "NetId cannot be zero");
             Assert.IsNotNull(identity, "Identity cannot be null");
@@ -48,11 +48,11 @@ namespace Mirage
         }
         internal void RemoveIdentity(NetworkIdentity identity)
         {
-            uint netId = identity.NetId;
+            ushort netId = identity.NetId;
             SpawnedObjects.Remove(netId);
             onUnspawn.Invoke(identity);
         }
-        internal void RemoveIdentity(uint netId)
+        internal void RemoveIdentity(ushort netId)
         {
             Assert.IsTrue(netId != 0, "id can not be zero");
 

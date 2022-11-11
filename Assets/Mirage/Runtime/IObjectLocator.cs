@@ -12,6 +12,6 @@ namespace Mirage
         /// <param name="netId">the id of the object to find</param>
         /// <param name="identity">The NetworkIdentity matching the netid or null if none is found</param>
         /// <returns>true if identity is found and is not null</returns>
-        bool TryGetIdentity(uint netId, out NetworkIdentity identity);
+        bool TryGetIdentity(ushort netId, out NetworkIdentity identity);
     }
 }

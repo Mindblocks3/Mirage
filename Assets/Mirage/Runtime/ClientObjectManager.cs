@@ -410,7 +410,7 @@ namespace Mirage
             DestroyObject(msg.netId);
         }
 
-        void DestroyObject(uint netId)
+        void DestroyObject(ushort netId)
         {
             if (logger.LogEnabled()) logger.Log("ClientScene.OnObjDestroy netId:" + netId);
 

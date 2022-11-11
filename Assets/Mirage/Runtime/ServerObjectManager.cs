@@ -43,10 +43,19 @@ namespace Mirage
         [FormerlySerializedAs("server")]
         public NetworkServer Server;
 
-        uint nextNetworkId = 1;
-        uint GetNextNetworkId() => checked(nextNetworkId++);
+        ushort nextNetworkId = 1;
+        ushort GetNextNetworkId() {
 
-        public SyncVarSender SyncVarSender { get; private set; }
+            do
+            {
+                nextNetworkId++;
+
+            } while (Server.World.SpawnedObjects.ContainsKey(nextNetworkId) || nextNetworkId == 0);
+
+            return nextNetworkId;
+        }
+
+    public SyncVarSender SyncVarSender { get; private set; }
 
         public void Start()
         {

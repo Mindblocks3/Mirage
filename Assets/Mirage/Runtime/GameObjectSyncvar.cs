@@ -15,11 +15,11 @@ namespace Mirage
         /// used to lookup the identity if it exists
         /// </summary>
         internal IObjectLocator objectLocator;
-        internal uint netId;
+        internal ushort netId;
 
         internal GameObject gameObject;
 
-        internal uint NetId => gameObject != null ? gameObject.GetComponent<NetworkIdentity>().NetId : netId;
+        internal ushort NetId => gameObject != null ? gameObject.GetComponent<NetworkIdentity>().NetId : netId;
 
         public GameObject Value
         {
@@ -49,12 +49,12 @@ namespace Mirage
     {
         public static void WriteGameObjectSyncVar(this NetworkWriter writer, GameObjectSyncvar id)
         {
-            writer.WritePackedUInt32(id.NetId);
+            writer.WriteUInt16(id.NetId);
         }
 
         public static GameObjectSyncvar ReadGameObjectSyncVar(this NetworkReader reader)
         {
-            uint netId = reader.ReadPackedUInt32();
+            ushort netId = reader.ReadUInt16();
 
             NetworkIdentity identity = null;
             bool hasValue = reader.ObjectLocator?.TryGetIdentity(netId, out identity) ?? false;

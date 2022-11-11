@@ -474,10 +474,10 @@ namespace Mirage.Serialization
         {
             if (value == null)
             {
-                writer.WritePackedUInt32(0);
+                writer.WriteUInt16(0);
                 return;
             }
-            writer.WritePackedUInt32(value.NetId);
+            writer.WriteUInt16(value.NetId);
         }
 
         public static void WriteList<T>(this NetworkWriter writer, List<T> list)

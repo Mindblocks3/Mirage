@@ -171,7 +171,7 @@ namespace Mirage.Tests.Runtime.ClientServer
             serverObjectManager.Spawn(newObject);
 
             // wait until the client spawns it
-            uint newObjectId = newBehavior.NetId;
+            ushort newObjectId = newBehavior.NetId;
             NetworkIdentity newClientObject = await AsyncUtil.WaitUntilSpawn(client.World, newObjectId);
 
             // check if the target was set correctly in the client
