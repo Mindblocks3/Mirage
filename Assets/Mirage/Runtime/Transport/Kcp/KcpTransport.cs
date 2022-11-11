@@ -56,7 +56,10 @@ namespace Mirage.KCP
         {
             try
             {
-                while (socket != null && socket.Poll(0, SelectMode.SelectRead))
+                if (socket == null)
+                    return;
+
+                while (socket.IsBound && socket.Poll(0, SelectMode.SelectRead))
                 {
                     int msgLength = socket.ReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref newClientEP);
 
@@ -190,7 +193,6 @@ namespace Mirage.KCP
             if (socket != null)
             {
                 socket.Close();
-                socket = null;
                 Stopped.Invoke();
             }
         }

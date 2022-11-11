@@ -212,7 +212,7 @@ namespace Mirage.KCP
         {
             await WaitForMessages(cancellationTokenSource.Token);
 
-            if (!socket.Connected || cancellationTokenSource.IsCancellationRequested)
+            if (cancellationTokenSource.IsCancellationRequested)
             {
                 Disconnected?.Invoke();
                 throw new EndOfStreamException();
