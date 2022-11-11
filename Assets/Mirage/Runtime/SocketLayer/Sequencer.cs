@@ -68,13 +68,6 @@ namespace Mirage.SocketLayer
         {
             Assert.IsTrue( bits is >0 and < 64, "Bits should be between 1 and 63");
 
-            // todo add context to the below comment
-
-            // 1 byte
-            // (1 << 8) = 256
-            // - 1      = 255
-            //          = 1111 1111
-
             this.bits = bits;
             sequence = 0;
             mask = (1UL << bits) - 1UL;
