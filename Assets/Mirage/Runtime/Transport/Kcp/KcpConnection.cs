@@ -24,7 +24,8 @@ namespace Mirage.KCP
         private readonly int receiveWindowSize;
 
         readonly KcpDelayMode delayMode;
-        volatile bool open;
+
+        protected CancellationTokenSource cancellationTokenSource;
 
         public int CHANNEL_SIZE = 4;
 
@@ -58,7 +59,7 @@ namespace Mirage.KCP
             this.receiveWindowSize = receiveWindowSize;
         }
 
-        protected void SetupKcp()
+        protected void SetupKcp(CancellationToken cancellationToken)
         {
             unreliable = new Unreliable(SendWithChecksum)
             {
@@ -72,18 +73,17 @@ namespace Mirage.KCP
 
             kcp.SetNoDelay(delayMode);
             kcp.SetWindowSize((uint)sendWindowSize, (uint)receiveWindowSize);
-            open = true;
 
-            Tick().Forget();
+            Tick(cancellationToken).Forget();
         }
 
-        async UniTaskVoid Tick()
+        async UniTaskVoid Tick(CancellationToken cancellationToken)
         {
             try
             {
                 Thread.VolatileWrite(ref lastReceived, stopWatch.ElapsedMilliseconds);
 
-                while (open)
+                while (!cancellationToken.IsCancellationRequested)
                 {
                     long now = stopWatch.ElapsedMilliseconds;
                     long received = Thread.VolatileRead(ref lastReceived);
@@ -99,14 +99,14 @@ namespace Mirage.KCP
                     if (delay <= 0)
                         delay = MinimumKcpTickInterval;
 
-                    await UniTask.Delay(delay);
+                    await UniTask.Delay(delay, cancellationToken: cancellationToken);
                 }
             }
             catch (SocketException)
             {
                 // this is ok, the connection was closed
             }
-            catch (ObjectDisposedException)
+            catch (OperationCanceledException)
             {
                 // fine,  socket was closed,  no more ticking needed
             }
@@ -116,7 +116,7 @@ namespace Mirage.KCP
             }
             finally
             {
-                open = false;
+                cancellationTokenSource.Cancel();
                 dataAvailable?.TrySetResult();
                 Close();
             }
@@ -210,9 +210,13 @@ namespace Mirage.KCP
         /// <returns>true if we got a message, false if we got disconnected</returns>
         public async UniTask<int> ReceiveAsync(MemoryStream buffer)
         {
-            await WaitForMessages();
+            await WaitForMessages(cancellationTokenSource.Token);
 
-            ThrowIfClosed();
+            if (!socket.Connected || cancellationTokenSource.IsCancellationRequested)
+            {
+                Disconnected?.Invoke();
+                throw new EndOfStreamException();
+            }
 
             if (unreliable.PeekSize() >= 0)
             {
@@ -224,9 +228,9 @@ namespace Mirage.KCP
             }
         }
 
-        private async UniTask WaitForMessages()
+        private async UniTask WaitForMessages(CancellationToken cancellationToken)
         {
-            while (kcp.PeekSize() < 0 && unreliable.PeekSize() < 0 && open)
+            while (kcp.PeekSize() < 0 && unreliable.PeekSize() < 0 && !cancellationToken.IsCancellationRequested)
             {
                 isWaiting = true;
                 dataAvailable = AutoResetUniTaskCompletionSource.Create();
@@ -235,14 +239,6 @@ namespace Mirage.KCP
             }
         }
 
-        private void ThrowIfClosed()
-        {
-            if (!open)
-            {
-                Disconnected?.Invoke();
-                throw new EndOfStreamException();
-            }
-        }
 
         private int ReadUnreliable(MemoryStream buffer)
         {
@@ -267,7 +263,7 @@ namespace Mirage.KCP
             var dataSegment = new ArraySegment<byte>(buffer.GetBuffer(), 0, msgSize);
             if (Utils.Equal(dataSegment, Goodby))
             {
-                open = false;
+                cancellationTokenSource.Cancel();
                 Disconnected?.Invoke();
                 throw new EndOfStreamException();
             }
@@ -280,7 +276,7 @@ namespace Mirage.KCP
         public virtual void Disconnect()
         {
             // send a disconnect message and disconnect
-            if (open && socket.Connected)
+            if (!cancellationTokenSource.IsCancellationRequested && socket.Connected)
             {
                 try
                 {
@@ -301,8 +297,8 @@ namespace Mirage.KCP
                     // were disconnected
                 }
             }
-            open = false;
-
+            cancellationTokenSource.Cancel();
+    
             // EOF is now available
             dataAvailable?.TrySetResult();
         }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -32,18 +33,21 @@ namespace Mirage.KCP
             remoteEndpoint = new IPEndPoint(ipAddress[0], port);
             socket = new Socket(remoteEndpoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
             socket.Connect(remoteEndpoint);
-            SetupKcp();
 
-            ReceiveLoop().Forget();
+            cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+            SetupKcp(cancellationToken);
+
+            ReceiveLoop(cancellationToken).Forget();
 
             await HandshakeAsync(HashCashBits);
         }
 
-        async UniTaskVoid ReceiveLoop()
+        async UniTaskVoid ReceiveLoop(CancellationToken cancellationToken)
         {
             try
             {
-                while (socket != null)
+                while (!cancellationToken.IsCancellationRequested)
                 {
                     while (socket.Poll(0, SelectMode.SelectRead))
                     {
@@ -52,7 +56,7 @@ namespace Mirage.KCP
                     }
 
                     // wait a few MS to poll again
-                    await UniTask.Delay(2);
+                    await UniTask.Delay(2, cancellationToken: cancellationToken);
                 }
             }
             catch (SocketException)
@@ -64,7 +68,6 @@ namespace Mirage.KCP
         protected override void Close()
         {
             socket.Close();
-            socket = null;
         }
 
         protected override void RawSend(byte[] data, int length)

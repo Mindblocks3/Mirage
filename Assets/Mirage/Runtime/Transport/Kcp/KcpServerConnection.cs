@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 namespace Mirage.KCP
@@ -14,7 +15,8 @@ namespace Mirage.KCP
         {
             this.socket = socket;
             this.remoteEndpoint = remoteEndpoint;
-            SetupKcp();
+            cancellationTokenSource = new CancellationTokenSource();
+            SetupKcp(cancellationTokenSource.Token);
         }
 
         internal async UniTask HandshakeAsync()
