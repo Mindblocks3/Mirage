@@ -22,6 +22,7 @@ THE SOFTWARE.
 */
 
 using System;
+using UnityEngine.Assertions;
 
 namespace Mirage.SocketLayer
 {
@@ -65,7 +66,7 @@ namespace Mirage.SocketLayer
         /// <param name="bits">amount of bits for the sequence</param>
         public Sequencer(int bits)
         {
-            if (bits <= 0 || bits > 63) throw new ArgumentOutOfRangeException(nameof(bits), bits, "Bits should be between 1 and 63");
+            Assert.IsTrue( bits is >0 and < 64, "Bits should be between 1 and 63");
 
             // todo add context to the below comment
 

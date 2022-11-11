@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using UnityAssertException = UnityEngine.Assertions.AssertionException;
 
 namespace Mirage.SocketLayer.Tests
 {
@@ -16,24 +17,18 @@ namespace Mirage.SocketLayer.Tests
         [Test]
         public void ThrowsErrorIfBitsisOver63([Range(64, 70)] int bits)
         {
-            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<UnityAssertException>(() =>
             {
                 var sequencer = new Sequencer(bits);
-            });
-
-            var expected = new ArgumentOutOfRangeException("bits", bits, "Bits should be between 1 and 63");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
+            }, "Bits should be between 1 and 63");
         }
         [Test]
         public void ThrowsErrorIfBitsisOver0([Range(-10, 0)] int bits)
         {
-            ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<UnityAssertException>(() =>
             {
                 var sequencer = new Sequencer(bits);
-            });
-
-            var expected = new ArgumentOutOfRangeException("bits", bits, "Bits should be between 1 and 63");
-            Assert.That(exception, Has.Message.EqualTo(expected.Message));
+            }, "Bits should be between 1 and 63");
         }
 
         [Test]
