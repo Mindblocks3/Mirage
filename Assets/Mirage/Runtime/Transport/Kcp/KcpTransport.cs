@@ -15,7 +15,7 @@ namespace Mirage.KCP
         [Header("Transport Configuration")]
         public ushort Port = 7778;
 
-        [Range(15, 20)]
+        [Range(0, 20)]
         [Tooltip("Used for DoS prevention,  clients must mine a HashCash with these many bits in order to connect, higher means more secure, but slower for the clients")]
         public int HashCashBits = 18;
 
@@ -51,25 +51,29 @@ namespace Mirage.KCP
             socket.Bind(new IPEndPoint(IPAddress.IPv6Any, Port));
         }
 
-        EndPoint newClientEP = new IPEndPoint(IPAddress.IPv6Any, 0);
+        EndPoint _newClientEP = new IPEndPoint(IPAddress.IPv6Any, 0);
         public void Update()
         {
+            if (socket == null)
+                return;
+
             try
             {
-                if (socket == null)
-                    return;
 
-                while (socket.IsBound && socket.Poll(0, SelectMode.SelectRead))
+                while (socket.Poll(0, SelectMode.SelectRead))
                 {
-                    int msgLength = socket.ReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref newClientEP);
+                    int msgLength = socket.ReceiveFrom(buffer, 0, buffer.Length, SocketFlags.None, ref _newClientEP);
 
                     ReceivedMessageCount++;
-                    RawInput(newClientEP, buffer, msgLength);
+                    RawInput(_newClientEP, buffer, msgLength);
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+                Disconnect();
             }
             catch (SocketException)
             {
-                //Client disconnected
                 Disconnect();
             }
         }
@@ -194,6 +198,7 @@ namespace Mirage.KCP
             {
                 socket.Close();
                 Stopped.Invoke();
+                socket = null;
             }
         }
 

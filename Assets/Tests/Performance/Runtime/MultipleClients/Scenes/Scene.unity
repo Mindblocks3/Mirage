@@ -253,8 +253,8 @@ MonoBehaviour:
   Transport: {fileID: 1193428350}
   authenticator: {fileID: 0}
   _started:
-      m_PersistentCalls:
-        m_Calls: []
+    m_PersistentCalls:
+      m_Calls: []
   _connected:
     m_PersistentCalls:
       m_Calls: []
@@ -265,14 +265,14 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _stopped:
-      m_PersistentCalls:
-        m_Calls: []
+    m_PersistentCalls:
+      m_Calls: []
   _onStartHost:
-      m_PersistentCalls:
-        m_Calls: []
+    m_PersistentCalls:
+      m_Calls: []
   _onStopHost:
-      m_PersistentCalls:
-        m_Calls: []
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1193428350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,14 +285,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3fbf0a5cb914b1c9bbb8a42e081f4bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Started:
-    m_PersistentCalls:
-      m_Calls: []
   Stopped:
     m_PersistentCalls:
       m_Calls: []
   Port: 7778
-  HashCashBits: 15
+  HashCashBits: 0
   SendWindowSize: 32
   ReceiveWindowSize: 8192
   delayMode: 0

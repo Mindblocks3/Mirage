@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using NUnit.Framework;
@@ -16,13 +17,13 @@ namespace Mirage.Tests.Performance.Runtime
     [Category("Benchmark")]
     public class MultipleClients
     {
-        const string ScenePath = "Assets/Tests/Performance/Runtime/MultipleClients/Scenes/Scene.unity";
-        const string MonsterPath = "Assets/Tests/Performance/Runtime/MultipleClients/Prefabs/Monster.prefab";
-        const int Warmup = 50;
-        const int MeasureCount = 256;
+        const string SCENE_PATH = "Assets/Tests/Performance/Runtime/MultipleClients/Scenes/Scene.unity";
+        const string MONSTER_PATH = "Assets/Tests/Performance/Runtime/MultipleClients/Prefabs/Monster.prefab";
+        const int WARMUP = 50;
+        const int MEASURE_COUNT = 256;
 
-        const int ClientCount = 10;
-        const int MonsterCount = 10;
+        const int CLIENT_COUNT = 10;
+        const int MONSTER_COUNT = 10;
 
         [FormerlySerializedAs("server")]
         public NetworkServer Server;
@@ -32,17 +33,17 @@ namespace Mirage.Tests.Performance.Runtime
         public Transport Transport;
 
         public NetworkIdentity MonsterPrefab;
-        private GameObject clientGo;
+        private readonly List<GameObject> _clients = new();
 
         [UnitySetUp]
         public IEnumerator SetUp() => UniTask.ToCoroutine(async () =>
         {
             // load scene
-            await EditorSceneManager.LoadSceneAsyncInPlayMode(ScenePath, new LoadSceneParameters { loadSceneMode = LoadSceneMode.Additive });
-            Scene scene = SceneManager.GetSceneByPath(ScenePath);
+            await EditorSceneManager.LoadSceneAsyncInPlayMode(SCENE_PATH, new LoadSceneParameters { loadSceneMode = LoadSceneMode.Additive });
+            var scene = SceneManager.GetSceneByPath(SCENE_PATH);
             SceneManager.SetActiveScene(scene);
 
-            MonsterPrefab = AssetDatabase.LoadAssetAtPath<NetworkIdentity>(MonsterPath);
+            MonsterPrefab = AssetDatabase.LoadAssetAtPath<NetworkIdentity>(MONSTER_PATH);
             // load host
             Server = Object.FindObjectOfType<NetworkServer>();
             ServerObjectManager = Object.FindObjectOfType<ServerObjectManager>();
@@ -60,36 +61,37 @@ namespace Mirage.Tests.Performance.Runtime
 
             Transport = Object.FindObjectOfType<Transport>();
 
+            _clients.Clear();
             // connect from a bunch of clients
-            for (int i = 0; i < ClientCount; i++)
-                await StartClient(i, Transport);
+            for (var i = 0; i < CLIENT_COUNT; i++) {
+                var client = await StartClient(i, Transport);
+                _clients.Add(client);
+            }
 
             // spawn a bunch of monsters
-            for (int i = 0; i < MonsterCount; i++)
+            for (var i = 0; i < MONSTER_COUNT; i++)
                 SpawnMonster(i);
 
-            while (Object.FindObjectsOfType<MonsterBehavior>().Count() < MonsterCount * (ClientCount + 1))
+            while (Object.FindObjectsOfType<MonsterBehavior>().Count() < MONSTER_COUNT * (CLIENT_COUNT + 1))
                 await UniTask.Delay(10);
         });
 
-        private IEnumerator StartClient(int i, Transport transport)
+        private async UniTask<GameObject> StartClient(int i, Transport transport)
         {
-            clientGo = new GameObject($"Client {i}", typeof(NetworkClient), typeof(ClientObjectManager));
-            NetworkClient client = clientGo.GetComponent<NetworkClient>();
-            ClientObjectManager objectManager = clientGo.GetComponent<ClientObjectManager>();
+            var clientGo = new GameObject($"Client {i}", typeof(NetworkClient), typeof(ClientObjectManager));
+            var client = clientGo.GetComponent<NetworkClient>();
+            var objectManager = clientGo.GetComponent<ClientObjectManager>();
             objectManager.Client = client;
-            objectManager.Start();
             client.Transport = transport;
 
             objectManager.RegisterPrefab(MonsterPrefab);
-            client.ConnectAsync("localhost");
-            while (!client.IsConnected)
-                yield return null;
+            await client.ConnectAsync("localhost");
+            return clientGo;
         }
 
         private void SpawnMonster(int i)
         {
-            NetworkIdentity monster = Object.Instantiate(MonsterPrefab);
+            var monster = Object.Instantiate(MonsterPrefab);
 
             monster.GetComponent<MonsterBehavior>().MonsterId = i;
             monster.gameObject.name = $"Monster {i}";
@@ -103,10 +105,12 @@ namespace Mirage.Tests.Performance.Runtime
             Server.Stop();
             yield return null;
 
-            Object.Destroy(clientGo);
+            foreach (var client in _clients) {
+                Object.Destroy(client);
+            }
 
             // unload scene
-            Scene scene = SceneManager.GetSceneByPath(ScenePath);
+            var scene = SceneManager.GetSceneByPath(SCENE_PATH);
             yield return SceneManager.UnloadSceneAsync(scene);
 
             var networkManager = GameObject.Find("NetworkManager");
@@ -122,8 +126,8 @@ namespace Mirage.Tests.Performance.Runtime
             yield return 
                 Measure
                 .Frames()
-                .MeasurementCount(MeasureCount)
-                .WarmupCount(Warmup)
+                .MeasurementCount(MEASURE_COUNT)
+                .WarmupCount(WARMUP)
                 .Run();
         }
     }
