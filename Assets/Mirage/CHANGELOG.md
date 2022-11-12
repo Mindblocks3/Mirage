@@ -1,3 +1,26 @@
+# [98.0.0](https://github.com/Mindblocks3/Mirage/compare/v97.0.0...v98.0.0) (2022-11-12)
+
+
+### Bug Fixes
+
+* generate serializer for notify messages ([a70e6c3](https://github.com/Mindblocks3/Mirage/commit/a70e6c36a4d6226bee6e16e047342368d1dde8ee))
+* more robust disconnect ([01fa97a](https://github.com/Mindblocks3/Mirage/commit/01fa97a68d22e7031df48b4b629d0fce00dc690b))
+* more robust disconnect ([f74ac52](https://github.com/Mindblocks3/Mirage/commit/f74ac52729da5c983a2e99028d6eda2bfeddb54e))
+* server was not getting data ([970dcec](https://github.com/Mindblocks3/Mirage/commit/970dcecf0a43137be09d731e0d43dc1093e09d10))
+
+
+* reduce the size of the network id ([318b7af](https://github.com/Mindblocks3/Mirage/commit/318b7af9f75ac4bdcd2979248f04125fb04a3b19))
+
+
+### Performance Improvements
+
+* use assertions for hashcash ([7cfb5b4](https://github.com/Mindblocks3/Mirage/commit/7cfb5b4344d13f5db71040b6156617e540cb4d29))
+
+
+### BREAKING CHANGES
+
+* reduce net id size to 2 bytes
+
 # [97.0.0](https://github.com/Mindblocks3/Mirage/compare/v96.0.6...v97.0.0) (2022-11-09)
 
 
