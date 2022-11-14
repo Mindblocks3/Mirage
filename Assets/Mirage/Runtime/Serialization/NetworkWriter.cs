@@ -126,6 +126,8 @@ namespace Mirage.Serialization
             return new ArraySegment<byte>(buffer, 0, Length);
         }
 
+        public ReadOnlySpan<byte> AsSpan() => new ReadOnlySpan<byte>(buffer, 0, Length);
+
         public void WriteByte(byte value)
         {
             EnsureLength(position + 1);
@@ -135,7 +137,7 @@ namespace Mirage.Serialization
 
         // for byte arrays with consistent size, where the reader knows how many to read
         // (like a packet opcode that's always the same)
-        public void WriteBytes(Span<byte> buffer)
+        public void WriteBytes(ReadOnlySpan<byte> buffer)
         {
             EnsureLength(position + buffer.Length);
             buffer.CopyTo(this.buffer.AsSpan(position));

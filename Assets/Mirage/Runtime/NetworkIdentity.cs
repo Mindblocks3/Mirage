@@ -845,9 +845,9 @@ namespace Mirage
                     //    OnSerialize again
                     if (comp.syncMode == SyncMode.Observers)
                     {
-                        var segment = ownerWriter.ToArraySegment();
+                        var segment = ownerWriter.AsSpan();
                         int length = ownerWriter.Position - startPosition;
-                        observersWriter.WriteBytes(segment.Array.AsSpan(startPosition, length));
+                        observersWriter.WriteBytes(segment.Slice(startPosition, length));
                         ++observersWritten;
                     }
                 }

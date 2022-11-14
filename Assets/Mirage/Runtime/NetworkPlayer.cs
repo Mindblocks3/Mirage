@@ -194,13 +194,13 @@ namespace Mirage
                 // pack message and send allocation free
                 MessagePacker.Pack(message, writer);
                 NetworkDiagnostics.OnSend(message, channelId, writer.Length, 1);
-                Send(writer.ToArraySegment(), channelId);
+                Send(writer.AsSpan(), channelId);
             }
         }
 
         // internal because no one except Mirage should send bytes directly to
         // the client. they would be detected as a message. send messages instead.
-        public void Send(ArraySegment<byte> segment, int channelId = Channel.Reliable)
+        public void Send(ReadOnlySpan<byte> segment, int channelId = Channel.Reliable)
         {
             connection.Send(segment, channelId);
         }
@@ -401,7 +401,7 @@ namespace Mirage
                 MessagePacker.Pack(notifyPacket, writer);
                 MessagePacker.Pack(message, writer);
                 NetworkDiagnostics.OnSend(message, channelId, writer.Length, 1);
-                Send(writer.ToArraySegment(), channelId);
+                Send(writer.AsSpan(), channelId);
                 lastNotifySentTime = Time.unscaledTime;
             }
 

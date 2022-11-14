@@ -16,15 +16,6 @@ namespace Mirage
         }
 
         [Test]
-        public void SenderUsesDefaultChannelForSegement()
-        {
-            IMessageSender sender = Substitute.For<IMessageSender>();
-            var segment = new ArraySegment<byte>();
-            sender.Send(segment);
-            sender.Received(1).Send(segment, Channel.Reliable);
-        }
-
-        [Test]
         public void NotifySenderUsesDefaultChannelForSegement()
         {
             INotifySender sender = Substitute.For<INotifySender>();
