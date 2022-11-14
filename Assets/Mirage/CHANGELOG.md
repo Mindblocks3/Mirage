@@ -1,3 +1,16 @@
+# [99.0.0](https://github.com/Mindblocks3/Mirage/compare/v98.0.0...v99.0.0) (2022-11-14)
+
+
+### Performance Improvements
+
+* send now use span instead of arraysegment ([21d0387](https://github.com/Mindblocks3/Mirage/commit/21d0387ae0d6dda35acd610b0649d7b4eca4381d))
+* transport now sends spans ([46b2e2c](https://github.com/Mindblocks3/Mirage/commit/46b2e2c13a96adffb4e96e1ce743400d2a381813))
+
+
+### BREAKING CHANGES
+
+* tranport sends spans instead of ArraySegment
+
 # [98.0.0](https://github.com/Mindblocks3/Mirage/compare/v97.0.0...v98.0.0) (2022-11-12)
 
 
