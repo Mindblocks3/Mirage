@@ -25,7 +25,7 @@ namespace Mirage
 
         private static void SendData(IConnection c, byte[] data)
         {
-            c.Send(new ArraySegment<byte>(data));
+            c.Send(data);
         }
 
 

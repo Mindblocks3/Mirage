@@ -86,9 +86,8 @@ namespace Mirage.KCP
             byte[] hello = new byte[1000];
             int length = HashCashEncoding.Encode(hello, token);
 
-            var data = new ArraySegment<byte>(hello, 0, length);
             // send a greeting and see if the server replies
-            Send(data);
+            Send(hello.AsSpan(0, length));
 
             var stream = new MemoryStream();
             try

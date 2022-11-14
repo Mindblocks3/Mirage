@@ -49,8 +49,8 @@ namespace Mirage.KCP
         /// </summary>
         public const int RESERVED = sizeof(ulong);
 
-        internal static readonly ArraySegment<byte> Hello = new ArraySegment<byte>(new byte[] { 0 });
-        private static readonly ArraySegment<byte> Goodby = new ArraySegment<byte>(new byte[] { 1 });
+        internal static readonly byte[] Hello = { 0 };
+        private static readonly byte[] Goodby = { 1 };
 
         protected KcpConnection(KcpDelayMode delayMode, int sendWindowSize, int receiveWindowSize)
         {
@@ -195,7 +195,7 @@ namespace Mirage.KCP
             }
         }
 
-        public void Send(ArraySegment<byte> data, int channel = Channel.Reliable)
+        public void Send(ReadOnlySpan<byte> data, int channel = Channel.Reliable)
         {
             if (channel == Channel.Reliable)
                 kcp.Send(data);

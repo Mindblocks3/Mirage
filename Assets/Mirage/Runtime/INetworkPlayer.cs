@@ -45,13 +45,7 @@ namespace Mirage
         /// <param name="message">message to send</param>
         /// <param name="token">a arbitrary object that the sender will receive with their notification</param>
         void SendNotify<T>(T message, object token, int channelId = Channel.Unreliable);
-    }
 
-    /// <summary>
-    /// An object that can receive notify messages
-    /// </summary>
-    public interface INotifyReceiver
-    {
         /// <summary>
         /// Raised when a message is delivered
         /// </summary>
@@ -66,7 +60,7 @@ namespace Mirage
     /// <summary>
     /// An object that can send and receive messages and notify messages
     /// </summary>
-    public interface IMessageHandler : IMessageSender, IMessageReceiver, INotifySender, INotifyReceiver
+    public interface IMessageHandler : IMessageSender, IMessageReceiver, INotifySender
     {
 
     }

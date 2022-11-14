@@ -68,7 +68,7 @@ namespace Mirage
             return 0;
         }
 
-        public void Send(ArraySegment<byte> data, int channel = Channel.Reliable)
+        public void Send(ReadOnlySpan<byte> data, int channel = Channel.Reliable)
         {
             connected.queue.Enqueue(data.ToArray());
             connected.MessageCount.Release();

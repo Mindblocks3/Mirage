@@ -479,5 +479,6 @@ namespace Mirage
         /// </summary>
         public event Action<INetworkPlayer, object> NotifyLost;
         #endregion
+
     }
 }

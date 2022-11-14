@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using Mirage.Serialization;
 using NSubstitute;
 using NUnit.Framework;
@@ -30,25 +31,41 @@ namespace Mirage.Tests.Runtime
 
         private byte[] lastSerializedPacket;
 
+        class MockConnection : IConnection
+        {
+            private NetworkPlayerTest testSuite;
+
+            public MockConnection(NetworkPlayerTest testSuite)
+            {
+                this.testSuite = testSuite;
+            }
+            public void Disconnect()
+            {
+                throw new NotImplementedException();
+            }
+
+            public EndPoint GetEndPointAddress() => new IPEndPoint(IPAddress.Loopback, 0);
+
+            public Cysharp.Threading.Tasks.UniTask<int> ReceiveAsync(MemoryStream buffer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Send(ReadOnlySpan<byte> data, int channel = 0)
+            {
+                var reader = new NetworkReader(data.ToArray());
+                _ = MessagePacker.UnpackId(reader);
+                testSuite.lastSent = reader.ReadNotifyPacket();
+
+                testSuite.lastSerializedPacket = data.ToArray();
+            }
+        }
 
         [SetUp]
         public void SetUp()
         {
             data = new SceneMessage();
-            mockTransportConnection = Substitute.For<IConnection>();
-
-            void ParsePacket(ArraySegment<byte> data)
-            {
-                var reader = new NetworkReader(data);
-                _ = MessagePacker.UnpackId(reader);
-                lastSent = reader.ReadNotifyPacket();
-
-                lastSerializedPacket = new byte[data.Count];
-                Array.Copy(data.Array, data.Offset, lastSerializedPacket, 0, data.Count);
-            }
-
-            mockTransportConnection.Send(
-                Arg.Do<ArraySegment<byte>>(ParsePacket), Channel.Unreliable);
+            mockTransportConnection = new MockConnection(this);
 
             player = new NetworkPlayer(mockTransportConnection);
 
