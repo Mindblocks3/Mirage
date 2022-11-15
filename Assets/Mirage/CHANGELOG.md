@@ -1,3 +1,15 @@
+# [100.0.0](https://github.com/Mindblocks3/Mirage/compare/v99.0.0...v100.0.0) (2022-11-15)
+
+
+### Performance Improvements
+
+* use ReadOnlyMemory instead of ArraySegment ([2f8c125](https://github.com/Mindblocks3/Mirage/commit/2f8c12595c77b73931410a10257a77a67b072a61))
+
+
+### BREAKING CHANGES
+
+* use ReadOnlyMemory instead of ArraySegment
+
 # [99.0.0](https://github.com/Mindblocks3/Mirage/compare/v98.0.0...v99.0.0) (2022-11-14)
 
 
