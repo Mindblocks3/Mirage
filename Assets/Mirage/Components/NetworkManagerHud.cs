@@ -65,7 +65,7 @@ namespace Mirage
                 OnlineSetActive();
                 await NetworkManager.Client.ConnectAsync(NetworkAddress);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 OfflineSetActive();
             }
