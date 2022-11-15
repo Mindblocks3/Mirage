@@ -10,31 +10,31 @@ namespace Mirage.Weaver
 {
     public class Writers
     {
-        readonly Dictionary<TypeReference, MethodReference> writeFuncs = new Dictionary<TypeReference, MethodReference>(new TypeReferenceComparer());
+        readonly Dictionary<TypeReference, MethodReference> _writeFuncs = new Dictionary<TypeReference, MethodReference>(new TypeReferenceComparer());
 
-        public int Count => writeFuncs.Count;
+        public int Count => _writeFuncs.Count;
 
-        private readonly IWeaverLogger logger;
-        private readonly ModuleDefinition module;
+        private readonly IWeaverLogger _logger;
+        private readonly ModuleDefinition _module;
 
         public Writers(ModuleDefinition module, IWeaverLogger logger)
         {
-            this.logger = logger;
-            this.module = module;
+            _logger = logger;
+            _module = module;
         }
 
         public void Register(TypeReference dataType, MethodReference methodReference)
         {
-            writeFuncs[dataType] = methodReference;
+            _writeFuncs[dataType] = methodReference;
         }
 
         void RegisterWriteFunc(TypeReference typeReference, MethodDefinition newWriterFunc)
         {
-            writeFuncs[typeReference] = newWriterFunc;
+            _writeFuncs[typeReference] = newWriterFunc;
         }
 
         public MethodReference GetWriteFunc<T>(SequencePoint sequencePoint) =>
-            GetWriteFunc(module.ImportReference<T>(), sequencePoint);
+            GetWriteFunc(_module.ImportReference<T>(), sequencePoint);
 
         /// <summary>
         /// Finds existing writer for type, if non exists trys to create one
@@ -45,11 +45,12 @@ namespace Mirage.Weaver
         /// <returns>Returns <see cref="MethodReference"/> or null</returns>
         public MethodReference GetWriteFunc(TypeReference typeReference, SequencePoint sequencePoint)
         {
-            if (writeFuncs.TryGetValue(typeReference, out MethodReference foundFunc))
+            if (_writeFuncs.TryGetValue(typeReference, out MethodReference foundFunc))
             {
                 return foundFunc;
             }
-            return GenerateWriter(module.ImportReference(typeReference), sequencePoint);
+            var reference = _module.ImportReference(typeReference);
+            return GenerateWriter(reference, sequencePoint);
         }
 
         /// <exception cref="GenerateWriterException">Throws when writer could not be generated for type</exception>
@@ -57,7 +58,7 @@ namespace Mirage.Weaver
         {
             if (typeReference.IsByReference)
             {
-                logger.Error($"Cannot pass {typeReference.Name} by reference", typeReference, sequencePoint);
+                _logger.Error($"Cannot pass {typeReference.Name} by reference", typeReference, sequencePoint);
                 return null;
             }
 
@@ -68,11 +69,12 @@ namespace Mirage.Weaver
             {
                 if (typeReference.IsMultidimensionalArray())
                 {
-                    logger.Error($"{typeReference.Name} is an unsupported type. Multidimensional arrays are not supported", typeReference, sequencePoint);
+                    _logger.Error($"{typeReference.Name} is an unsupported type. Multidimensional arrays are not supported", typeReference, sequencePoint);
                 }
                 TypeReference elementType = typeReference.GetElementType();
                 return GenerateCollectionWriter(typeReference, elementType, () => NetworkWriterExtensions.WriteArray<byte>(default, default), sequencePoint);
             }
+
 
             if (typeReference.Resolve()?.IsEnum ?? false)
             {
@@ -88,13 +90,16 @@ namespace Mirage.Weaver
 
                 return GenerateCollectionWriter(typeReference, elementType, () => NetworkWriterExtensions.WriteNullable<byte>(default, default), sequencePoint);
             }
-            if (typeReference.Is(typeof(ArraySegment<>)))
+            if (typeReference.FullName.StartsWith("System.ReadOnlyMemory"))
             {
                 var genericInstance = (GenericInstanceType)typeReference;
                 TypeReference elementType = genericInstance.GenericArguments[0];
 
-                return GenerateCollectionWriter(typeReference, elementType, () => NetworkWriterExtensions.WriteArraySegment<byte>(default, default), sequencePoint);
+                var methodRef = _module.ImportReference(typeof(NetworkWriterExtensions).GetMethod(nameof(NetworkWriterExtensions.WriteReadOnlyMemory)));
+
+                return GenerateCollectionWriter(typeReference, elementType, methodRef, sequencePoint);
             }
+
             if (typeReference.Is(typeof(List<>)))
             {
                 var genericInstance = (GenericInstanceType)typeReference;
@@ -107,7 +112,7 @@ namespace Mirage.Weaver
             TypeDefinition typeDefinition = typeReference.Resolve();
             if (typeDefinition == null)
             {
-                logger.Error($"{typeReference.Name} is not a supported type. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"{typeReference.Name} is not a supported type. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
             if (typeDefinition.IsDerivedFrom<NetworkBehaviour>())
@@ -116,32 +121,32 @@ namespace Mirage.Weaver
             }
             if (typeDefinition.IsDerivedFrom<UnityEngine.Component>())
             {
-                logger.Error($"Cannot generate writer for component type {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"Cannot generate writer for component type {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
             if (typeReference.Is<UnityEngine.Object>())
             {
-                logger.Error($"Cannot generate writer for {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"Cannot generate writer for {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
             if (typeReference.Is<UnityEngine.ScriptableObject>())
             {
-                logger.Error($"Cannot generate writer for {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"Cannot generate writer for {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
             if (typeDefinition.HasGenericParameters)
             {
-                logger.Error($"Cannot generate writer for generic type {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"Cannot generate writer for generic type {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
             if (typeDefinition.IsInterface)
             {
-                logger.Error($"Cannot generate writer for interface {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"Cannot generate writer for interface {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
             if (typeDefinition.IsAbstract)
             {
-                logger.Error($"Cannot generate writer for abstract class {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
+                _logger.Error($"Cannot generate writer for abstract class {typeReference.Name}. Use a supported type or provide a custom writer", typeReference, sequencePoint);
                 return null;
             }
 
@@ -151,7 +156,7 @@ namespace Mirage.Weaver
 
         private MethodReference GetNetworkBehaviourWriter(TypeReference typeReference)
         {
-            MethodReference writeFunc = module.ImportReference<NetworkWriter>((nw) => nw.WriteNetworkBehaviour(default));
+            MethodReference writeFunc = _module.ImportReference<NetworkWriter>((nw) => nw.WriteNetworkBehaviour(default));
             Register(typeReference, writeFunc);
             return writeFunc;
         }
@@ -176,7 +181,7 @@ namespace Mirage.Weaver
         {
             string functionName = "_Write_" + typeReference.FullName;
             // create new writer for this type
-            MethodDefinition writerFunc = module.GeneratedClass().AddMethod(functionName,
+            MethodDefinition writerFunc = _module.GeneratedClass().AddMethod(functionName,
                     MethodAttributes.Public |
                     MethodAttributes.Static |
                     MethodAttributes.HideBySig);
@@ -244,7 +249,7 @@ namespace Mirage.Weaver
                 // need this null check till later PR when GetWriteFunc throws exception instead
                 if (writeFunc == null) { return false; }
 
-                FieldReference fieldRef = module.ImportReference(field);
+                FieldReference fieldRef = _module.ImportReference(field);
 
                 fields++;
                 worker.Append(worker.Create(OpCodes.Ldarg_0));
@@ -256,7 +261,12 @@ namespace Mirage.Weaver
             return true;
         }
 
-        MethodDefinition GenerateCollectionWriter(TypeReference variable, TypeReference elementType, Expression<Action> writerFunction, SequencePoint sequencePoint)
+        MethodDefinition GenerateCollectionWriter(TypeReference variable, TypeReference elementType, Expression<Action> writerFunction, SequencePoint sequencePoint) {
+            var writerRef = _module.ImportReference(writerFunction);
+            return GenerateCollectionWriter(variable, elementType, writerRef, sequencePoint);
+        }
+
+        MethodDefinition GenerateCollectionWriter(TypeReference variable, TypeReference elementType, MethodReference writerRef, SequencePoint sequencePoint)
         {
 
             MethodDefinition writerFunc = GenerateWriterFunc(variable);
@@ -266,11 +276,11 @@ namespace Mirage.Weaver
             // need this null check till later PR when GetWriteFunc throws exception instead
             if (elementWriteFunc == null)
             {
-                logger.Error($"Cannot generate writer for {variable}. Use a supported type or provide a custom writer", variable, sequencePoint);
+                _logger.Error($"Cannot generate writer for {variable}. Use a supported type or provide a custom writer", variable, sequencePoint);
                 return writerFunc;
             }
 
-            MethodReference collectionWriter = module.ImportReference(writerFunction).GetElementMethod();
+            MethodReference collectionWriter = writerRef.GetElementMethod();
 
             var methodRef = new GenericInstanceMethod(collectionWriter);
             methodRef.GenericArguments.Add(elementType);
@@ -295,15 +305,15 @@ namespace Mirage.Weaver
         /// <param name="worker"></param>
         internal void InitializeWriters(ILProcessor worker)
         {
-            TypeReference genericWriterClassRef = module.ImportReference(typeof(Writer<>));
+            TypeReference genericWriterClassRef = _module.ImportReference(typeof(Writer<>));
 
             System.Reflection.PropertyInfo writerProperty = typeof(Writer<>).GetProperty(nameof(Writer<int>.Write));
-            MethodReference fieldRef = module.ImportReference(writerProperty.GetSetMethod());
-            TypeReference networkWriterRef = module.ImportReference(typeof(NetworkWriter));
-            TypeReference actionRef = module.ImportReference(typeof(Action<,>));
-            MethodReference actionConstructorRef = module.ImportReference(typeof(Action<,>).GetConstructors()[0]);
+            MethodReference fieldRef = _module.ImportReference(writerProperty.GetSetMethod());
+            TypeReference networkWriterRef = _module.ImportReference(typeof(NetworkWriter));
+            TypeReference actionRef = _module.ImportReference(typeof(Action<,>));
+            MethodReference actionConstructorRef = _module.ImportReference(typeof(Action<,>).GetConstructors()[0]);
 
-            foreach (MethodReference writerMethod in writeFuncs.Values)
+            foreach (MethodReference writerMethod in _writeFuncs.Values)
             {
 
                 TypeReference dataType = writerMethod.Parameters[1].ParameterType;

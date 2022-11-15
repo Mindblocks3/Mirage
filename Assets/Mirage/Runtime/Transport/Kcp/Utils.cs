@@ -9,14 +9,14 @@ namespace Mirage.KCP
             return Math.Min(Math.Max(lower, value), upper);
         }
 
-        public static bool Equal(ArraySegment<byte> seg1, ArraySegment<byte> seg2)
+        public static bool Equal(ReadOnlyMemory<byte> seg1, ReadOnlyMemory<byte> seg2)
         {
-            if (seg1.Count != seg2.Count)
+            if (seg1.Length != seg2.Length)
                 return false;
 
-            for (int i = 0; i < seg1.Count; i++)
+            for (int i = 0; i < seg1.Length; i++)
             {
-                if (seg1.Array[i + seg1.Offset] != seg2.Array[i + seg2.Offset])
+                if (seg1.Span[i] != seg2.Span[i])
                     return false;
             }
             return true;

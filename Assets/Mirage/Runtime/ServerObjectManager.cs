@@ -481,7 +481,7 @@ namespace Mirage
             {
                 bool isOwner = identity.ConnectionToClient == player;
 
-                ArraySegment<byte> payload = CreateSpawnMessagePayload(isOwner, identity, ownerWriter, observersWriter);
+                var payload = CreateSpawnMessagePayload(isOwner, identity, ownerWriter, observersWriter);
 
                 player.Send(new SpawnMessage
                 {
@@ -500,7 +500,7 @@ namespace Mirage
             }
         }
 
-        static ArraySegment<byte> CreateSpawnMessagePayload(bool isOwner, NetworkIdentity identity, PooledNetworkWriter ownerWriter, PooledNetworkWriter observersWriter)
+        static ReadOnlyMemory<byte> CreateSpawnMessagePayload(bool isOwner, NetworkIdentity identity, PooledNetworkWriter ownerWriter, PooledNetworkWriter observersWriter)
         {
             // Only call OnSerializeAllSafely if there are NetworkBehaviours
             if (identity.NetworkBehaviours.Length == 0)
@@ -514,9 +514,9 @@ namespace Mirage
 
             // use owner segment if 'conn' owns this identity, otherwise
             // use observers segment
-            ArraySegment<byte> payload = isOwner ?
-                ownerWriter.ToArraySegment() :
-                observersWriter.ToArraySegment();
+            var payload = isOwner ?
+                ownerWriter.ToReadOnlyMemory() :
+                observersWriter.ToReadOnlyMemory();
 
             return payload;
         }
@@ -584,7 +584,6 @@ namespace Mirage
             if (UnityEditor.EditorUtility.IsPersistent(identity.gameObject))
                 return false;
 #endif
-
             // If not a scene object
             return identity.sceneId != 0;
         }

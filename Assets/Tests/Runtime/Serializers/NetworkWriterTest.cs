@@ -54,10 +54,10 @@ namespace Mirage.Tests.Runtime
             writer.WriteBytes(data);
 
             var reader = new NetworkReader(writer.ToArray());
-            ArraySegment<byte> deserialized = reader.ReadBytesSegment(data.Length);
-            Assert.That(deserialized.Count, Is.EqualTo(data.Length));
+            var deserialized = reader.ReadBytesSegment(data.Length);
+            Assert.That(deserialized.Length, Is.EqualTo(data.Length));
             for (int i = 0; i < data.Length; ++i)
-                Assert.That(deserialized.Array[deserialized.Offset + i], Is.EqualTo(data[i]));
+                Assert.That(deserialized.Span[i], Is.EqualTo(data[i]));
         }
 
         // write byte[], read segment
@@ -68,10 +68,10 @@ namespace Mirage.Tests.Runtime
             writer.WriteBytesAndSize(data);
 
             var reader = new NetworkReader(writer.ToArray());
-            ArraySegment<byte> deserialized = reader.ReadBytesAndSizeSegment();
-            Assert.That(deserialized.Count, Is.EqualTo(data.Length));
+            var deserialized = reader.ReadBytesAndSizeSegment();
+            Assert.That(deserialized.Length, Is.EqualTo(data.Length));
             for (int i = 0; i < data.Length; ++i)
-                Assert.That(deserialized.Array[deserialized.Offset + i], Is.EqualTo(data[i]));
+                Assert.That(deserialized.Span[i], Is.EqualTo(data[i]));
         }
 
         // write segment, read segment
@@ -80,14 +80,14 @@ namespace Mirage.Tests.Runtime
         {
             byte[] data = { 1, 2, 3, 4 };
             // [2, 3]
-            var segment = new ArraySegment<byte>(data, 1, 1);
+            var segment = data.AsMemory(1,1);
             writer.WriteBytesAndSizeSegment(segment);
 
             var reader = new NetworkReader(writer.ToArray());
-            ArraySegment<byte> deserialized = reader.ReadBytesAndSizeSegment();
-            Assert.That(deserialized.Count, Is.EqualTo(segment.Count));
-            for (int i = 0; i < segment.Count; ++i)
-                Assert.That(deserialized.Array[deserialized.Offset + i], Is.EqualTo(segment.Array[segment.Offset + i]));
+            var deserialized = reader.ReadBytesAndSizeSegment();
+            Assert.That(deserialized.Length, Is.EqualTo(segment.Length));
+            for (int i = 0; i < segment.Length; ++i)
+                Assert.That(deserialized.Span[i], Is.EqualTo(segment.Span[i]));
         }
 
         [Test]
@@ -493,12 +493,12 @@ namespace Mirage.Tests.Runtime
         }
 
         [Test]
-        public void TestToArraySegment()
+        public void TestToReadOnlyMemory()
         {
             writer.WriteString("hello");
             writer.WriteString("world");
 
-            var reader = new NetworkReader(writer.ToArraySegment());
+            var reader = new NetworkReader(writer.ToReadOnlyMemory());
             Assert.That(reader.ReadString(), Is.EqualTo("hello"));
             Assert.That(reader.ReadString(), Is.EqualTo("world"));
         }

@@ -29,7 +29,7 @@ classDiagram
 
     class IConnection {
         <<interface>>
-        SendAsync(ArraySegment<byte>, channel)
+        SendAsync(ReadOnlyMemory<byte>, channel)
         ReceiveAsync(MemoryStream) int
         Disconnect()
     }

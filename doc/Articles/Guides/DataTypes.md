@@ -17,7 +17,7 @@ Mirage supports a number of data types you can use with these, including:
     - These will allocate garbage and will be instantiated new on the receiver every time they're sent.
 - Arrays of any of the above 
     - Not supported with SyncVars or SyncLists
-- ArraySegments of any of the above 
+- ReadOnlyMemorys of any of the above 
     - Not supported with SyncVars or SyncLists
 
 ## Game Objects

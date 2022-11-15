@@ -2,12 +2,12 @@ using System;
 using Mirage;
 using UnityEngine;
 
-namespace GeneratedReaderWriter.CreatesForStructArraySegment
+namespace GeneratedReaderWriter.CreatesForStructReadOnlyMemory
 {
-    public class CreatesForStructArraySegment : NetworkBehaviour
+    public class CreatesForStructReadOnlyMemory : NetworkBehaviour
     {
         [ClientRpc]
-        public void RpcDoSomething(ArraySegment<MyStruct> data)
+        public void RpcDoSomething(ReadOnlyMemory<MyStruct> data)
         {
             // empty
         }

@@ -260,7 +260,7 @@ namespace Mirage.KCP
 
             // if we receive a disconnect message,  then close everything
 
-            var dataSegment = new ArraySegment<byte>(buffer.GetBuffer(), 0, msgSize);
+            var dataSegment = new ReadOnlyMemory<byte>(buffer.GetBuffer(), 0, msgSize);
             if (Utils.Equal(dataSegment, Goodby))
             {
                 cancellationTokenSource.Cancel();

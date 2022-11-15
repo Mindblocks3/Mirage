@@ -155,7 +155,7 @@ namespace Mirage.Tests.Runtime.NetworkBehaviourSerialize
             {
                 source.OnSerialize(writer, initialState);
 
-                using (PooledNetworkReader reader = NetworkReaderPool.GetReader(writer.ToArraySegment()))
+                using (PooledNetworkReader reader = NetworkReaderPool.GetReader(writer.ToReadOnlyMemory()))
                 {
                     target.OnDeserialize(reader, initialState);
                 }

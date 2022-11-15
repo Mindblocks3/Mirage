@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,8 +55,20 @@ namespace Mirage
         public void StartClientButtonHandler()
         {
             SetLabel("Client Mode");
-            NetworkManager.Client.ConnectAsync(NetworkAddress).Forget();
-            OnlineSetActive();
+            Connect(NetworkAddress).Forget();
+        }
+
+        private async UniTaskVoid Connect(string networkAddress)
+        {
+            try
+            {
+                OnlineSetActive();
+                await NetworkManager.Client.ConnectAsync(NetworkAddress);
+            }
+            catch (Exception e)
+            {
+                OfflineSetActive();
+            }
         }
 
         public void StopButtonHandler()

@@ -164,13 +164,13 @@ namespace Mirage.Weaver
         }
 
         [Test]
-        public void CreatesForArraySegment()
+        public void CreatesForReadOnlyMemory()
         {
             IsSuccess();
         }
 
         [Test]
-        public void CreatesForStructArraySegment()
+        public void CreatesForStructReadOnlyMemory()
         {
             IsSuccess();
         }
@@ -200,10 +200,10 @@ namespace Mirage.Weaver
         }
 
         [Test]
-        public void GivesErrorForInvalidArraySegmentType()
+        public void GivesErrorForInvalidReadOnlyMemoryType()
         {
-            HasError("Cannot generate writer for System.ArraySegment`1<UnityEngine.MonoBehaviour>. Use a supported type or provide a custom writer",
-                "System.ArraySegment`1<UnityEngine.MonoBehaviour>");
+            HasError("Cannot generate writer for System.ReadOnlyMemory`1<UnityEngine.MonoBehaviour>. Use a supported type or provide a custom writer",
+                "System.ReadOnlyMemory`1<UnityEngine.MonoBehaviour>");
             HasError("Cannot generate writer for component type MonoBehaviour. Use a supported type or provide a custom writer", "UnityEngine.MonoBehaviour");
             HasError("Cannot generate reader for component type MonoBehaviour. Use a supported type or provide a custom reader", "UnityEngine.MonoBehaviour");
         }

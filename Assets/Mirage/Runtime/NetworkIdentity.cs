@@ -1222,7 +1222,7 @@ namespace Mirage
                     //  below too)
                     if (ownerWritten > 0)
                     {
-                        varsMessage.payload = ownerWriter.ToArraySegment();
+                        varsMessage.payload = ownerWriter.ToReadOnlyMemory();
                         if (ConnectionToClient != null && ConnectionToClient.IsReady)
                             ConnectionToClient.Send(varsMessage);
                     }
@@ -1231,7 +1231,7 @@ namespace Mirage
                     // (only if we serialized anything for observers)
                     if (observersWritten > 0)
                     {
-                        varsMessage.payload = observersWriter.ToArraySegment();
+                        varsMessage.payload = observersWriter.ToReadOnlyMemory();
                         SendToRemoteObservers(varsMessage, false);
                     }
 

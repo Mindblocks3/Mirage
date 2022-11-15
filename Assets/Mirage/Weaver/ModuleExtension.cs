@@ -24,7 +24,7 @@ namespace Mirage.Weaver
             if (expression.Body is NewExpression newExpression)
             {
                 ConstructorInfo methodInfo = newExpression.Constructor;
-                // constructor is null when creating an ArraySegment<object>
+                // constructor is null when creating an ReadOnlyMemory<object>
                 methodInfo = methodInfo ?? newExpression.Type.GetConstructors()[0];
                 return module.ImportReference(methodInfo);
             }

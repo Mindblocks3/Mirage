@@ -78,7 +78,7 @@ namespace Mirage.Tests.Runtime
             var writer = new NetworkWriter();
             writer.Write(msg);
 
-            var reader = new NetworkReader(writer.ToArraySegment());
+            var reader = new NetworkReader(writer.ToReadOnlyMemory());
             return reader.Read<T>();
         }
     }

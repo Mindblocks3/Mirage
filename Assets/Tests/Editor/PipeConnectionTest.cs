@@ -35,7 +35,7 @@ namespace Mirage
             await c.ReceiveAsync(memoryStream);
 
             memoryStream.TryGetBuffer(out ArraySegment<byte> receivedData);
-            Assert.That(receivedData, Is.EqualTo(new ArraySegment<byte>(expected)));
+            Assert.That(receivedData, Is.EqualTo(expected));
         }
 
         [UnityTest]

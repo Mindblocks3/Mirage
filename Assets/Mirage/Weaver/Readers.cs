@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Mirage.Serialization;
 using Mono.Cecil;
@@ -66,9 +67,9 @@ namespace Mirage.Weaver
 
                 return GenerateReadCollection(typeReference, elementType, () => NetworkReaderExtensions.ReadNullable<byte>(default), sequencePoint);
             }
-            if (variableDefinition.Is(typeof(ArraySegment<>)))
+            if (variableDefinition.FullName.StartsWith("System.ReadOnlyMemory"))
             {
-                return GenerateArraySegmentReadFunc(typeReference, sequencePoint);
+                return GenerateReadOnlyMemoryReadFunc(typeReference, sequencePoint);
             }
             if (variableDefinition.Is(typeof(List<>)))
             {
@@ -158,7 +159,7 @@ namespace Mirage.Weaver
             return readerFunc;
         }
 
-        MethodDefinition GenerateArraySegmentReadFunc(TypeReference variable, SequencePoint sequencePoint)
+        MethodDefinition GenerateReadOnlyMemoryReadFunc(TypeReference variable, SequencePoint sequencePoint)
         {
             var genericInstance = (GenericInstanceType)variable;
             TypeReference elementType = genericInstance.GenericArguments[0];
@@ -172,9 +173,12 @@ namespace Mirage.Weaver
             worker.Append(worker.Create(OpCodes.Ldarg_0));
             worker.Append(worker.Create(OpCodes.Call, GetReadFunc(arrayType, sequencePoint)));
 
-            // return new ArraySegment<T>($array);
-            MethodReference arraySegmentConstructor = module.ImportReference(() => new ArraySegment<object>());
-            worker.Append(worker.Create(OpCodes.Newobj, arraySegmentConstructor.MakeHostInstanceGeneric(genericInstance)));
+            var readOnlyMemoryDef = variable.Resolve();
+            var constructorDef = readOnlyMemoryDef.GetConstructors().First(c => c.Parameters.Count == 1);
+
+            // return new ReadOnlyMemory<T>($array);
+            MethodReference ReadOnlyMemoryConstructor = module.ImportReference(constructorDef);
+            worker.Append(worker.Create(OpCodes.Newobj, ReadOnlyMemoryConstructor.MakeHostInstanceGeneric(genericInstance)));
             worker.Append(worker.Create(OpCodes.Ret));
             return readerFunc;
         }

@@ -50,7 +50,7 @@ namespace Mirage.Serialization
         }
 
         // pack message before sending
-        // -> NetworkWriter passed as arg so that we can use .ToArraySegment
+        // -> NetworkWriter passed as arg so that we can use .ToReadOnlyMemory
         //    and do an allocation free send before recycling it.
         public static void Pack<T>(T message, NetworkWriter writer)
         {

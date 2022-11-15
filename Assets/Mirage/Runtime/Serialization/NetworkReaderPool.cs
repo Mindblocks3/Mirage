@@ -11,7 +11,7 @@ namespace Mirage.Serialization
     {
         internal PooledNetworkReader(byte[] bytes) : base(bytes) { }
 
-        internal PooledNetworkReader(ArraySegment<byte> segment) : base(segment) { }
+        internal PooledNetworkReader(ReadOnlyMemory<byte> segment) : base(segment) { }
 
         public void Dispose()
         {
@@ -88,7 +88,7 @@ namespace Mirage.Serialization
         /// Get the next reader in the pool
         /// <para>If pool is empty, creates a new Reader</para>
         /// </summary>
-        public static PooledNetworkReader GetReader(ArraySegment<byte> segment)
+        public static PooledNetworkReader GetReader(ReadOnlyMemory<byte> segment)
         {
             if (next == -1)
             {
@@ -125,11 +125,11 @@ namespace Mirage.Serialization
         // SetBuffer methods mirror constructor for ReaderPool
         static void SetBuffer(NetworkReader reader, byte[] bytes)
         {
-            reader.buffer = new ArraySegment<byte>(bytes);
+            reader.buffer = bytes;
             reader.Position = 0;
         }
 
-        static void SetBuffer(NetworkReader reader, ArraySegment<byte> segment)
+        static void SetBuffer(NetworkReader reader, ReadOnlyMemory<byte> segment)
         {
             reader.buffer = segment;
             reader.Position = 0;

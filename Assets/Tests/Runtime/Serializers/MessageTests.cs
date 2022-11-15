@@ -18,7 +18,7 @@ namespace Mirage.Tests.Runtime
                 netId = 42,
                 componentIndex = 4,
                 functionHash = 0xABCDEF,
-                payload = new ArraySegment<byte>(new byte[] { 0x01, 0x02 })
+                payload = new byte[] { 0x01, 0x02 }
             };
             byte[] arr = MessagePacker.Pack(message);
 
@@ -27,10 +27,10 @@ namespace Mirage.Tests.Runtime
             Assert.That(fresh.netId, Is.EqualTo(message.netId));
             Assert.That(fresh.componentIndex, Is.EqualTo(message.componentIndex));
             Assert.That(fresh.functionHash, Is.EqualTo(message.functionHash));
-            Assert.That(fresh.payload, Has.Count.EqualTo(message.payload.Count));
-            for (int i = 0; i < fresh.payload.Count; ++i)
-                Assert.That(fresh.payload.Array[fresh.payload.Offset + i],
-                    Is.EqualTo(message.payload.Array[message.payload.Offset + i]));
+            Assert.That(fresh.payload, Has.Length.EqualTo(message.payload.Length));
+            for (int i = 0; i < fresh.payload.Length; ++i)
+                Assert.That(fresh.payload.Span[i],
+                    Is.EqualTo(message.payload.Span[i]));
         }
 
         [AssertionMethod]
@@ -112,17 +112,17 @@ namespace Mirage.Tests.Runtime
                 netId = 42,
                 componentIndex = 4,
                 functionHash = 0xABCDEF,
-                payload = new ArraySegment<byte>(new byte[] { 0x01, 0x02 })
+                payload = new byte[] { 0x01, 0x02 }
             };
             byte[] arr = MessagePacker.Pack(message);
             RpcMessage fresh = MessagePacker.Unpack<RpcMessage>(arr);
             Assert.That(fresh.netId, Is.EqualTo(message.netId));
             Assert.That(fresh.componentIndex, Is.EqualTo(message.componentIndex));
             Assert.That(fresh.functionHash, Is.EqualTo(message.functionHash));
-            Assert.That(fresh.payload.Count, Is.EqualTo(message.payload.Count));
-            for (int i = 0; i < fresh.payload.Count; ++i)
-                Assert.That(fresh.payload.Array[fresh.payload.Offset + i],
-                    Is.EqualTo(message.payload.Array[message.payload.Offset + i]));
+            Assert.That(fresh.payload.Length, Is.EqualTo(message.payload.Length));
+            for (int i = 0; i < fresh.payload.Length; ++i)
+                Assert.That(fresh.payload.Span[i],
+                    Is.EqualTo(message.payload.Span[i]));
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace Mirage.Tests.Runtime
                     position = UnityEngine.Vector3.one,
                     rotation = UnityEngine.Quaternion.identity,
                     scale = UnityEngine.Vector3.one,
-                    payload = new ArraySegment<byte>(new byte[] { 0x01, 0x02 })
+                    payload = new byte[] { 0x01, 0x02 }
                 };
                 byte[] arr = MessagePacker.Pack(message);
                 SpawnMessage fresh = MessagePacker.Unpack<SpawnMessage>(arr);
@@ -157,10 +157,10 @@ namespace Mirage.Tests.Runtime
                 Assert.That(fresh.position, Is.EqualTo(message.position));
                 Assert.That(fresh.rotation, Is.EqualTo(message.rotation));
                 Assert.That(fresh.scale, Is.EqualTo(message.scale));
-                Assert.That(fresh.payload.Count, Is.EqualTo(message.payload.Count));
-                for (int i = 0; i < fresh.payload.Count; ++i)
-                    Assert.That(fresh.payload.Array[fresh.payload.Offset + i],
-                        Is.EqualTo(message.payload.Array[message.payload.Offset + i]));
+                Assert.That(fresh.payload.Length, Is.EqualTo(message.payload.Length));
+                for (int i = 0; i < fresh.payload.Length; ++i)
+                    Assert.That(fresh.payload.Span[i],
+                        Is.EqualTo(message.payload.Span[i]));
             }
         }
 
@@ -171,15 +171,15 @@ namespace Mirage.Tests.Runtime
             var message = new UpdateVarsMessage
             {
                 netId = 42,
-                payload = new ArraySegment<byte>(new byte[] { 0x01, 0x02 })
+                payload = new byte[] { 0x01, 0x02 }
             };
             byte[] arr = MessagePacker.Pack(message);
             UpdateVarsMessage fresh = MessagePacker.Unpack<UpdateVarsMessage>(arr);
             Assert.That(fresh.netId, Is.EqualTo(message.netId));
-            Assert.That(fresh.payload.Count, Is.EqualTo(message.payload.Count));
-            for (int i = 0; i < fresh.payload.Count; ++i)
-                Assert.That(fresh.payload.Array[fresh.payload.Offset + i],
-                    Is.EqualTo(message.payload.Array[message.payload.Offset + i]));
+            Assert.That(fresh.payload.Length, Is.EqualTo(message.payload.Length));
+            for (int i = 0; i < fresh.payload.Length; ++i)
+                Assert.That(fresh.payload.Span[i],
+                    Is.EqualTo(message.payload.Span[i]));
         }
     }
 }

@@ -323,7 +323,7 @@ namespace Mirage
 
             // deserialize components if any payload
             // (Count is 0 if there were no components)
-            if (msg.payload.Count > 0)
+            if (msg.payload.Length > 0)
             {
                 using (PooledNetworkReader payloadReader = NetworkReaderPool.GetReader(msg.payload))
                 {

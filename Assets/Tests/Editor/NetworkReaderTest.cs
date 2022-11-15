@@ -18,7 +18,7 @@ namespace Mirage
             byte[] bytes = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C };
             for (int i = 0; i < 10000000; ++i)
             {
-                ArraySegment<byte> segment = new ArraySegment<byte>(bytes);
+                ReadOnlyMemory<byte> segment = new ReadOnlyMemory<byte>(bytes);
                 NetworkReader reader = new NetworkReader(segment);
                 Vector3 value = reader.ReadVector3();
             }

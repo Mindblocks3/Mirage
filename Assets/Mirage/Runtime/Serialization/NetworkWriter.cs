@@ -116,14 +116,14 @@ namespace Mirage.Serialization
             return data;
         }
 
-        // Gets the serialized data in an ArraySegment<byte>
+        // Gets the serialized data in an ReadOnlyMemory<byte>
         // this is similar to ToArray(),  but it gets the data in O(1)
         // and without allocations.
         // Do not write anything else or modify the NetworkWriter
-        // while you are using the ArraySegment
-        public ArraySegment<byte> ToArraySegment()
+        // while you are using the ReadOnlyMemory
+        public ReadOnlyMemory<byte> ToReadOnlyMemory()
         {
-            return new ArraySegment<byte>(buffer, 0, Length);
+            return new ReadOnlyMemory<byte>(buffer, 0, Length);
         }
 
         public ReadOnlySpan<byte> AsSpan() => new ReadOnlySpan<byte>(buffer, 0, Length);
@@ -297,9 +297,11 @@ namespace Mirage.Serialization
             writer.WriteBytesAndSize(buffer, 0, buffer != null ? buffer.Length : 0);
         }
 
-        public static void WriteBytesAndSizeSegment(this NetworkWriter writer, ArraySegment<byte> buffer)
+        public static void WriteBytesAndSizeSegment(this NetworkWriter writer, ReadOnlyMemory<byte> buffer)
         {
-            writer.WriteBytesAndSize(buffer.Array, buffer.Offset, buffer.Count);
+            
+            writer.WritePackedUInt32(checked((uint)buffer.Length) + 1u);
+            writer.WriteBytes(buffer.Span);
         }
 
         // zigzag encoding https://gist.github.com/mfuerstenau/ba870a29e16536fdbaba
@@ -506,13 +508,13 @@ namespace Mirage.Serialization
                 writer.Write(array[i]);
         }
 
-        public static void WriteArraySegment<T>(this NetworkWriter writer, ArraySegment<T> segment)
+        public static void WriteReadOnlyMemory<T>(this NetworkWriter writer, ReadOnlyMemory<T> segment)
         {
-            int length = segment.Count;
+            int length = segment.Length;
             writer.WritePackedInt32(length);
             for (int i = 0; i < length; i++)
             {
-                writer.Write(segment.Array[segment.Offset + i]);
+                writer.Write(segment.Span[i]);
             }
         }
 

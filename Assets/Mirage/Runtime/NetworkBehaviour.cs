@@ -238,7 +238,7 @@ namespace Mirage
                 // type+func so Inventory.RpcUse != Equipment.RpcUse
                 functionHash = RemoteCallHelper.GetMethodHash(invokeClass, cmdName),
                 // segment to avoid reader allocations
-                payload = writer.ToArraySegment()
+                payload = writer.ToReadOnlyMemory()
             };
 
             Client.Send(message, channelId);
@@ -282,7 +282,7 @@ namespace Mirage
                 // type+func so Inventory.RpcUse != Equipment.RpcUse
                 functionHash = RemoteCallHelper.GetMethodHash(invokeClass, cmdName),
                 // segment to avoid reader allocations
-                payload = writer.ToArraySegment()
+                payload = writer.ToReadOnlyMemory()
             };
 
             Client.Send(message, channelId);
@@ -317,7 +317,7 @@ namespace Mirage
                 // type+func so Inventory.RpcUse != Equipment.RpcUse
                 functionHash = RemoteCallHelper.GetMethodHash(invokeClass, rpcName),
                 // segment to avoid reader allocations
-                payload = writer.ToArraySegment()
+                payload = writer.ToReadOnlyMemory()
             };
 
             // The public facing parameter is excludeOwner in [ClientRpc]
@@ -358,7 +358,7 @@ namespace Mirage
                 // type+func so Inventory.RpcUse != Equipment.RpcUse
                 functionHash = RemoteCallHelper.GetMethodHash(invokeClass, rpcName),
                 // segment to avoid reader allocations
-                payload = writer.ToArraySegment()
+                payload = writer.ToReadOnlyMemory()
             };
 
             player.Send(message, channelId);

@@ -261,7 +261,7 @@ namespace Mirage.Tests.Runtime
             Action<SceneMessage> mockHandler = Substitute.For<Action<SceneMessage>>();
             player.RegisterHandler(mockHandler);
 
-            player.TransportReceive(new ArraySegment<byte>(lastSerializedPacket), Channel.Unreliable);
+            player.TransportReceive(lastSerializedPacket, Channel.Unreliable);
             mockHandler.Received().Invoke(new SceneMessage());
         }
 

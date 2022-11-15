@@ -147,10 +147,10 @@ namespace Mirage.Weaver
         }
 
         /// <summary>
-        /// Given a method of a generic class such as ArraySegment`T.get_Count,
-        /// and a generic instance such as ArraySegment`int
-        /// Creates a reference to the specialized method  ArraySegment`int`.get_Count
-        /// <para> Note that calling ArraySegment`T.get_Count directly gives an invalid IL error </para>
+        /// Given a method of a generic class such as ReadOnlyMemory`T.get_Count,
+        /// and a generic instance such as ReadOnlyMemory`int
+        /// Creates a reference to the specialized method  ReadOnlyMemory`int`.get_Count
+        /// <para> Note that calling ReadOnlyMemory`T.get_Count directly gives an invalid IL error </para>
         /// </summary>
         /// <param name="self"></param>
         /// <param name="instanceType"></param>

@@ -56,8 +56,8 @@ Weaver will Generate Read Write functions for
 - Enums
 - Arrays
     - eg `int[]`
-- ArraySegments
-    - eg `ArraySegment<int>`
+- ReadOnlyMemorys
+    - eg `ReadOnlyMemory<int>`
 - Lists
     - eg `List<int>`
 

@@ -11,7 +11,7 @@ namespace Mirage.Weaver
         }
 
         [Test]
-        public void SyncVarArraySegment()
+        public void SyncVarReadOnlyMemory()
         {
             IsSuccess();
         }

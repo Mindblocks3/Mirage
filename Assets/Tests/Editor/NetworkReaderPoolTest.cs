@@ -26,12 +26,12 @@ namespace Mirage
         {
             object firstReader;
 
-            using (PooledNetworkReader Reader = NetworkReaderPool.GetReader(default(ArraySegment<byte>)))
+            using (PooledNetworkReader Reader = NetworkReaderPool.GetReader(default))
             {
                 firstReader = Reader;
             }
 
-            using (PooledNetworkReader Reader = NetworkReaderPool.GetReader(default(ArraySegment<byte>)))
+            using (PooledNetworkReader Reader = NetworkReaderPool.GetReader(default))
             {
                 Assert.That(Reader, Is.SameAs(firstReader), "Pool should reuse the Reader");
             }
@@ -47,7 +47,7 @@ namespace Mirage
 
             for (int i = 0; i < testReaderCount; i++)
             {
-                Readers[i] = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+                Readers[i] = NetworkReaderPool.GetReader(default);
             }
 
             // Make sure all Readers are different
@@ -60,16 +60,16 @@ namespace Mirage
             NetworkReaderPool.Capacity = 1;
 
             // get 2 Readers
-            PooledNetworkReader a = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
-            PooledNetworkReader b = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+            PooledNetworkReader a = NetworkReaderPool.GetReader(default);
+            PooledNetworkReader b = NetworkReaderPool.GetReader(default);
 
             // recycle all
             NetworkReaderPool.Recycle(a);
             NetworkReaderPool.Recycle(b);
 
             // get 2 new ones
-            PooledNetworkReader c = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
-            PooledNetworkReader d = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+            PooledNetworkReader c = NetworkReaderPool.GetReader(default);
+            PooledNetworkReader d = NetworkReaderPool.GetReader(default);
 
             // exactly one should be reused, one should be new
             bool cReused = c == a || c == b;
@@ -86,8 +86,8 @@ namespace Mirage
             NetworkReaderPool.Capacity = 2;
 
             // get Reader and recycle so we have 2 in there, hence 'next' is at limit
-            PooledNetworkReader a = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
-            PooledNetworkReader b = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+            PooledNetworkReader a = NetworkReaderPool.GetReader(default);
+            PooledNetworkReader b = NetworkReaderPool.GetReader(default);
             NetworkReaderPool.Recycle(a);
             NetworkReaderPool.Recycle(b);
 
@@ -95,7 +95,7 @@ namespace Mirage
             NetworkReaderPool.Capacity = 1;
 
             // get one. should return the only one which is still in there.
-            PooledNetworkReader c = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+            PooledNetworkReader c = NetworkReaderPool.GetReader(default);
             Assert.That(c, !Is.Null);
             Assert.That(c == a || c == b);
         }
@@ -107,15 +107,15 @@ namespace Mirage
             NetworkReaderPool.Capacity = 1;
 
             // create and recycle one
-            PooledNetworkReader a = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+            PooledNetworkReader a = NetworkReaderPool.GetReader(default);
             NetworkReaderPool.Recycle(a);
 
             // grow capacity
             NetworkReaderPool.Capacity = 2;
 
             // get two
-            PooledNetworkReader b = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
-            PooledNetworkReader c = NetworkReaderPool.GetReader(default(ArraySegment<byte>));
+            PooledNetworkReader b = NetworkReaderPool.GetReader(default);
+            PooledNetworkReader c = NetworkReaderPool.GetReader(default);
             Assert.That(b, !Is.Null);
             Assert.That(c, !Is.Null);
 

@@ -32,15 +32,15 @@ namespace Mirage
         // this then a ServerRpcReply will be sent with this id
         public int replyId;
         // the parameters for the Cmd function
-        // -> ArraySegment to avoid unnecessary allocations
-        public ArraySegment<byte> payload;
+        // -> ReadOnlyMemory to avoid unnecessary allocations
+        public ReadOnlyMemory<byte> payload;
     }
 
     [NetworkMessage]
     public struct ServerRpcReply
     {
         public int replyId;
-        public ArraySegment<byte> payload;
+        public ReadOnlyMemory<byte> payload;
     }
 
     [NetworkMessage]
@@ -50,8 +50,8 @@ namespace Mirage
         public int componentIndex;
         public int functionHash;
         // the parameters for the Cmd function
-        // -> ArraySegment to avoid unnecessary allocations
-        public ArraySegment<byte> payload;
+        // -> ReadOnlyMemory to avoid unnecessary allocations
+        public ReadOnlyMemory<byte> payload;
     }
     #endregion
 
@@ -94,9 +94,9 @@ namespace Mirage
         public Vector3 scale;
         /// <summary>
         /// The serialized component data
-        /// <remark>ArraySegment to avoid unnecessary allocations</remark>
+        /// <remark>ReadOnlyMemory to avoid unnecessary allocations</remark>
         /// </summary>
-        public ArraySegment<byte> payload;
+        public ReadOnlyMemory<byte> payload;
     }
 
     [NetworkMessage]
@@ -116,8 +116,8 @@ namespace Mirage
     {
         public ushort netId;
         // the serialized component data
-        // -> ArraySegment to avoid unnecessary allocations
-        public ArraySegment<byte> payload;
+        // -> ReadOnlyMemory to avoid unnecessary allocations
+        public ReadOnlyMemory<byte> payload;
     }
 
     // A client sends this message to the server

@@ -38,14 +38,14 @@ namespace Mirage.Serialization
     public class NetworkReader
     {
         // internal buffer
-        // byte[] pointer would work, but we use ArraySegment to also support
-        // the ArraySegment constructor
-        internal ArraySegment<byte> buffer;
+        // byte[] pointer would work, but we use ReadOnlyMemory to also support
+        // the ReadOnlyMemory constructor
+        internal ReadOnlyMemory<byte> buffer;
 
         // 'int' is the best type for .Position. 'short' is too small if we send >32kb which would result in negative .Position
         // -> converting long to int is fine until 2GB of data (MAX_INT), so we don't have to worry about overflows here
         public int Position;
-        public int Length => buffer.Count;
+        public int Length => buffer.Length;
 
         /// <summary>
         /// some service object that can find objects by net id
@@ -54,21 +54,21 @@ namespace Mirage.Serialization
 
         public NetworkReader(byte[] bytes)
         {
-            buffer = new ArraySegment<byte>(bytes);
+            buffer = bytes;
         }
 
-        public NetworkReader(ArraySegment<byte> segment)
+        public NetworkReader(ReadOnlyMemory<byte> segment)
         {
             buffer = segment;
         }
 
         public byte ReadByte()
         {
-            if (Position + 1 > buffer.Count)
+            if (Position + 1 > buffer.Length)
             {
                 throw new EndOfStreamException("ReadByte out of range:" + ToString());
             }
-            return buffer.Array[buffer.Offset + Position++];
+            return buffer.Span[Position++];
         }
 
         public int ReadInt32() => (int)ReadUInt32();
@@ -105,29 +105,29 @@ namespace Mirage.Serialization
                 throw new EndOfStreamException("ReadBytes can't read " + count + " + bytes because the passed byte[] only has length " + bytes.Length);
             }
 
-            ArraySegment<byte> data = ReadBytesSegment(count);
-            Array.Copy(data.Array, data.Offset, bytes, 0, count);
+            ReadOnlyMemory<byte> data = ReadBytesSegment(count);
+            data.Span.CopyTo(bytes);
             return bytes;
         }
 
         // useful to parse payloads etc. without allocating
-        public ArraySegment<byte> ReadBytesSegment(int count)
+        public ReadOnlyMemory<byte> ReadBytesSegment(int count)
         {
             // check if within buffer limits
-            if (Position + count > buffer.Count)
+            if (Position + count > buffer.Length)
             {
                 throw new EndOfStreamException("ReadBytesSegment can't read " + count + " bytes because it would read past the end of the stream. " + ToString());
             }
 
             // return the segment
-            var result = new ArraySegment<byte>(buffer.Array, buffer.Offset + Position, count);
+            var result = buffer.Slice(Position, count);
             Position += count;
             return result;
         }
 
         public override string ToString()
         {
-            return "NetworkReader pos=" + Position + " len=" + Length + " buffer=" + BitConverter.ToString(buffer.Array, buffer.Offset, buffer.Count);
+            return "NetworkReader pos=" + Position + " len=" + Length + " buffer=" + BitConverter.ToString(buffer.ToArray());
         }
 
         /// <summary>
@@ -237,10 +237,10 @@ namespace Mirage.Serialization
                 throw new EndOfStreamException("ReadString too long: " + realSize + ". Limit is: " + NetworkWriter.MaxStringLength);
             }
 
-            ArraySegment<byte> data = reader.ReadBytesSegment(realSize);
+            var data = reader.ReadBytesSegment(realSize);
 
             // convert directly from buffer to string via encoding
-            return encoding.GetString(data.Array, data.Offset, data.Count);
+            return encoding.GetString(data.Span);
         }
 
         // Use checked() to force it to throw OverflowException if data is invalid
@@ -253,7 +253,7 @@ namespace Mirage.Serialization
             return count == 0 ? null : reader.ReadBytes(checked((int)(count - 1u)));
         }
 
-        public static ArraySegment<byte> ReadBytesAndSizeSegment(this NetworkReader reader)
+        public static ReadOnlyMemory<byte> ReadBytesAndSizeSegment(this NetworkReader reader)
         {
             // count = 0 means the array was null
             // otherwise count - 1 is the length of the array
