@@ -1,3 +1,10 @@
+# [100.1.0](https://github.com/Mindblocks3/Mirage/compare/v100.0.0...v100.1.0) (2022-11-16)
+
+
+### Features
+
+* do not send [NonSerialized] fields ([f3e7a32](https://github.com/Mindblocks3/Mirage/commit/f3e7a32434d27404e83f812b9eb474b7afc9e32b))
+
 # [100.0.0](https://github.com/Mindblocks3/Mirage/compare/v99.0.0...v100.0.0) (2022-11-15)
 
 
