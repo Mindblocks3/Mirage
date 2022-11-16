@@ -303,6 +303,9 @@ namespace Mirage.Weaver
             uint fields = 0;
             foreach (FieldDefinition field in variable.FindAllPublicFields())
             {
+                if (field.HasCustomAttribute<NonSerializedAttribute>())
+                    continue;
+                    
                 // mismatched ldloca/ldloc for struct/class combinations is invalid IL, which causes crash at runtime
                 OpCode opcode = variable.IsValueType ? OpCodes.Ldloca : OpCodes.Ldloc;
                 worker.Append(worker.Create(opcode, 0));
