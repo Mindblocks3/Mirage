@@ -512,9 +512,18 @@ namespace Mirage.Serialization
         {
             int length = segment.Length;
             writer.WritePackedInt32(length);
-            for (int i = 0; i < length; i++)
-            {
-                writer.Write(segment.Span[i]);
+            var span = segment.Span;
+            foreach (T item in span) {
+                writer.Write(item);
+            }
+        }
+        public static void WriteMemory<T>(this NetworkWriter writer, Memory<T> segment)
+        {
+            int length = segment.Length;
+            writer.WritePackedInt32(length);
+            var span = segment.Span;
+            foreach (T item in span) {
+                writer.Write(item);
             }
         }
 

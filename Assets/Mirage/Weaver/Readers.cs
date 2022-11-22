@@ -64,12 +64,29 @@ namespace Mirage.Weaver
             {
                 var genericInstance = (GenericInstanceType)typeReference;
                 TypeReference elementType = genericInstance.GenericArguments[0];
-
+                
                 return GenerateReadCollection(typeReference, elementType, () => NetworkReaderExtensions.ReadNullable<byte>(default), sequencePoint);
             }
             if (variableDefinition.FullName.StartsWith("System.ReadOnlyMemory"))
             {
-                return GenerateReadOnlyMemoryReadFunc(typeReference, sequencePoint);
+                var genericInstance = (GenericInstanceType)typeReference;
+                TypeReference elementType = genericInstance.GenericArguments[0];
+
+                var extensions = typeof(NetworkReaderExtensions);
+                var method = extensions.GetMethod(nameof(NetworkReaderExtensions.ReadReadOnlyMemory));
+                var methodRef = module.ImportReference(method);
+
+                return GenerateReadCollection(typeReference, elementType, methodRef, sequencePoint);
+            }
+            if (variableDefinition.FullName.StartsWith("System.Memory"))
+            {
+                var genericInstance = (GenericInstanceType)typeReference;
+                TypeReference elementType = genericInstance.GenericArguments[0];
+                var extensions = typeof(NetworkReaderExtensions);
+                var method = extensions.GetMethod(nameof(NetworkReaderExtensions.ReadMemory));
+                var methodRef = module.ImportReference(method);
+
+                return GenerateReadCollection(typeReference, elementType, methodRef, sequencePoint);
             }
             if (variableDefinition.Is(typeof(List<>)))
             {
@@ -159,30 +176,6 @@ namespace Mirage.Weaver
             return readerFunc;
         }
 
-        MethodDefinition GenerateReadOnlyMemoryReadFunc(TypeReference variable, SequencePoint sequencePoint)
-        {
-            var genericInstance = (GenericInstanceType)variable;
-            TypeReference elementType = genericInstance.GenericArguments[0];
-
-            MethodDefinition readerFunc = GenerateReaderFunction(variable);
-
-            ILProcessor worker = readerFunc.Body.GetILProcessor();
-
-            // $array = reader.Read<[T]>()
-            ArrayType arrayType = elementType.MakeArrayType();
-            worker.Append(worker.Create(OpCodes.Ldarg_0));
-            worker.Append(worker.Create(OpCodes.Call, GetReadFunc(arrayType, sequencePoint)));
-
-            var readOnlyMemoryDef = variable.Resolve();
-            var constructorDef = readOnlyMemoryDef.GetConstructors().First(c => c.Parameters.Count == 1);
-
-            // return new ReadOnlyMemory<T>($array);
-            MethodReference ReadOnlyMemoryConstructor = module.ImportReference(constructorDef);
-            worker.Append(worker.Create(OpCodes.Newobj, ReadOnlyMemoryConstructor.MakeHostInstanceGeneric(genericInstance)));
-            worker.Append(worker.Create(OpCodes.Ret));
-            return readerFunc;
-        }
-
         private MethodDefinition GenerateReaderFunction(TypeReference variable)
         {
             string functionName = "_Read_" + variable.FullName;
@@ -200,14 +193,17 @@ namespace Mirage.Weaver
 
             return readerFunc;
         }
-
         MethodDefinition GenerateReadCollection(TypeReference variable, TypeReference elementType, Expression<Action> readerFunction, SequencePoint sequencePoint)
+        {
+            MethodReference listReader = module.ImportReference(readerFunction);
+            return GenerateReadCollection(variable, elementType, listReader, sequencePoint);
+        }
+
+        MethodDefinition GenerateReadCollection(TypeReference variable, TypeReference elementType, MethodReference listReader, SequencePoint sequencePoint)
         {
             MethodDefinition readerFunc = GenerateReaderFunction(variable);
             // generate readers for the element
             GetReadFunc(elementType, sequencePoint);
-
-            MethodReference listReader = module.ImportReference(readerFunction);
 
             var methodRef = new GenericInstanceMethod(listReader.GetElementMethod());
             methodRef.GenericArguments.Add(elementType);

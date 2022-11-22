@@ -99,6 +99,15 @@ namespace Mirage.Weaver
 
                 return GenerateCollectionWriter(typeReference, elementType, methodRef, sequencePoint);
             }
+            if (typeReference.FullName.StartsWith("System.Memory"))
+            {
+                var genericInstance = (GenericInstanceType)typeReference;
+                TypeReference elementType = genericInstance.GenericArguments[0];
+
+                var methodRef = _module.ImportReference(typeof(NetworkWriterExtensions).GetMethod(nameof(NetworkWriterExtensions.WriteMemory)));
+
+                return GenerateCollectionWriter(typeReference, elementType, methodRef, sequencePoint);
+            }
 
             if (typeReference.Is(typeof(List<>)))
             {

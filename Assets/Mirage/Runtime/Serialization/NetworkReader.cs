@@ -414,6 +414,18 @@ namespace Mirage.Serialization
             return result;
         }
 
+        public static ReadOnlyMemory<T> ReadReadOnlyMemory<T>(this NetworkReader reader)
+        {
+            var array = ReadArray<T>(reader);
+            return new ReadOnlyMemory<T>(array);
+        }
+        
+        public static Memory<T> ReadMemory<T>(this NetworkReader reader)
+        {
+            var array = ReadArray<T>(reader);
+            return new Memory<T>(array);
+        }
+
         public static T[] ReadArray<T>(this NetworkReader reader)
         {
             int length = reader.ReadPackedInt32();
