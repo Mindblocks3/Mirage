@@ -1,3 +1,10 @@
+# [100.2.0](https://github.com/Mindblocks3/Mirage/compare/v100.1.0...v100.2.0) (2022-11-22)
+
+
+### Features
+
+* Memory<T> is now supported ([6e6fd34](https://github.com/Mindblocks3/Mirage/commit/6e6fd341e4848c5f29c2af06292edceb9eeff5f1))
+
 # [100.1.0](https://github.com/Mindblocks3/Mirage/compare/v100.0.0...v100.1.0) (2022-11-16)
 
 
