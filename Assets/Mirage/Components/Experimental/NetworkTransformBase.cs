@@ -28,39 +28,31 @@ namespace Mirage.Experimental
         [Header("Authority")]
 
         [Tooltip("Set to true if moves come from owner client, set to false if moves always come from server")]
-        [SyncVar]
-        public bool clientAuthority;
+        public bool clientAuthority ;
 
         [Tooltip("Set to true if updates from server should be ignored by owner")]
-        [SyncVar]
         public bool excludeOwnerUpdate = true;
 
         [Header("Synchronization")]
 
         [Tooltip("Set to true if position should be synchronized")]
-        [SyncVar]
         public bool syncPosition = true;
 
         [Tooltip("Set to true if rotation should be synchronized")]
-        [SyncVar]
         public bool syncRotation = true;
 
         [Tooltip("Set to true if scale should be synchronized")]
-        [SyncVar]
         public bool syncScale = true;
 
         [Header("Interpolation")]
 
         [Tooltip("Set to true if position should be interpolated")]
-        [SyncVar]
         public bool interpolatePosition = true;
 
         [Tooltip("Set to true if rotation should be interpolated")]
-        [SyncVar]
         public bool interpolateRotation = true;
 
         [Tooltip("Set to true if scale should be interpolated")]
-        [SyncVar]
         public bool interpolateScale = true;
 
         // Sensitivity is added for VR where human players tend to have micro movements so this can quiet down
@@ -68,15 +60,12 @@ namespace Mirage.Experimental
         [Header("Sensitivity")]
 
         [Tooltip("Changes to the transform must exceed these values to be transmitted on the network.")]
-        [SyncVar]
         public float localPositionSensitivity = .01f;
 
         [Tooltip("If rotation exceeds this angle, it will be transmitted on the network")]
-        [SyncVar]
         public float localRotationSensitivity = .01f;
 
         [Tooltip("Changes to the transform must exceed these values to be transmitted on the network.")]
-        [SyncVar]
         public float localScaleSensitivity = .01f;
 
         [Header("Diagnostics")]
