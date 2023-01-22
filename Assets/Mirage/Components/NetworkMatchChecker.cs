@@ -20,7 +20,6 @@ namespace Mirage
         Guid currentMatch = Guid.Empty;
 
         [Header("Diagnostics")]
-        [SyncVar]
         public string currentMatchDebug;
 
         public NetworkIdentity Identity => GetComponent<NetworkIdentity>();
