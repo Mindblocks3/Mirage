@@ -22,10 +22,10 @@ namespace Mirage.Experimental
 
 
         [SyncVar]
-        Vector3 targetVelocity;
+        Vector3 targetVelocity { get; set; }
 
         [SyncVar]
-        Vector3 targetPosition;
+        Vector3 targetPosition { get; set; }
 
         /// <summary>
         /// Ignore value if is host or client with Authority

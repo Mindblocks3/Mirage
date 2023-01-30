@@ -26,14 +26,14 @@ namespace Mirage.Weaver
         public void SyncVarsStatic()
         {
             HasError("invalidVar cannot be static",
-                "System.Int32 SyncVarTests.SyncVarsStatic.SyncVarsStatic::invalidVar");
+                "System.Int32 SyncVarTests.SyncVarsStatic.SyncVarsStatic::invalidVar()");
         }
 
         [Test]
         public void SyncVarsGenericField()
         {
             HasError("invalidVar cannot be synced since it's a generic parameter",
-                "T SyncVarTests.SyncVarGenericFields.SyncVarGenericFields`1::invalidVar");
+                "T SyncVarTests.SyncVarGenericFields.SyncVarGenericFields`1::invalidVar()");
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Mirage.Weaver
             HasError("Cannot generate writer for generic type MySyncVar`1. Use a supported type or provide a custom writer",
                 "SyncVarTests.SyncVarsGenericParam.SyncVarsGenericParam/MySyncVar`1<System.Int32>");
             HasError("invalidVar has unsupported type. Use a supported Mirage type instead",
-                "SyncVarTests.SyncVarsGenericParam.SyncVarsGenericParam/MySyncVar`1<System.Int32> SyncVarTests.SyncVarsGenericParam.SyncVarsGenericParam::invalidVar");
+                "SyncVarTests.SyncVarsGenericParam.SyncVarsGenericParam/MySyncVar`1<System.Int32> SyncVarTests.SyncVarsGenericParam.SyncVarsGenericParam::invalidVar()");
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace Mirage.Weaver
             HasError("Cannot generate writer for interface IMySyncVar. Use a supported type or provide a custom writer",
                 "SyncVarTests.SyncVarsInterface.SyncVarsInterface/IMySyncVar");
             HasError("invalidVar has unsupported type. Use a supported Mirage type instead",
-                "SyncVarTests.SyncVarsInterface.SyncVarsInterface/IMySyncVar SyncVarTests.SyncVarsInterface.SyncVarsInterface::invalidVar");
+                "SyncVarTests.SyncVarsInterface.SyncVarsInterface/IMySyncVar SyncVarTests.SyncVarsInterface.SyncVarsInterface::invalidVar()");
         }
 
         [Test]
@@ -60,21 +60,21 @@ namespace Mirage.Weaver
             HasError("Cannot generate writer for component type TextMesh. Use a supported type or provide a custom writer",
                 "UnityEngine.TextMesh");
             HasError("invalidVar has unsupported type. Use a supported Mirage type instead",
-                "UnityEngine.TextMesh SyncVarTests.SyncVarsUnityComponent.SyncVarsUnityComponent::invalidVar");
+                "UnityEngine.TextMesh SyncVarTests.SyncVarsUnityComponent.SyncVarsUnityComponent::invalidVar()");
         }
 
         [Test]
         public void SyncVarsCantBeArray()
         {
             HasError("thisShouldntWork has invalid type. Use SyncLists instead of arrays",
-                "System.Int32[] SyncVarTests.SyncVarsCantBeArray.SyncVarsCantBeArray::thisShouldntWork");
+                "System.Int32[] SyncVarTests.SyncVarsCantBeArray.SyncVarsCantBeArray::thisShouldntWork()");
         }
 
         [Test]
         public void SyncVarsSyncList()
         {
             HasWarning("syncints has [SyncVar] attribute. SyncLists should not be marked with SyncVar",
-                "Mirage.Collections.SyncList`1<System.Int32> SyncVarTests.SyncVarsSyncList.SyncVarsSyncList::syncints");
+                "Mirage.Collections.SyncList`1<System.Int32> SyncVarTests.SyncVarsSyncList.SyncVarsSyncList::syncints()");
         }
 
         [Test]

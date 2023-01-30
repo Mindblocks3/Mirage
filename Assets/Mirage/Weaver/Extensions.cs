@@ -24,6 +24,7 @@ namespace Mirage.Weaver
             method.DeclaringType.Is<T>() && method.Name == name;
 
         public static bool IsDerivedFrom<T>(this TypeDefinition td) => IsDerivedFrom(td, typeof(T));
+        public static bool IsDerivedFrom<T>(this TypeReference td) => IsDerivedFrom(td, typeof(T));
 
         public static bool IsDerivedFrom(this TypeDefinition td, Type baseClass)
         {
@@ -44,6 +45,19 @@ namespace Mirage.Weaver
                 return IsDerivedFrom(parent.Resolve(), baseClass);
 
             return false;
+        }
+
+        public static bool IsDerivedFrom(this TypeReference tr, Type baseClass) {
+            if (tr.Is(baseClass))
+                return true;
+
+            TypeDefinition td = tr.Resolve();
+
+            TypeReference parent = td.BaseType;
+            if (parent == null)
+                return false;
+
+            return parent.Is(baseClass);
         }
 
         // set the value of a constant in a class
@@ -210,6 +224,15 @@ namespace Mirage.Weaver
             }
 
             return fd;
+        }
+        public static MethodReference MakeHostGenericIfNeeded(this MethodReference md)
+        {
+            if (md.DeclaringType.HasGenericParameters)
+            {
+                return md.MakeHostInstanceGeneric((GenericInstanceType)md.DeclaringType.Resolve().ConvertToGenericIfNeeded());
+            }
+
+            return md;
         }
     }
 }

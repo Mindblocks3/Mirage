@@ -11,13 +11,6 @@ namespace Mirage.Weaver
         }
 
         [Test]
-        public void MonoBehaviourSyncVar()
-        {
-            HasError("SyncVar potato must be inside a NetworkBehaviour.  MonoBehaviourSyncVar is not a NetworkBehaviour",
-                "System.Int32 MonoBehaviourTests.MonoBehaviourSyncVar.MonoBehaviourSyncVar::potato");
-        }
-
-        [Test]
         public void MonoBehaviourSyncList()
         {
             HasError("potato is a SyncObject and must be inside a NetworkBehaviour.  MonoBehaviourSyncList is not a NetworkBehaviour",

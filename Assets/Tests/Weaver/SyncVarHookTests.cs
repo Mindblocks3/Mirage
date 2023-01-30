@@ -55,28 +55,30 @@ namespace Mirage.Weaver
         public void ErrorWhenNoHookFound()
         {
             HasError($"Could not find hook for 'health', hook name 'onChangeHealth'. Method signature should be {OldNewMethodFormat("onChangeHealth", "System.Int32")}",
-                "System.Int32 SyncVarHookTests.ErrorWhenNoHookFound.ErrorWhenNoHookFound::health");
+                "System.Int32 SyncVarHookTests.ErrorWhenNoHookFound.ErrorWhenNoHookFound::health()");
         }
 
         [Test]
         public void ErrorWhenNoHookWithCorrectParametersFound()
         {
             HasError($"Could not find hook for 'health', hook name 'onChangeHealth'. Method signature should be {OldNewMethodFormat("onChangeHealth", "System.Int32")}",
-                "System.Int32 SyncVarHookTests.ErrorWhenNoHookWithCorrectParametersFound.ErrorWhenNoHookWithCorrectParametersFound::health");
+                "System.Int32 SyncVarHookTests.ErrorWhenNoHookWithCorrectParametersFound.ErrorWhenNoHookWithCorrectParametersFound::health()");
         }
 
         [Test]
         public void ErrorForWrongTypeOldParameter()
         {
             HasError($"Wrong type for Parameter in hook for 'health', hook name 'onChangeHealth'. Method signature should be {OldNewMethodFormat("onChangeHealth", "System.Int32")}",
-                "System.Int32 SyncVarHookTests.ErrorForWrongTypeOldParameter.ErrorForWrongTypeOldParameter::health");
+                "System.Int32 SyncVarHookTests.ErrorForWrongTypeOldParameter.ErrorForWrongTypeOldParameter::health()");
         }
 
         [Test]
         public void ErrorForWrongTypeNewParameter()
         {
             HasError($"Wrong type for Parameter in hook for 'health', hook name 'onChangeHealth'. Method signature should be {OldNewMethodFormat("onChangeHealth", "System.Int32")}",
-                "System.Int32 SyncVarHookTests.ErrorForWrongTypeNewParameter.ErrorForWrongTypeNewParameter::health");
+                "System.Int32 SyncVarHookTests.ErrorForWrongTypeNewParameter.ErrorForWrongTypeNewParameter::health()");
+
+
         }
     }
 }

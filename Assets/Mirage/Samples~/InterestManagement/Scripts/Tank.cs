@@ -12,10 +12,10 @@ namespace Mirage.Examples.InterestManagement
         [Header("Movement")]
         public float rotationSpeed = 100;
 
-        [Header("Game Stats")]
         [SyncVar]
-        public string playerName;
+        public string playerName { get; set; }
 
+        [Header("Game Stats")]
         public TextMesh nameText;
 
         [Server]

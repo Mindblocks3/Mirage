@@ -6,6 +6,6 @@ namespace SyncVarTests.SyncVarReadOnlyMemory
     class SyncVarReadOnlyMemory : NetworkBehaviour
     {
        [SyncVar]
-       public ReadOnlyMemory<int> data;
+       public ReadOnlyMemory<int> data { get; set; }
     }
 }

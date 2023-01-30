@@ -5,6 +5,7 @@ using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Unity.CompilationPipeline.Common.Diagnostics;
+using UnityEngine;
 
 namespace Mirage.Weaver
 {
@@ -44,6 +45,9 @@ namespace Mirage.Weaver
 
         private void AddMessage(string message, SequencePoint sequencePoint, DiagnosticType diagnosticType)
         {
+            if (diagnosticType == DiagnosticType.Error)
+                Console.Write("Got here somehow", new Exception().StackTrace);
+
             Diagnostics.Add(new DiagnosticMessage
             {
                 DiagnosticType = diagnosticType,

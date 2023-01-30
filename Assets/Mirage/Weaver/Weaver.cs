@@ -13,7 +13,6 @@ namespace Mirage.Weaver
         private readonly IWeaverLogger logger;
         private Readers readers;
         private Writers writers;
-        private PropertySiteProcessor propertySiteProcessor;
 
         private AssemblyDefinition CurrentAssembly { get; set; }
 
@@ -75,7 +74,7 @@ namespace Mirage.Weaver
             bool modified = false;
             foreach (TypeDefinition behaviour in behaviourClasses)
             {
-                modified |= new NetworkBehaviourProcessor(behaviour, readers, writers, propertySiteProcessor, logger).Process();
+                modified |= new NetworkBehaviourProcessor(behaviour, readers, writers, logger).Process();
             }
             return modified;
         }
@@ -104,9 +103,6 @@ namespace Mirage.Weaver
 
                 watch.Stop();
                 Console.WriteLine("Weave behaviours and messages took" + watch.ElapsedMilliseconds + " milliseconds");
-
-                if (modified)
-                    propertySiteProcessor.Process(module);
 
                 return modified;
             }
@@ -150,7 +146,6 @@ namespace Mirage.Weaver
                 readers = new Readers(module, logger);
                 writers = new Writers(module, logger);
                 var rwstopwatch = System.Diagnostics.Stopwatch.StartNew();
-                propertySiteProcessor = new PropertySiteProcessor();
                 var rwProcessor = new ReaderWriterProcessor(module, readers, writers);
 
                 bool modified = rwProcessor.Process();

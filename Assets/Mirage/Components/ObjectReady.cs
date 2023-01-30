@@ -3,7 +3,7 @@ namespace Mirage
     public class ObjectReady : NetworkBehaviour
     {
         [SyncVar]
-        public bool IsReady;
+        public bool IsReady { get; set; }
 
         [Server]
         public void SetClientReady()

@@ -52,22 +52,22 @@ namespace Mirage.Experimental
 
         #region Sync vars
         [SyncVar(hook = nameof(OnVelocityChanged))]
-        Vector3 velocity;
+        Vector3 velocity { get; set; }
 
         [SyncVar(hook = nameof(OnAngularVelocityChanged))]
-        Vector3 angularVelocity;
+        Vector3 angularVelocity { get; set; }
 
         [SyncVar(hook = nameof(OnIsKinematicChanged))]
-        bool isKinematic;
+        bool isKinematic { get; set; }
 
         [SyncVar(hook = nameof(OnUseGravityChanged))]
-        bool useGravity;
+        bool useGravity { get; set; }
 
         [SyncVar(hook = nameof(OnuDragChanged))]
-        float drag;
+        float drag { get; set; }
 
         [SyncVar(hook = nameof(OnAngularDragChanged))]
-        float angularDrag;
+        float angularDrag { get; set; }
 
         /// <summary>
         /// Ignore value if is host or client with Authority
