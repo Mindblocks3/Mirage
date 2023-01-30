@@ -1,3 +1,15 @@
+# [101.0.0](https://github.com/Mindblocks3/Mirage/compare/v100.2.0...v101.0.0) (2023-01-30)
+
+
+### Code Refactoring
+
+* apply syncvar to properties instead of fields ([#7](https://github.com/Mindblocks3/Mirage/issues/7)) ([8e55d31](https://github.com/Mindblocks3/Mirage/commit/8e55d31ac8e6f15c6c2172e9ef6349a5f0dc5fe7))
+
+
+### BREAKING CHANGES
+
+* [syncvar] is now applied to properties instead of fields
+
 # [100.2.0](https://github.com/Mindblocks3/Mirage/compare/v100.1.0...v100.2.0) (2022-11-22)
 
 
