@@ -24,14 +24,14 @@ namespace Mirage.Weaver
         readonly SyncVarProcessor syncVarProcessor;
         readonly SyncObjectProcessor syncObjectProcessor;
 
-        public NetworkBehaviourProcessor(TypeDefinition td, Readers readers, Writers writers, PropertySiteProcessor propertySiteProcessor, IWeaverLogger logger)
+        public NetworkBehaviourProcessor(TypeDefinition td, Readers readers, Writers writers, IWeaverLogger logger)
         {
             Weaver.DLog(td, "NetworkBehaviourProcessor");
             netBehaviourSubclass = td;
             this.logger = logger;
             serverRpcProcessor = new ServerRpcProcessor(netBehaviourSubclass.Module, readers, writers, logger);
             clientRpcProcessor = new ClientRpcProcessor(netBehaviourSubclass.Module, readers, writers, logger);
-            syncVarProcessor = new SyncVarProcessor(netBehaviourSubclass.Module, readers, writers, propertySiteProcessor, logger);
+            syncVarProcessor = new SyncVarProcessor(netBehaviourSubclass.Module, readers, writers, logger);
             syncObjectProcessor = new SyncObjectProcessor(readers, writers, logger);
         }
 

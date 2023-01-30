@@ -13,10 +13,10 @@ namespace Mirage.Tests.Runtime
         }
 
         [SyncVar]
-        public Guild guild;
+        public Guild guild { get; set; }
 
         [SyncVar]
-        public NetworkIdentity target;
+        public NetworkIdentity target { get; set; }
     }
 
     public class SyncVarTest

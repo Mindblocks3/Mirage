@@ -5,7 +5,7 @@ namespace SyncVarHookTests.FindsStaticHook
     class FindsStaticHook : NetworkBehaviour
     {
         [SyncVar(hook = nameof(onChangeHealth))]
-        int health;
+        int health { get; set; }
 
         static void onChangeHealth(int oldValue, int newValue)
         {

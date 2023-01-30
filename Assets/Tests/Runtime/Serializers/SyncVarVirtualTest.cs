@@ -8,9 +8,9 @@ namespace Mirage.Tests.Runtime
     abstract class SyncVarHookTesterBase : NetworkBehaviour
     {
         [SyncVar(hook = nameof(OnValue1Changed))]
-        public float value1;
+        public float value1 { get; set; }
         [SyncVar(hook = nameof(OnValue2Changed))]
-        public float value2;
+        public float value2 { get; set; }
 
         public event Action OnValue2ChangedVirtualCalled;
 

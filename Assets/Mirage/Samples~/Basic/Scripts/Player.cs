@@ -15,9 +15,9 @@ namespace Mirage.Examples.Basic
 
         // These are set in OnStartServer and used in OnStartClient
         [SyncVar]
-        int playerNo;
+        int playerNo { get; set; }
         [SyncVar]
-        Color playerColor;
+        Color playerColor { get; set; }
 
         private static int playerCounter = 1;
 
@@ -28,7 +28,7 @@ namespace Mirage.Examples.Basic
 
         // This is updated by UpdateData which is called from OnStartServer via InvokeRepeating
         [SyncVar(hook = nameof(OnPlayerDataChanged))]
-        public int playerData;
+        public int playerData { get; set; }
 
         void Awake()
         {
