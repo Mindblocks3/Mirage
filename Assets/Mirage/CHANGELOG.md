@@ -1,3 +1,15 @@
+# [102.0.0](https://github.com/Mindblocks3/Mirage/compare/v101.0.0...v102.0.0) (2023-01-31)
+
+
+### Code Refactoring
+
+* remove syncvar hooks ([#9](https://github.com/Mindblocks3/Mirage/issues/9)) ([899d6e0](https://github.com/Mindblocks3/Mirage/commit/899d6e0871fef3ba0120e7fd4823441ba3514a10))
+
+
+### BREAKING CHANGES
+
+* SyncVar hooks are no longer supported
+
 # [101.0.0](https://github.com/Mindblocks3/Mirage/compare/v100.2.0...v101.0.0) (2023-01-30)
 
 
