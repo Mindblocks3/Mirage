@@ -26,9 +26,10 @@ namespace Mirage.Examples.Basic
             return playerCounter++;
         }
 
+        private int _playerData;
         // This is updated by UpdateData which is called from OnStartServer via InvokeRepeating
-        [SyncVar(hook = nameof(OnPlayerDataChanged))]
-        public int playerData { get; set; }
+        [SyncVar]
+        public int playerData { get => _playerData; set { _playerData = value; OnPlayerDataChanged(value); } }
 
         void Awake()
         {
@@ -38,7 +39,7 @@ namespace Mirage.Examples.Basic
         }
 
         // This is called by the hook of playerData SyncVar above
-        void OnPlayerDataChanged(int oldPlayerData, int newPlayerData)
+        void OnPlayerDataChanged(int newPlayerData)
         {
             // Show the data in the UI
             playerDataText.text = string.Format("Data: {0:000}", newPlayerData);

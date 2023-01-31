@@ -32,52 +32,6 @@ namespace Mirage.Weaver
         static string HookParameterMessage(string hookName, TypeReference ValueType)
             => string.Format("void {0}({1} oldValue, {1} newValue)", hookName, ValueType);
 
-        // Get hook method if any
-        MethodDefinition GetHookMethod(PropertyDefinition syncVar)
-        {
-            CustomAttribute syncVarAttr = syncVar.GetCustomAttribute<SyncVarAttribute>();
-
-            if (syncVarAttr == null)
-                return null;
-
-            string hookFunctionName = syncVarAttr.GetField<string>(nameof(SyncVarAttribute.hook), null);
-
-            if (hookFunctionName == null)
-                return null;
-
-            return FindHookMethod(syncVar, hookFunctionName);
-        }
-
-        MethodDefinition FindHookMethod(PropertyDefinition syncVar, string hookFunctionName)
-        {
-            List<MethodDefinition> methods = syncVar.DeclaringType.GetMethods(hookFunctionName);
-
-            var methodsWith2Param = new List<MethodDefinition>(methods.Where(m => m.Parameters.Count == 2));
-
-            if (methodsWith2Param.Count == 0)
-            {
-                logger.Error($"Could not find hook for '{syncVar.Name}', hook name '{hookFunctionName}'. " +
-                    $"Method signature should be {HookParameterMessage(hookFunctionName, syncVar.PropertyType)}",
-                    syncVar);
-
-                return null;
-            }
-
-            foreach (MethodDefinition method in methodsWith2Param)
-            {
-                if (MatchesParameters(method, syncVar.PropertyType))
-                {
-                    return method;
-                }
-            }
-
-            logger.Error($"Wrong type for Parameter in hook for '{syncVar.Name}', hook name '{hookFunctionName}'. " +
-                     $"Method signature should be {HookParameterMessage(hookFunctionName, syncVar.PropertyType)}",
-                   syncVar);
-
-            return null;
-        }
-
         static bool MatchesParameters(MethodDefinition method, TypeReference originalType)
         {
             // matches void onValueChange(T oldValue, T newValue)
@@ -154,39 +108,6 @@ namespace Mirage.Weaver
             worker.Append(worker.Create(OpCodes.Ldarg_0));
             worker.Append(worker.Create(OpCodes.Ldc_I8, dirtyBit));
             worker.Append(worker.Create<NetworkBehaviour>(OpCodes.Call, nb => nb.SetDirtyBit(default)));
-
-            MethodDefinition hookMethod = GetHookMethod(pd);
-
-            if (hookMethod != null)
-            {
-                //if (base.isLocalClient && !getSyncVarHookGuard(dirtyBit))
-                Instruction label = worker.Create(OpCodes.Nop);
-                worker.Append(worker.Create(OpCodes.Ldarg_0));
-                worker.Append(worker.Create(OpCodes.Call, (NetworkBehaviour nb) => nb.IsLocalClient));
-                worker.Append(worker.Create(OpCodes.Brfalse, label));
-                worker.Append(worker.Create(OpCodes.Ldarg_0));
-                worker.Append(worker.Create(OpCodes.Ldc_I8, dirtyBit));
-                worker.Append(worker.Create<NetworkBehaviour>(OpCodes.Call, nb => nb.GetSyncVarHookGuard(default)));
-                worker.Append(worker.Create(OpCodes.Brtrue, label));
-
-                // setSyncVarHookGuard(dirtyBit, true);
-                worker.Append(worker.Create(OpCodes.Ldarg_0));
-                worker.Append(worker.Create(OpCodes.Ldc_I8, dirtyBit));
-                worker.Append(worker.Create(OpCodes.Ldc_I4_1));
-                worker.Append(worker.Create<NetworkBehaviour>(OpCodes.Call, nb => nb.SetSyncVarHookGuard(default, default)));
-
-                // call hook (oldValue, newValue)
-                // Generates: OnValueChanged(oldValue, value);
-                CallHook(worker, hookMethod, oldValue, valueParam);
-
-                // setSyncVarHookGuard(dirtyBit, false);
-                worker.Append(worker.Create(OpCodes.Ldarg_0));
-                worker.Append(worker.Create(OpCodes.Ldc_I8, dirtyBit));
-                worker.Append(worker.Create(OpCodes.Ldc_I4_0));
-                worker.Append(worker.Create<NetworkBehaviour>(OpCodes.Call, nb => nb.SetSyncVarHookGuard(default, default)));
-
-                worker.Append(label);
-            }
 
             worker.Append(endOfMethod);
 
@@ -626,7 +547,6 @@ namespace Mirage.Weaver
 
         private void DeserializeNormalField(PropertyDefinition syncVar, ILProcessor serWorker, MethodDefinition deserialize)
         {
-            MethodDefinition hookMethod = GetHookMethod(syncVar);
             MethodReference readFunc = readers.GetReadFunc(syncVar.PropertyType, null);
             if (readFunc == null)
             {
@@ -657,43 +577,10 @@ namespace Mirage.Weaver
             serWorker.Append(serWorker.Create(OpCodes.Call, readFunc));
             // syncvar
             serWorker.Append(serWorker.Create(OpCodes.Call, syncVar.SetMethod.MakeHostGenericIfNeeded()));
-
-            if (hookMethod != null)
-            {
-                // call hook
-                // but only if SyncVar changed. otherwise a client would
-                // get hook calls for all initial values, even if they
-                // didn't change from the default values on the client.
-                // see also: https://github.com/vis2k/Mirror/issues/1278
-
-                // Generates: if (!SyncVarEqual);
-                Instruction syncVarEqualLabel = serWorker.Create(OpCodes.Nop);
-
-                // 'this.' for 'this.SyncVarEqual'
-                serWorker.Append(serWorker.Create(OpCodes.Ldarg_0));
-                // 'oldValue'
-                serWorker.Append(serWorker.Create(OpCodes.Ldloc, oldValue));
-                // 'newValue'
-                LoadField(serWorker, syncVar);
-                // call the function
-                MethodReference syncVarEqual = module.ImportReference<NetworkBehaviour>(nb => nb.SyncVarEqual<object>(default, default));
-                var syncVarEqualGm = new GenericInstanceMethod(syncVarEqual.GetElementMethod());
-                syncVarEqualGm.GenericArguments.Add(syncVar.PropertyType);
-                serWorker.Append(serWorker.Create(OpCodes.Call, syncVarEqualGm));
-                serWorker.Append(serWorker.Create(OpCodes.Brtrue, syncVarEqualLabel));
-
-                // call the hook
-                // Generates: OnValueChanged(oldValue, this.syncVar);
-                CallHook(serWorker, hookMethod, oldValue, syncVar);
-
-                // Generates: end if (!SyncVarEqual);
-                serWorker.Append(syncVarEqualLabel);
-            }
         }
 
         private void DeserializeWrappedField(PropertyDefinition syncVar, ILProcessor serWorker, MethodDefinition deserialize)
         {
-            MethodDefinition hookMethod = GetHookMethod(syncVar);
             var backingField = wrappedBackingFields[syncVar];
             MethodReference readFunc = readers.GetReadFunc(backingField.FieldType, null);
             if (readFunc == null)
@@ -701,11 +588,6 @@ namespace Mirage.Weaver
                 logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar);
                 return;
             }
-
-            // T oldValue = value;
-            VariableDefinition oldValue = deserialize.AddLocal(syncVar.PropertyType);
-            LoadField(serWorker, syncVar);
-            serWorker.Append(serWorker.Create(OpCodes.Stloc, oldValue));
 
             // read value and store in syncvar BEFORE calling the hook
             // -> this makes way more sense. by definition, the hook is
@@ -724,38 +606,6 @@ namespace Mirage.Weaver
             serWorker.Append(serWorker.Create(OpCodes.Call, readFunc));
             // syncvar
             serWorker.Append(serWorker.Create(OpCodes.Stfld, backingField.MakeHostGenericIfNeeded()));
-
-            if (hookMethod != null)
-            {
-                // call hook
-                // but only if SyncVar changed. otherwise a client would
-                // get hook calls for all initial values, even if they
-                // didn't change from the default values on the client.
-                // see also: https://github.com/vis2k/Mirror/issues/1278
-
-                // Generates: if (!SyncVarEqual);
-                Instruction syncVarEqualLabel = serWorker.Create(OpCodes.Nop);
-
-                // 'this.' for 'this.SyncVarEqual'
-                serWorker.Append(serWorker.Create(OpCodes.Ldarg_0));
-                // 'oldValue'
-                serWorker.Append(serWorker.Create(OpCodes.Ldloc, oldValue));
-                // 'newValue'
-                LoadField(serWorker, syncVar);
-                // call the function
-                MethodReference syncVarEqual = module.ImportReference<NetworkBehaviour>(nb => nb.SyncVarEqual<object>(default, default));
-                var syncVarEqualGm = new GenericInstanceMethod(syncVarEqual.GetElementMethod());
-                syncVarEqualGm.GenericArguments.Add(syncVar.PropertyType);
-                serWorker.Append(serWorker.Create(OpCodes.Call, syncVarEqualGm));
-                serWorker.Append(serWorker.Create(OpCodes.Brtrue, syncVarEqualLabel));
-
-                // call the hook
-                // Generates: OnValueChanged(oldValue, this.syncVar);
-                CallHook(serWorker, hookMethod, oldValue, syncVar);
-
-                // Generates: end if (!SyncVarEqual);
-                serWorker.Append(syncVarEqualLabel);
-            }
         }
     }
 }

@@ -10,22 +10,23 @@ namespace Mirage.Tests.Runtime.ClientServer
     {
         [SyncVar]
         public int baseValue { get; set; }
-        [SyncVar(hook = nameof(OnSyncedBaseValueWithHook))]
-        public int baseValueWithHook { get; set; }
+        public int _baseValueWithHook;
+        [SyncVar]
+        public int baseValueWithHook { get => _baseValueWithHook; set { _baseValueWithHook = value; OnSyncedBaseValueWithHook(value); } }
         [SyncVar]
         public NetworkBehaviour target { get; set; }
         [SyncVar]
         public NetworkIdentity targetIdentity { get; set; }
 
-        public Action<int, int> onBaseValueChanged;
+        public Action<int> onBaseValueChanged;
 
         // Not used, just here to trigger possible errors.
         private T value;
         private T[] values;
 
-        public void OnSyncedBaseValueWithHook(int oldValue, int newValue)
+        public void OnSyncedBaseValueWithHook( int newValue)
         {
-            onBaseValueChanged?.Invoke(oldValue, newValue);
+            onBaseValueChanged?.Invoke(newValue);
         }
     }
 
@@ -33,18 +34,19 @@ namespace Mirage.Tests.Runtime.ClientServer
     {
         [SyncVar]
         public int childValue { get; set; }
-        [SyncVar(hook = nameof(OnSyncedChildValueWithHook))]
-        public int childValueWithHook { get; set; }
+        private int _childValueWithHook;
+        [SyncVar]
+        public int childValueWithHook { get => _childValueWithHook; set { _childValueWithHook = value; OnSyncedChildValueWithHook(value); } }
         [SyncVar]
         public NetworkBehaviour childTarget { get; set; }
         [SyncVar]
         public NetworkIdentity childIdentity { get; set; }
 
-        public Action<int, int> onChildValueChanged;
+        public Action<int> onChildValueChanged;
 
-        public void OnSyncedChildValueWithHook(int oldValue, int newValue)
+        public void OnSyncedChildValueWithHook(int newValue)
         {
-            onChildValueChanged?.Invoke(oldValue, newValue);
+            onChildValueChanged?.Invoke(newValue);
         }
     }
 
@@ -77,9 +79,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         public IEnumerator ChangeValueHook() => UniTask.ToCoroutine(async () =>
         {
             serverComponent.baseValueWithHook = 2;
-            clientComponent.onBaseValueChanged += (oldValue, newValue) =>
+            clientComponent.onBaseValueChanged += (newValue) =>
             {
-                Assert.AreEqual(0, oldValue);
                 Assert.AreEqual(2, newValue);
             };
 
@@ -120,9 +121,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         public IEnumerator ChangeChildValueHook() => UniTask.ToCoroutine(async () =>
         {
             serverComponent.childValueWithHook = 2;
-            clientComponent.onChildValueChanged += (oldValue, newValue) =>
+            clientComponent.onChildValueChanged += (newValue) =>
             {
-                Assert.AreEqual(0, oldValue);
                 Assert.AreEqual(2, newValue);
             };
 

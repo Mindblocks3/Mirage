@@ -7,10 +7,11 @@ namespace Mirage.Tests.Runtime.ClientServer
 {
     public class SampleBehaviorWithNI : NetworkBehaviour
     {
-        [SyncVar(hook = nameof(OnTargetChange))]
-        public NetworkIdentity target { get; set; }
+        private NetworkIdentity _target;
+        [SyncVar]
+        public NetworkIdentity target { get => _target; set { _target = value; OnTargetChange(value); } }
 
-        public void OnTargetChange(NetworkIdentity _, NetworkIdentity networkIdentity)
+        public void OnTargetChange(NetworkIdentity networkIdentity)
         {
             Assert.That(networkIdentity, Is.SameAs(target));
         }

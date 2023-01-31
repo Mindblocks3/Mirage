@@ -4,8 +4,9 @@ namespace SyncVarTests.SyncVarsValid
 {
     class SyncVarsValid : NetworkBehaviour
     {
-        [SyncVar(hook = nameof(OnChangeHealth))]
-        int health { get; set; }
+        private int _health;
+        [SyncVar]
+        int health { get => _health; set { _health = value; OnChangeHealth(value); } }
 
         [SyncVar] int var2 { get; set; }
         [SyncVar] int var3 { get; set; }
@@ -78,7 +79,7 @@ namespace SyncVarTests.SyncVarsValid
             health -= amount;
         }
 
-        void OnChangeHealth(int oldHealth, int newHealth)
+        void OnChangeHealth(int newHealth)
         {
             // do things with your health bar
         }
