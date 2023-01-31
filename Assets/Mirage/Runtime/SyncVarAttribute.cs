@@ -11,6 +11,5 @@ namespace Mirage
     public class SyncVarAttribute : PropertyAttribute
     {
         ///<summary>A function that should be called on the client when the value changes.</summary>
-        public string hook;
     }
 }

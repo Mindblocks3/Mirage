@@ -7,15 +7,17 @@ namespace Mirage.Tests.Runtime
 {
     abstract class SyncVarHookTesterBase : NetworkBehaviour
     {
-        [SyncVar(hook = nameof(OnValue1Changed))]
-        public float value1 { get; set; }
-        [SyncVar(hook = nameof(OnValue2Changed))]
-        public float value2 { get; set; }
+        private float _value1;
+        [SyncVar]
+        public float value1 { get => _value1; set { _value1 = value; OnValue1Changed(value); } }
+        private float _value2;
+        [SyncVar]
+        public float value2 { get => _value2; set { _value2 = value; OnValue2Changed(value); } }
 
         public event Action OnValue2ChangedVirtualCalled;
 
-        public abstract void OnValue1Changed(float old, float newValue);
-        public virtual void OnValue2Changed(float old, float newValue)
+        public abstract void OnValue1Changed(float newValue);
+        public virtual void OnValue2Changed(float newValue)
         {
             OnValue2ChangedVirtualCalled?.Invoke();
         }
@@ -28,7 +30,7 @@ namespace Mirage.Tests.Runtime
 
         public void CallOnValue2Changed()
         {
-            OnValue2Changed(1, 1);
+            OnValue2Changed(1);
         }
     }
 
@@ -36,11 +38,11 @@ namespace Mirage.Tests.Runtime
     {
         public event Action OnValue1ChangedOverrideCalled;
         public event Action OnValue2ChangedOverrideCalled;
-        public override void OnValue1Changed(float old, float newValue)
+        public override void OnValue1Changed(float newValue)
         {
             OnValue1ChangedOverrideCalled?.Invoke();
         }
-        public override void OnValue2Changed(float old, float newValue)
+        public override void OnValue2Changed(float newValue)
         {
             OnValue2ChangedOverrideCalled?.Invoke();
         }
@@ -151,7 +153,7 @@ namespace Mirage.Tests.Runtime
             };
 
             var baseClass = clientTester as SyncVarHookTesterBase;
-            baseClass.OnValue2Changed(1, 1);
+            baseClass.OnValue2Changed(1);
 
             Assert.AreEqual(serverTester.value2, serverTester.value2);
             Assert.IsTrue(value2OverrideCalled, "Override method not called");

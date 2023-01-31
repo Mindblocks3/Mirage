@@ -51,23 +51,29 @@ namespace Mirage.Experimental
         }
 
         #region Sync vars
-        [SyncVar(hook = nameof(OnVelocityChanged))]
-        Vector3 velocity { get; set; }
+        private Vector3 _velocity;
+        [SyncVar]
+        Vector3 velocity { get => _velocity; set {this._velocity = value; OnVelocityChanged(value);} }
 
-        [SyncVar(hook = nameof(OnAngularVelocityChanged))]
-        Vector3 angularVelocity { get; set; }
+        private Vector3 _angularVelocity;
+        [SyncVar]
+        Vector3 angularVelocity { get => _angularVelocity; set {this._angularVelocity = value; OnAngularVelocityChanged(value);} }
 
-        [SyncVar(hook = nameof(OnIsKinematicChanged))]
-        bool isKinematic { get; set; }
+        private bool _isKinematic;
+        [SyncVar]
+        bool isKinematic { get => _isKinematic; set {this._isKinematic = value; OnIsKinematicChanged(value);} }
 
-        [SyncVar(hook = nameof(OnUseGravityChanged))]
-        bool useGravity { get; set; }
+        private bool _useGravity;
+        [SyncVar]
+        bool useGravity { get => _useGravity; set {this._useGravity = value; OnUseGravityChanged(value);} }
 
-        [SyncVar(hook = nameof(OnuDragChanged))]
-        float drag { get; set; }
+        private float _drag;
+        [SyncVar]
+        float drag { get => _drag; set {this._drag = value; OnuDragChanged(value);} }
 
-        [SyncVar(hook = nameof(OnAngularDragChanged))]
-        float angularDrag { get; set; }
+        private float _angularDrag;
+        [SyncVar]
+        float angularDrag { get => _angularDrag; set {this._angularDrag = value; OnAngularDragChanged(value);} }
 
         /// <summary>
         /// Ignore value if is host or client with Authority
@@ -77,7 +83,7 @@ namespace Mirage.Experimental
 
         bool ClientWithAuthority => clientAuthority && HasAuthority;
 
-        void OnVelocityChanged(Vector3 _, Vector3 newValue)
+        void OnVelocityChanged(Vector3 newValue)
         {
             if (IgnoreSync)
                 return;
@@ -86,7 +92,7 @@ namespace Mirage.Experimental
         }
 
 
-        void OnAngularVelocityChanged(Vector3 _, Vector3 newValue)
+        void OnAngularVelocityChanged(Vector3 newValue)
         {
             if (IgnoreSync)
                 return;
@@ -94,7 +100,7 @@ namespace Mirage.Experimental
             target.angularVelocity = newValue;
         }
 
-        void OnIsKinematicChanged(bool _, bool newValue)
+        void OnIsKinematicChanged(bool newValue)
         {
             if (IgnoreSync)
                 return;
@@ -102,7 +108,7 @@ namespace Mirage.Experimental
             target.isKinematic = newValue;
         }
 
-        void OnUseGravityChanged(bool _, bool newValue)
+        void OnUseGravityChanged(bool newValue)
         {
             if (IgnoreSync)
                 return;
@@ -110,7 +116,7 @@ namespace Mirage.Experimental
             target.useGravity = newValue;
         }
 
-        void OnuDragChanged(float _, float newValue)
+        void OnuDragChanged(float newValue)
         {
             if (IgnoreSync)
                 return;
@@ -118,7 +124,7 @@ namespace Mirage.Experimental
             target.drag = newValue;
         }
 
-        void OnAngularDragChanged(float _, float newValue)
+        void OnAngularDragChanged(float newValue)
         {
             if (IgnoreSync)
                 return;

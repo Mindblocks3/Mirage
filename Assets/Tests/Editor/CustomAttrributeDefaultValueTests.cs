@@ -5,14 +5,6 @@ namespace Mirage
     public class CustomAttrributeDefaultValueTests
     {
         [Test]
-        public void SyncVarHookDefaultsToEmpty()
-        {
-            var attrib = new SyncVarAttribute();
-
-            Assert.That(string.IsNullOrEmpty(attrib.hook));
-        }
-
-        [Test]
         public void ServerRpcDefaultsToReliable()
         {
             var attrib = new ServerRpcAttribute();
