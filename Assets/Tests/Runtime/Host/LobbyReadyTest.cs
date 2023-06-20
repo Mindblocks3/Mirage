@@ -80,7 +80,7 @@ namespace Mirage.Tests.Runtime.Host
         [UnityTest]
         public IEnumerator ClientReadyTest() => UniTask.ToCoroutine(async () =>
         {
-            readyPlayer = new GameObject();
+            readyPlayer = new GameObject(this.GetType().Name);
             readyPlayer.AddComponent<NetworkIdentity>();
             readyComp = readyPlayer.AddComponent<ObjectReady>();
 

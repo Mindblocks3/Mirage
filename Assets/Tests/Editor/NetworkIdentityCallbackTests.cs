@@ -137,13 +137,13 @@ namespace Mirage
         [SetUp]
         public void SetUp()
         {
-            networkServerGameObject = new GameObject();
+            networkServerGameObject = new GameObject(this.GetType().Name);
             server = networkServerGameObject.AddComponent<NetworkServer>();
             serverObjectManager = networkServerGameObject.AddComponent<ServerObjectManager>();
             serverObjectManager.Server = server;
             networkServerGameObject.AddComponent<NetworkClient>();
 
-            gameObject = new GameObject();
+            gameObject = new GameObject(this.GetType().Name);
             identity = gameObject.AddComponent<NetworkIdentity>();
             identity.Server = server;
             identity.ServerObjectManager = serverObjectManager;
@@ -459,11 +459,13 @@ namespace Mirage
         {
             // create a networkidentity with a component that returns true
             // result should still be true.
-            var gameObjectTrue = new GameObject();
+            var gameObjectTrue = new GameObject(this.GetType().Name);
             NetworkIdentity identityTrue = gameObjectTrue.AddComponent<NetworkIdentity>();
             CheckObserverTrueNetworkBehaviour compTrue = gameObjectTrue.AddComponent<CheckObserverTrueNetworkBehaviour>();
             Assert.That(identityTrue.OnCheckObserver(player1), Is.True);
             Assert.That(compTrue.called, Is.EqualTo(1));
+
+            GameObject.DestroyImmediate(gameObjectTrue);
         }
 
         [Test]
@@ -472,11 +474,13 @@ namespace Mirage
             // create a networkidentity with a component that returns true and
             // one component that returns false.
             // result should still be false if any one returns false.
-            var gameObjectFalse = new GameObject();
+            var gameObjectFalse = new GameObject(this.GetType().Name);
             NetworkIdentity identityFalse = gameObjectFalse.AddComponent<NetworkIdentity>();
             CheckObserverFalseNetworkBehaviour compFalse = gameObjectFalse.AddComponent<CheckObserverFalseNetworkBehaviour>();
             Assert.That(identityFalse.OnCheckObserver(player1), Is.False);
             Assert.That(compFalse.called, Is.EqualTo(1));
+
+            GameObject.DestroyImmediate(gameObjectFalse);
         }
 
         [Test]

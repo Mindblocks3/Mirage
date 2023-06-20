@@ -15,7 +15,7 @@ namespace Mirage.Tests.Runtime.Host
         [Test]
         public void MaxConnectionsTest()
         {
-            var secondGO = new GameObject();
+            var secondGO = new GameObject(this.GetType().Name);
             NetworkClient secondClient = secondGO.AddComponent<NetworkClient>();
             Transport secondTestTransport = secondGO.AddComponent<LoopbackTransport>();
 

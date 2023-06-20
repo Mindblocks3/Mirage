@@ -32,13 +32,13 @@ namespace Mirage.Tests.Runtime
         [SetUp]
         public void SetUp()
         {
-            networkServerGameObject = new GameObject();
+            networkServerGameObject = new GameObject(this.GetType().Name);
             server = networkServerGameObject.AddComponent<NetworkServer>();
             serverObjectManager = networkServerGameObject.AddComponent<ServerObjectManager>();
             serverObjectManager.Server = server;
             client = networkServerGameObject.AddComponent<NetworkClient>();
 
-            gameObject = new GameObject();
+            gameObject = new GameObject(this.GetType().Name);
             identity = gameObject.AddComponent<NetworkIdentity>();
             identity.Server = server;
             identity.ServerObjectManager = serverObjectManager;

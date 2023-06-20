@@ -18,7 +18,7 @@ namespace Mirage.Tests.Performance
         [SetUp]
         public void SetUp()
         {
-            gameObject = new GameObject();
+            gameObject = new GameObject("NetworkIdentityPerformance");
             identity = gameObject.AddComponent<NetworkIdentity>();
             identity.ConnectionToClient = Substitute.For<INetworkPlayer>();
             identity.observers.Add(identity.ConnectionToClient);

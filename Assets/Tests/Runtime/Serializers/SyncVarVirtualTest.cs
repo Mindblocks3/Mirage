@@ -60,11 +60,11 @@ namespace Mirage.Tests.Runtime
         {
             // create server and client objects and sync inital values
 
-            var gameObject1 = new GameObject();
+            var gameObject1 = new GameObject(this.GetType().Name);
             netIdServer = gameObject1.AddComponent<NetworkIdentity>();
             serverTester = gameObject1.AddComponent<SyncVarHookTester>();
 
-            var gameObject2 = new GameObject();
+            var gameObject2 = new GameObject(this.GetType().Name);
             netIdClient = gameObject2.AddComponent<NetworkIdentity>();
             clientTester = gameObject2.AddComponent<SyncVarHookTester>();
 

@@ -27,7 +27,7 @@ namespace Mirage.Tests.Runtime
         [SetUp]
         public void Setup()
         {
-            transportObj = new GameObject();
+            transportObj = new GameObject(this.GetType().Name);
 
             transport = transportObj.AddComponent<MultiplexTransport>();
 

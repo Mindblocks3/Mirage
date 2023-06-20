@@ -23,7 +23,7 @@ namespace Mirage.Tests.Runtime.Host
             spawner.ClientObjectManager = clientObjectManager;
             spawner.ServerObjectManager = serverObjectManager;
 
-            player = new GameObject();
+            player = new GameObject(this.GetType().Name);
             NetworkIdentity identity = player.AddComponent<NetworkIdentity>();
             spawner.PlayerPrefab = identity;
 

@@ -80,7 +80,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         {
             spawnDelegateTestCalled = 0;
             var guid = Guid.NewGuid();
-            var gameObject = new GameObject();
+            var gameObject = new GameObject(this.GetType().Name);
             NetworkIdentity identity = gameObject.AddComponent<NetworkIdentity>();
             identity.AssetId = guid;
             identity.NetId = (ushort)Random.Range(0, ushort.MaxValue);
@@ -92,6 +92,8 @@ namespace Mirage.Tests.Runtime.ClientServer
             await AsyncUtil.WaitUntilWithTimeout(() => spawnDelegateTestCalled != 0);
 
             Assert.That(spawnDelegateTestCalled, Is.EqualTo(1));
+            
+            GameObject.DestroyImmediate(gameObject);
         });
 
         [UnityTest]
@@ -99,7 +101,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         {
             spawnDelegateTestCalled = 0;
             var guid = Guid.NewGuid();
-            var gameObject = new GameObject();
+            var gameObject = new GameObject(this.GetType().Name);
             NetworkIdentity identity = gameObject.AddComponent<NetworkIdentity>();
             identity.AssetId = guid;
             identity.NetId = (ushort)Random.Range(0, ushort.MaxValue);
@@ -117,6 +119,8 @@ namespace Mirage.Tests.Runtime.ClientServer
                 netId = identity.NetId
             });
             unspawnDelegate.Received().Invoke(Arg.Any<NetworkIdentity>());
+
+            GameObject.DestroyImmediate(gameObject);
         });
 
         int spawnDelegateTestCalled;

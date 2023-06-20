@@ -22,7 +22,7 @@ namespace Mirage
         [SetUp]
         public void Setup()
         {
-            go = new GameObject();
+            go = new GameObject(this.GetType().Name);
             client = go.AddComponent<NetworkClient>();
             server = go.AddComponent<NetworkServer>();
             spawner = go.AddComponent<CharacterSpawner>();
@@ -35,13 +35,13 @@ namespace Mirage
             spawner.ServerObjectManager = serverObjectManager;
             spawner.ClientObjectManager = clientObjectManager;
 
-            playerPrefab = new GameObject();
+            playerPrefab = new GameObject(this.GetType().Name);
             NetworkIdentity playerId = playerPrefab.AddComponent<NetworkIdentity>();
 
             spawner.PlayerPrefab = playerId;
 
-            pos1 = new GameObject().transform;
-            pos2 = new GameObject().transform;
+            pos1 = new GameObject(this.GetType().Name).transform;
+            pos2 = new GameObject(this.GetType().Name).transform;
             spawner.startPositions.Add(pos1);
             spawner.startPositions.Add(pos2);
         }

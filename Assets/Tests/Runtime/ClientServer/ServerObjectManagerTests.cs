@@ -34,8 +34,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ThrowsIfSpawnCalledOwnerHasNoNetworkIdentity()
         {
-            var badObject = new GameObject();
-            var badOwner = new GameObject();
+            var badObject = new GameObject(this.GetType().Name);
+            var badOwner = new GameObject(this.GetType().Name);
 
             Assert.Throws<UnityAssertionException>(
                 () => { serverObjectManager.Spawn(badObject, badOwner); },
@@ -56,8 +56,8 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ThrowsIfSpawnCalledWithOwnerWithNoOwnerTest()
         {
-            var badObject = new GameObject();
-            var badOwner = new GameObject();
+            var badObject = new GameObject(this.GetType().Name);
+            var badOwner = new GameObject(this.GetType().Name);
             badOwner.AddComponent<NetworkIdentity>();
 
             Assert.Throws<UnityAssertionException>(
@@ -246,7 +246,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ThrowsIfSpawnedCalledWithoutANetworkIdentity()
         {
-            var badObject = new GameObject();
+            var badObject = new GameObject(this.GetType().Name);
 
             Assert.Throws<UnityAssertionException>(
                 () => serverObjectManager.Spawn(badObject, connectionToServer),
@@ -260,7 +260,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void AddCharacterNoIdentityExceptionTest()
         {
-            var character = new GameObject();
+            var character = new GameObject(this.GetType().Name);
 
             Assert.Throws<UnityAssertionException>(
                 () => serverObjectManager.AddCharacter(connectionToClient, character),
@@ -272,7 +272,7 @@ namespace Mirage.Tests.Runtime.ClientServer
         [Test]
         public void ReplacePlayerNoIdentityExceptionTest()
         {
-            var character = new GameObject();
+            var character = new GameObject(this.GetType().Name);
 
             Assert.Throws<UnityAssertionException>(
                 () => serverObjectManager.ReplaceCharacter(connectionToClient, character, true),

@@ -13,7 +13,7 @@ namespace Mirage
         [SetUp]
         public void Setup()
         {
-            testGO = new GameObject();
+            testGO = new GameObject(this.GetType().Name);
             comp = testGO.AddComponent<HeadlessAutoStart>();
         }
 

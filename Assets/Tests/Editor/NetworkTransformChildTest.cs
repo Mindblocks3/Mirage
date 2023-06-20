@@ -11,7 +11,7 @@ namespace Mirage
         {
             NetworkTransformChild networkTransformChild;
 
-            var gameObject = new GameObject();
+            var gameObject = new GameObject(this.GetType().Name);
             networkTransformChild = gameObject.AddComponent<NetworkTransformChild>();
 
             Assert.That(networkTransformChild.Target == null);
@@ -19,6 +19,8 @@ namespace Mirage
             networkTransformChild.Target = gameObject.transform;
 
             Assert.That(networkTransformChild.Target == networkTransformChild.transform);
+
+            GameObject.DestroyImmediate(gameObject);
         }
     }
 }

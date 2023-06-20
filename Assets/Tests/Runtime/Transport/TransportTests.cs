@@ -39,7 +39,7 @@ namespace Mirage.Tests.Runtime
         [UnitySetUp]
         public IEnumerator Setup() => UniTask.ToCoroutine(async () =>
         {
-            transportObj = new GameObject();
+            transportObj = new GameObject(this.GetType().Name);
 
             transport = transportObj.AddComponent<T>();
 

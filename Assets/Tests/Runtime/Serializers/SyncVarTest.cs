@@ -128,7 +128,7 @@ namespace Mirage.Tests.Runtime
             identity1.OnSerializeAllSafely(true, ownerWriter, observersWriter);
 
             // set up a "client" object
-            var gameObject2 = new GameObject();
+            var gameObject2 = new GameObject(this.GetType().Name);
             NetworkIdentity identity2 = gameObject2.AddComponent<NetworkIdentity>();
             MockPlayer player2 = gameObject2.AddComponent<MockPlayer>();
 

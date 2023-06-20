@@ -24,7 +24,7 @@ namespace Mirage.Tests.Runtime.Host
         public void GetNoNetworkIdentity()
         {
             // create a GameObject without NetworkIdentity
-            var goWithout = new GameObject();
+            var goWithout = new GameObject(this.GetType().Name);
 
             Assert.Throws<UnityAssertionException>(
                 () => goWithout.GetNetworkIdentity(),
@@ -79,7 +79,7 @@ namespace Mirage.Tests.Runtime.Host
 
             INetworkPlayer player = Substitute.For<INetworkPlayer>();
 
-            NetworkIdentity identity = new GameObject().AddComponent<NetworkIdentity>();
+            NetworkIdentity identity = new GameObject(this.GetType().Name).AddComponent<NetworkIdentity>();
 
             serverObjectManager.HideForConnection(identity, player);
 

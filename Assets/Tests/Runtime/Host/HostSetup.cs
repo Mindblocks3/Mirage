@@ -30,7 +30,7 @@ namespace Mirage.Tests.Runtime.Host
         [UnitySetUp]
         public IEnumerator SetupHost() => UniTask.ToCoroutine(async () =>
         {
-            networkManagerGo = new GameObject();
+            networkManagerGo = new GameObject(this.GetType().Name);
             // set gameobject name to test name (helps with debugging)
             networkManagerGo.name = TestContext.CurrentContext.Test.MethodName;
 

@@ -63,7 +63,7 @@ namespace Mirage.Tests.Runtime.Host
         [Test]
         public void OnStartServer()
         {
-            var gameObject = new GameObject();
+            var gameObject = new GameObject(this.GetType().Name);
             NetworkIdentity netIdentity = gameObject.AddComponent<NetworkIdentity>();
             OnStartServerTestComponent comp = gameObject.AddComponent<OnStartServerTestComponent>();
             netIdentity.OnStartServer.AddListener(comp.OnStartServer);
@@ -80,7 +80,7 @@ namespace Mirage.Tests.Runtime.Host
         [Test]
         public void SpawnedObjectNoAuthority()
         {
-            var gameObject2 = new GameObject();
+            var gameObject2 = new GameObject(this.GetType().Name);
             gameObject2.AddComponent<NetworkIdentity>();
             SampleBehavior behaviour2 = gameObject2.AddComponent<SampleBehavior>();
 
@@ -90,6 +90,8 @@ namespace Mirage.Tests.Runtime.Host
 
             // no authority by default
             Assert.That(behaviour2.HasAuthority, Is.False);
+            
+            Object.Destroy(gameObject2);
         }
 
         [Test]
@@ -116,7 +118,7 @@ namespace Mirage.Tests.Runtime.Host
         [Test]
         public void ComponentIndex()
         {
-            var extraObject = new GameObject();
+            var extraObject = new GameObject(this.GetType().Name);
 
             extraObject.AddComponent<NetworkIdentity>();
 

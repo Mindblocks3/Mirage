@@ -21,7 +21,7 @@ namespace Mirage.Tests.Runtime.Host
 
         public override void ExtraSetup()
         {
-            gameObject = new GameObject();
+            gameObject = new GameObject(this.GetType().Name);
             testIdentity = gameObject.AddComponent<NetworkIdentity>();
         }
 
@@ -211,9 +211,9 @@ namespace Mirage.Tests.Runtime.Host
         [UnityTest]
         public IEnumerator DestroyOwnedObjectsTest() => UniTask.ToCoroutine(async () =>
         {
-            var testObj1 = new GameObject();
-            var testObj2 = new GameObject();
-            var testObj3 = new GameObject();
+            var testObj1 = new GameObject(this.GetType().Name);
+            var testObj2 = new GameObject(this.GetType().Name);
+            var testObj3 = new GameObject(this.GetType().Name);
 
             server.LocalPlayer.AddOwnedObject(testObj1.AddComponent<NetworkIdentity>());
             server.LocalPlayer.AddOwnedObject(testObj2.AddComponent<NetworkIdentity>());
@@ -235,7 +235,7 @@ namespace Mirage.Tests.Runtime.Host
 
         public override void ExtraSetup()
         {
-            gameObject = new GameObject();
+            gameObject = new GameObject(this.GetType().Name);
             testIdentity = gameObject.AddComponent<NetworkIdentity>();
             server.Started.AddListener(() => serverObjectManager.Spawn(gameObject));
         }

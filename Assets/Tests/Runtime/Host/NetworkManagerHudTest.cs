@@ -17,8 +17,8 @@ namespace Mirage.Tests.Runtime.Host
             gameObject = new GameObject("NetworkManagerHud", typeof(NetworkManagerHud));
             networkManagerHud = gameObject.GetComponent<NetworkManagerHud>();
             networkManagerHud.NetworkManager = manager;
-            networkManagerHud.OfflineGO = new GameObject();
-            networkManagerHud.OnlineGO = new GameObject();
+            networkManagerHud.OfflineGO = new GameObject(this.GetType().Name);
+            networkManagerHud.OnlineGO = new GameObject(this.GetType().Name);
 
             //Initial state in the prefab
             networkManagerHud.OfflineGO.SetActive(true);

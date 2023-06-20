@@ -69,7 +69,7 @@ namespace Mirage.Tests
         {
             AddValidIdentity(out ushort id, out NetworkIdentity identity);
 
-            Object.DestroyImmediate(identity);
+            Object.DestroyImmediate(identity.gameObject);
 
             bool found = world.TryGetIdentity(id, out NetworkIdentity _);
             Assert.That(found, Is.False);
@@ -81,6 +81,8 @@ namespace Mirage.Tests
 
             bool found = world.TryGetIdentity(id, out NetworkIdentity _);
             Assert.That(found, Is.True);
+
+            GameObject.DestroyImmediate(identity.gameObject);
         }
 
         [Test]
@@ -94,6 +96,8 @@ namespace Mirage.Tests
 
             Assert.That(collection.Count, Is.EqualTo(1));
             Assert.That(actual, Is.EqualTo(expected));
+
+            GameObject.DestroyImmediate(expected.gameObject);
         }
 
         [Test]
@@ -116,6 +120,11 @@ namespace Mirage.Tests
             Assert.That(actual2, Is.EqualTo(expected2));
             Assert.That(actual3, Is.EqualTo(expected3));
             Assert.That(actual4, Is.EqualTo(expected4));
+
+            GameObject.DestroyImmediate(expected1.gameObject);
+            GameObject.DestroyImmediate(expected2.gameObject);
+            GameObject.DestroyImmediate(expected3.gameObject);
+            GameObject.DestroyImmediate(expected4.gameObject);
         }
         [Test]
         public void AddInvokesEvent()
@@ -123,6 +132,8 @@ namespace Mirage.Tests
             AddValidIdentity(out ushort id, out NetworkIdentity expected);
 
             spawnListener.Received(1).Invoke(expected);
+
+            GameObject.DestroyImmediate(expected.gameObject);
         }
         [Test]
         public void AddInvokesEventOncePerAdd()
@@ -136,7 +147,13 @@ namespace Mirage.Tests
             spawnListener.Received(1).Invoke(expected2);
             spawnListener.Received(1).Invoke(expected3);
             spawnListener.Received(1).Invoke(expected4);
+
+            GameObject.DestroyImmediate(expected1.gameObject);
+            GameObject.DestroyImmediate(expected2.gameObject);
+            GameObject.DestroyImmediate(expected3.gameObject);
+            GameObject.DestroyImmediate(expected4.gameObject);
         }
+
         [Test]
         public void AddThrowsIfIdentityIsNull()
         {
@@ -157,7 +174,10 @@ namespace Mirage.Tests
             {
                 world.AddIdentity(id, identity);
             }, $"NetId {id} already exists");
+
+            GameObject.DestroyImmediate(identity.gameObject);
         }
+
         [Test]
         public void AddThrowsIfIdIs0()
         {
@@ -171,6 +191,8 @@ namespace Mirage.Tests
             }, "NetId cannot be zero");
 
             spawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
+
+            GameObject.DestroyImmediate(identity.gameObject);
         }
         [Test]
         public void AddAssertsIfIdentityDoesNotHaveMatchingId()
@@ -188,6 +210,8 @@ namespace Mirage.Tests
             }, $"NetId {id2} does not match identity's netId {id1}");
 
             spawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
+
+            GameObject.DestroyImmediate(identity.gameObject);
         }
 
         [Test]
@@ -201,6 +225,8 @@ namespace Mirage.Tests
 
             Assert.That(world.TryGetIdentity(id, out NetworkIdentity identityOut), Is.False);
             Assert.That(identityOut, Is.EqualTo(null));
+
+            GameObject.DestroyImmediate(identity.gameObject);
         }
         [Test]
         public void RemoveFromCollectionUsingNetId()
@@ -213,6 +239,8 @@ namespace Mirage.Tests
 
             Assert.That(world.TryGetIdentity(id, out NetworkIdentity identityOut), Is.False);
             Assert.That(identityOut, Is.EqualTo(null));
+
+            GameObject.DestroyImmediate(identity.gameObject);
         }
         [Test]
         public void RemoveOnlyRemovesCorrectItem()
@@ -231,6 +259,10 @@ namespace Mirage.Tests
             Assert.That(identityOut1, Is.EqualTo(identity1));
             Assert.That(identityOut2, Is.EqualTo(null));
             Assert.That(identityOut3, Is.EqualTo(identity3));
+
+            GameObject.DestroyImmediate(identity1.gameObject);
+            GameObject.DestroyImmediate(identity2.gameObject);
+            GameObject.DestroyImmediate(identity3.gameObject);
         }
         [Test]
         public void RemoveInvokesEvent()
@@ -248,6 +280,10 @@ namespace Mirage.Tests
 
             world.RemoveIdentity(id2);
             unspawnListener.Received(1).Invoke(identity2);
+
+            GameObject.DestroyImmediate(identity1.gameObject);
+            GameObject.DestroyImmediate(identity2.gameObject);
+            GameObject.DestroyImmediate(identity3.gameObject);
         }
 
         [Test]
@@ -273,6 +309,11 @@ namespace Mirage.Tests
 
             world.ClearSpawnedObjects();
             Assert.That(world.SpawnedIdentities.Count, Is.EqualTo(0));
+
+            GameObject.DestroyImmediate(identity1.gameObject);
+            GameObject.DestroyImmediate(identity2.gameObject);
+            GameObject.DestroyImmediate(identity3.gameObject);
+
         }
         [Test]
         public void ClearDoesNotInvokeEvent()
@@ -284,6 +325,10 @@ namespace Mirage.Tests
 
             world.ClearSpawnedObjects();
             unspawnListener.DidNotReceiveWithAnyArgs().Invoke(default);
+
+            GameObject.DestroyImmediate(identity1.gameObject);
+            GameObject.DestroyImmediate(identity2.gameObject);
+            GameObject.DestroyImmediate(identity3.gameObject);
         }
     }
 }
