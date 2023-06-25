@@ -1,3 +1,10 @@
+## [102.0.1](https://github.com/Mindblocks3/Mirage/compare/v102.0.0...v102.0.1) (2023-06-25)
+
+
+### Performance Improvements
+
+* remove deprecated finders in favor of faster ones ([c70d567](https://github.com/Mindblocks3/Mirage/commit/c70d567366b2250c2dfa77386654a007aa570370))
+
 # [102.0.0](https://github.com/Mindblocks3/Mirage/compare/v101.0.0...v102.0.0) (2023-01-31)
 
 
