@@ -486,8 +486,8 @@ namespace Mirage
         // (because scene objects have no persistent unique ID in Unity)
         //
         // original UNET used OnPostProcessScene to assign an index based on
-        // FindObjectOfType<NetworkIdentity> order.
-        // -> this didn't work because FindObjectOfType order isn't deterministic.
+        // FindFirstObjectByType<NetworkIdentity> order.
+        // -> this didn't work because FindFirstObjectByType order isn't deterministic.
         // -> one workaround is to sort them by sibling paths, but it can still
         //    get out of sync when we open scene2 in editor and we have
         //    DontDestroyOnLoad objects that messed with the sibling index.

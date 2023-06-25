@@ -45,8 +45,8 @@ namespace Mirage.Tests.Performance.Runtime
 
             MonsterPrefab = AssetDatabase.LoadAssetAtPath<NetworkIdentity>(MONSTER_PATH);
             // load host
-            Server = Object.FindObjectOfType<NetworkServer>();
-            ServerObjectManager = Object.FindObjectOfType<ServerObjectManager>();
+            Server = Object.FindFirstObjectByType<NetworkServer>();
+            ServerObjectManager = Object.FindFirstObjectByType<ServerObjectManager>();
 
             Server.Authenticated.AddListener(conn => ServerObjectManager.SetClientReady(conn));
 
@@ -59,7 +59,7 @@ namespace Mirage.Tests.Performance.Runtime
 
             await started.Task;
 
-            Transport = Object.FindObjectOfType<Transport>();
+            Transport = Object.FindFirstObjectByType<Transport>();
 
             _clients.Clear();
             // connect from a bunch of clients
@@ -71,8 +71,8 @@ namespace Mirage.Tests.Performance.Runtime
             // spawn a bunch of monsters
             for (var i = 0; i < MONSTER_COUNT; i++)
                 SpawnMonster(i);
-
-            while (Object.FindObjectsOfType<MonsterBehavior>().Count() < MONSTER_COUNT * (CLIENT_COUNT + 1))
+            
+            while (Object.FindObjectsByType<MonsterBehavior>(FindObjectsSortMode.None).Count() < MONSTER_COUNT * (CLIENT_COUNT + 1))
                 await UniTask.Delay(10);
         });
 

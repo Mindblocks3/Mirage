@@ -26,7 +26,7 @@ namespace Mirage.Tests.Performance.Runtime
             SceneManager.SetActiveScene(scene);
 
             // load host
-            benchmarker = Object.FindObjectOfType<NetworkManager>();
+            benchmarker = Object.FindFirstObjectByType<NetworkManager>();
 
             benchmarker.Server.Listen(benchmarker.Client);
 

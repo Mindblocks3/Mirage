@@ -29,7 +29,7 @@ namespace Mirage.Tests.Performance.Runtime
 
             await UniTask.Delay(1);
             // load host
-            benchmarker = Object.FindObjectOfType<NetworkManager>();
+            benchmarker = Object.FindFirstObjectByType<NetworkManager>();
 
             benchmarker.Server.Listen(benchmarker.Client);
         });
@@ -48,7 +48,7 @@ namespace Mirage.Tests.Performance.Runtime
 
         static void EnableHealth(bool value)
         {
-            Health[] all = Object.FindObjectsOfType<Health>();
+            Health[] all = Object.FindObjectsByType<Health>(FindObjectsSortMode.None);
             foreach (Health health in all)
             {
                 health.enabled = value;

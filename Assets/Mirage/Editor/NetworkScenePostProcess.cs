@@ -21,7 +21,7 @@ namespace Mirage
             // => ignore DontDestroyOnLoad scene! this avoids weird situations
             //    like in NetworkZones when we destroy the local player and
             //    load another scene afterwards, yet the local player is still
-            //    in the FindObjectsOfType result with scene=DontDestroyOnLoad
+            //    in the FindObjectsByType result with scene=DontDestroyOnLoad
             //    for some reason
             // => OfTypeAll so disabled objects are included too
             // => Unity 2019 returns prefabs here too, so filter them out.
