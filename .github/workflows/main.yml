@@ -58,7 +58,7 @@ jobs:
           path: Library
           key: Library-build
 
-      - uses: game-ci/unity-builder@v2
+      - uses: game-ci/unity-builder@v3
         with:
           targetPlatform: StandaloneLinux64
           customParameters: -nographics
