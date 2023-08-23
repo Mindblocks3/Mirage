@@ -31,7 +31,7 @@ jobs:
           path: Library
           key: Library-2022.1.20
 
-      - uses: game-ci/unity-test-runner@v2
+      - uses: game-ci/unity-test-runner@v3
         id: tests
 
       - uses: actions/upload-artifact@v3
