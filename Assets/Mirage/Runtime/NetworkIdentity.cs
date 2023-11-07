@@ -634,11 +634,7 @@ namespace Mirage
                     sceneId = 0;
                     // NOTE: might make sense to use GetPrefabStage for asset
                     //       path, but let's not touch it while it works.
-#if UNITY_2020_1_OR_NEWER
                     string path = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage().assetPath;
-#else
-                    string path = PrefabStageUtility.GetCurrentPrefabStage().prefabAssetPath;
-#endif
 
                     AssignAssetID(path);
                 }

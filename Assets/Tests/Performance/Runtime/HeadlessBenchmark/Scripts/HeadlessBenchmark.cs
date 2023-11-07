@@ -3,9 +3,6 @@ using System.Collections;
 using Cysharp.Threading.Tasks;
 using Mirage.KCP;
 using UnityEngine;
-#if IGNORANCE
-using Mirror.ENet;
-#endif
 
 namespace Mirage.HeadlessBenchmark
 {
@@ -214,22 +211,6 @@ namespace Mirage.HeadlessBenchmark
                 }
             }
 
-#if IGNORANCE
-            if (string.IsNullOrEmpty(transport) || transport.Equals("ignorance"))
-            {
-                IgnoranceNG newTransport = networkManager.gameObject.AddComponent<IgnoranceNG>();
-
-                //Try to apply port if exists and needed by transport.
-                if (!string.IsNullOrEmpty(port))
-                {
-                    newTransport.Config.CommunicationPort = ushort.Parse(port);
-                }
-                networkManager.server.Transport = newTransport;
-                networkManager.client.Transport = newTransport;
-
-                this.transport = newTransport;
-            }
-#endif
         }
 
         string GetArgValue(string name)
