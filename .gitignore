@@ -563,3 +563,4 @@ FodyWeavers.xsd
 # used for Samples~ and weaver tests
 !Assets/**/*~
 >>>>>>> master
+.vscode
