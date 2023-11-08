@@ -32,7 +32,7 @@ jobs:
           key: Library-2022.1.20
 
       # note v3.1.0 is broken, it has the wrong image
-      - uses: game-ci/unity-test-runner@c80d909
+      - uses: game-ci/unity-test-runner@c80d9094f5f5f471d0ae6f44a8c8868a448bfb7e
         id: tests
 
       - uses: actions/upload-artifact@v3
@@ -60,7 +60,7 @@ jobs:
           key: Library-build
 
       # Note v3.1.0 is broken, uses the wrong image
-      - uses: game-ci/unity-builder@7afabe7
+      - uses: game-ci/unity-builder@7afabe74da5227a9ecd537f5260b398258c3eb3b
         with:
           targetPlatform: StandaloneLinux64
           customParameters: -nographics
