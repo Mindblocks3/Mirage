@@ -56,8 +56,13 @@ namespace Mirage.RemoteCalls
     {
         static readonly ILogger logger = LogFactory.GetLogger(typeof(RemoteCallHelper));
 
-        static readonly Dictionary<int, Skeleton> cmdHandlerDelegates = new Dictionary<int, Skeleton>();
+        static Dictionary<int, Skeleton> cmdHandlerDelegates = new Dictionary<int, Skeleton>();
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Initialize()
+        {
+            cmdHandlerDelegates = new Dictionary<int, Skeleton>();
+        }
         /// <summary>
         /// Creates hash from Type and method name
         /// </summary>

@@ -26,6 +26,12 @@ namespace Mirage.Examples.Basic
             return playerCounter++;
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init()
+        {
+            playerCounter = 1;
+        }
+
         private int _playerData;
         // This is updated by UpdateData which is called from OnStartServer via InvokeRepeating
         [SyncVar]
