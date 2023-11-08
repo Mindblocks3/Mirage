@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Mirage.Examples.Chat
 {
@@ -7,6 +8,12 @@ namespace Mirage.Examples.Chat
         public string playerName { get; set; }
 
         public static event Action<Player, string> OnMessage;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Initialize()
+        {
+            OnMessage = null;
+        }
 
         [ServerRpc]
         public void CmdSend(string message)
