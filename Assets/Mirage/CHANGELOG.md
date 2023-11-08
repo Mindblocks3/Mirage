@@ -1,3 +1,26 @@
+# [103.0.0](https://github.com/Mindblocks3/Mirage/compare/v102.0.1...v103.0.0) (2023-11-08)
+
+
+### Bug Fixes
+
+* initialize statics without domain reload ([ea05d2e](https://github.com/Mindblocks3/Mirage/commit/ea05d2ee605bfa83f3b9c6dc0c1d3a0db6178a5f))
+
+
+### Features
+
+* remove support for scene checker ([8eab5b2](https://github.com/Mindblocks3/Mirage/commit/8eab5b28b6fd84dc97572f25f7bc3617c82bc867))
+
+
+### Styles
+
+* remove lobby support ([ea6bd09](https://github.com/Mindblocks3/Mirage/commit/ea6bd09c4e30c914e8bcf51bcaf834d63fca43e1))
+
+
+### BREAKING CHANGES
+
+* remove support for multiple scenes
+* Lobby support has been removed.
+
 ## [102.0.1](https://github.com/Mindblocks3/Mirage/compare/v102.0.0...v102.0.1) (2023-06-25)
 
 
