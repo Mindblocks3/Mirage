@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Mirage
 {
@@ -47,6 +48,13 @@ namespace Mirage
         /// Subscribe to this if you want to diagnose the network
         /// </summary>
         public static event Action<MessageInfo> OutMessageEvent;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Initialize()
+        {
+            OutMessageEvent = null;
+            InMessageEvent = null;
+        }
 
         internal static void OnSend<T>(T message, int channel, int bytes, int count)
         {

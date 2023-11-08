@@ -56,13 +56,21 @@ namespace Mirage.RemoteCalls
     {
         static readonly ILogger logger = LogFactory.GetLogger(typeof(RemoteCallHelper));
 
+        /*
+            Note: this should not be reinitialized without domain reload.
+
+            The delegates are added as part of class constructors
+            so if we add a [InitializeOnLoad] constructor to this class
+            it will be called after all the other constructors
+            and we will lose all the delegates.
+
+            Note the skeletons don't have references to gameobjects
+            thus it is safe to persist them between reload. If
+            the classes are reloaded, the skeletons will be overriden
+            with new ones.
+        */
         static Dictionary<int, Skeleton> cmdHandlerDelegates = new Dictionary<int, Skeleton>();
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
-        {
-            cmdHandlerDelegates = new Dictionary<int, Skeleton>();
-        }
         /// <summary>
         /// Creates hash from Type and method name
         /// </summary>

@@ -221,7 +221,7 @@ namespace Mirage
                     return networkBehavioursCache;
 
                 NetworkBehaviour[] components = GetComponents<NetworkBehaviour>();
-                
+
                 Assert.IsTrue(components.Length <= byte.MaxValue, "Only 255 NetworkBehaviour per gameobject allowed");
 
                 networkBehavioursCache = components;
@@ -313,12 +313,19 @@ namespace Mirage
         /// </summary>
         static readonly Dictionary<ulong, NetworkIdentity> sceneIds = new Dictionary<ulong, NetworkIdentity>();
 
-        [SerializeField] UnityEvent _onStartServer = new ();
-        [SerializeField] UnityEvent _onStartClient = new ();
-        [SerializeField] UnityEvent _onStartLocalPlayer = new ();
-        [SerializeField] BoolUnityEvent _onAuthorityChanged = new ();
-        [SerializeField] UnityEvent _onStopClient = new ();
-        [SerializeField] UnityEvent _onStopServer = new ();
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void Initialize()
+        {
+            sceneIds.Clear();
+            newObservers.Clear();
+        }
+
+        [SerializeField] UnityEvent _onStartServer = new();
+        [SerializeField] UnityEvent _onStartClient = new();
+        [SerializeField] UnityEvent _onStartLocalPlayer = new();
+        [SerializeField] BoolUnityEvent _onAuthorityChanged = new();
+        [SerializeField] UnityEvent _onStopClient = new();
+        [SerializeField] UnityEvent _onStopServer = new();
 
         bool clientStarted;
         bool localPlayerStarted;
@@ -1016,6 +1023,7 @@ namespace Mirage
             }
         }
 
+        // Just a cache of the HashSet for allocations
         static readonly HashSet<INetworkPlayer> newObservers = new HashSet<INetworkPlayer>();
 
         /// <summary>
@@ -1243,6 +1251,7 @@ namespace Mirage
             }
         }
 
+        // just a cache to avoid allocations
         static readonly List<INetworkPlayer> connectionsExcludeSelf = new List<INetworkPlayer>(100);
 
         /// <summary>
