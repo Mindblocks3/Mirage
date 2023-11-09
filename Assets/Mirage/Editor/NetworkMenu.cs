@@ -15,9 +15,9 @@ namespace Mirage
         {
             var components = new Type[]
             {
-                typeof(NetworkManager),
                 typeof(NetworkServer),
                 typeof(NetworkClient),
+                typeof(NetworkManager),
                 typeof(ServerObjectManager),
                 typeof(ClientObjectManager),
                 typeof(CharacterSpawner),
