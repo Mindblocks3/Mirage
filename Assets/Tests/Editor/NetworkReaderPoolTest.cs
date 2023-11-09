@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using Mirage.Serialization;
 using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace Mirage
 {
@@ -57,6 +59,10 @@ namespace Mirage
         [Test]
         public void PoolReUsesReadersUpToSizeLimit()
         {
+            // suppress the warning that it generates
+            bool logEnabled = Debug.unityLogger.logEnabled;
+            Debug.unityLogger.logEnabled = false;
+
             NetworkReaderPool.Capacity = 1;
 
             // get 2 Readers
@@ -76,6 +82,8 @@ namespace Mirage
             bool dReused = d == a || d == b;
             Assert.That((cReused && !dReused) ||
                         (!cReused && dReused));
+
+            Debug.unityLogger.logEnabled = logEnabled;
         }
 
         // if we shrink the capacity, the internal 'next' needs to be adjusted
