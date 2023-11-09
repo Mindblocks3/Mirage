@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 namespace Mirage
 {
     [TestFixture]
-    public class HeadlessAutoStartTest : MonoBehaviour
+    public class HeadlessAutoStartTest
     {
         protected GameObject testGO;
         protected HeadlessAutoStart comp;

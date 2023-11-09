@@ -132,12 +132,27 @@ namespace Mirage.Tests.Runtime.Host
 
             Object.Destroy(extraObject);
         }
+
+        [Test]
+        public void HookGuardTest() {
+            var obj = new GameObject();
+            var tester = obj.AddComponent<NetworkBehaviourHookGuardTester>();
+            tester.HookGuard();
+            Object.Destroy(obj);
+        }
+
+        [Test]
+        public void InitSyncObjectTest() {
+            var obj = new GameObject();
+            var tester = obj.AddComponent<NetworkBehaviourInitSyncObjectTester>();
+            tester.InitSyncObject();
+            Object.Destroy(obj);
+        }
     }
 
     // we need to inherit from networkbehaviour to test protected functions
     public class NetworkBehaviourHookGuardTester : NetworkBehaviour
     {
-        [Test]
         public void HookGuard()
         {
             // set hook guard for some bits
@@ -162,7 +177,6 @@ namespace Mirage.Tests.Runtime.Host
     // we need to inherit from networkbehaviour to test protected functions
     public class NetworkBehaviourInitSyncObjectTester : NetworkBehaviour
     {
-        [Test]
         public void InitSyncObject()
         {
             ISyncObject syncObject = new SyncList<bool>();
