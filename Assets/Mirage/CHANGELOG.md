@@ -1,3 +1,10 @@
+## [103.0.1](https://github.com/Mindblocks3/Mirage/compare/v103.0.0...v103.0.1) (2023-11-09)
+
+
+### Bug Fixes
+
+* warning adding network menu ([b7513df](https://github.com/Mindblocks3/Mirage/commit/b7513dfbf5c9aee4f886f180323bfd7542a952a4))
+
 # [103.0.0](https://github.com/Mindblocks3/Mirage/compare/v102.0.1...v103.0.0) (2023-11-08)
 
 
