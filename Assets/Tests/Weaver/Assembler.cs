@@ -59,12 +59,10 @@ namespace Mirage.Weaver
         }
 
         // Add a range of source files to compile
-        public void AddSourceFiles(string[] sourceFiles)
+        private IEnumerable<string> AddSourceFiles(IEnumerable<string> sourceFiles)
         {
-            foreach (string src in sourceFiles)
-            {
-                this.sourceFiles.Add(Path.Combine(WeaverTestLocator.OutputDirectory, src));
-            }
+            return from sourceFile in sourceFiles
+                select Path.Combine(WeaverTestLocator.OutputDirectory, sourceFile);
         }
 
         // Delete output dll / pdb / mdb
@@ -96,18 +94,57 @@ namespace Mirage.Weaver
         }
 
         /// <summary>
+        /// Calls the compiler to build the provided scripts
+        /// </summary>
+        /// <param name="outputFile">The path of the output assembly</param>
+        /// <param name="sourceFiles">The source files to be compiled</param>
+        /// <returns>The assembly definition that was generated</returns>
+        /// <exception cref="AssemblyDefinitionException"></exception>
+        public AssemblyDefinition Assemble(string outputFile, IEnumerable<string> sourceFiles)
+        {
+            var assemblyPath = Path.Combine(WeaverTestLocator.OutputDirectory, outputFile);
+
+            // This will compile scripts with the same references as files in the asset folder.
+            // This means that the dll will get references to all asmdef just as if it was the default "Assembly-CSharp.dll"
+            var assemblyBuilder = new AssemblyBuilder(assemblyPath, AddSourceFiles(sourceFiles).ToArray())
+            {
+                referencesOptions = ReferencesOptions.UseEngineModules
+            };
+
+            if (!assemblyBuilder.Build())
+            {
+                throw new AssemblyDefinitionException("Failed to start build of assembly {0}", assemblyBuilder.assemblyPath);
+            }
+
+            while (assemblyBuilder.status != AssemblyBuilderStatus.Finished)
+            {
+                System.Threading.Thread.Sleep(10);
+            }
+
+            var path = assemblyBuilder.assemblyPath;
+
+            var compiledAssembly = new CompiledAssembly(assemblyPath)
+                {
+                    Defines = assemblyBuilder.defaultDefines,
+                    References = assemblyBuilder.defaultReferences
+                };
+
+            return Weaver.AssemblyDefinitionFor(compiledAssembly);
+        }
+
+        /// <summary>
         /// Builds and Weaves an Assembly with references to unity engine and other asmdefs.
         /// <para>
         ///     NOTE: Does not write the weaved assemble to disk
         /// </para>
         /// </summary>
-        public AssemblyDefinition Build(IWeaverLogger logger)
+        public AssemblyDefinition Build(IWeaverLogger logger, IEnumerable<string> sourceFiles)
         {
             AssemblyDefinition assembly = null;
 
             // This will compile scripts with the same references as files in the asset folder.
             // This means that the dll will get references to all asmdef just as if it was the default "Assembly-CSharp.dll"
-            var assemblyBuilder = new AssemblyBuilder(ProjectPathFile, sourceFiles.ToArray())
+            var assemblyBuilder = new AssemblyBuilder(ProjectPathFile, AddSourceFiles(sourceFiles).ToArray())
             {
                 referencesOptions = ReferencesOptions.UseEngineModules
             };
