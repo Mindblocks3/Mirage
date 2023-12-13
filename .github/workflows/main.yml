@@ -32,7 +32,7 @@ jobs:
           key: Library-2022.1.20
 
       # note v3.1.0 is broken, it has the wrong image
-      - uses: game-ci/unity-test-runner@c80d9094f5f5f471d0ae6f44a8c8868a448bfb7e
+      - uses: game-ci/unity-test-runner@ce074787fbea6aec833f2c4a4c14315865e89047
         id: tests
 
       - uses: actions/upload-artifact@v3
