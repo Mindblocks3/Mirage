@@ -35,7 +35,7 @@ jobs:
       - uses: game-ci/unity-test-runner@c80d9094f5f5f471d0ae6f44a8c8868a448bfb7e
         id: tests
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test Results
