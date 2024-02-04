@@ -5,53 +5,16 @@ using Mono.Cecil;
 using Unity.CompilationPipeline.Common.ILPostProcessing;
 using UnityEditor.Compilation;
 using UnityEngine;
+using System;
 
 namespace Mirage.Weaver
 {
-    public class CompiledAssembly : ICompiledAssembly
-    {
-        private readonly string assemblyPath;
-        private InMemoryAssembly inMemoryAssembly;
-
-        public CompiledAssembly(string assemblyPath)
-        {
-            this.assemblyPath = assemblyPath;
-        }
-
-        public InMemoryAssembly InMemoryAssembly
-        {
-            get
-            {
-
-                if (inMemoryAssembly == null)
-                {
-                    byte[] peData = File.ReadAllBytes(assemblyPath);
-
-                    string pdbFileName = Path.GetFileNameWithoutExtension(assemblyPath) + ".pdb";
-
-                    byte[] pdbData = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(assemblyPath), pdbFileName));
-
-                    inMemoryAssembly = new InMemoryAssembly(peData, pdbData);
-                }
-                return inMemoryAssembly;
-            }
-        }
-
-        public string Name => Path.GetFileNameWithoutExtension(assemblyPath);
-
-        public string[] References { get; set; }
-
-        public string[] Defines { get; set; }
-    }
-
     public class Assembler
     {
         public string OutputFile { get; set; }
         public string ProjectPathFile => Path.Combine(WeaverTestLocator.OutputDirectory, OutputFile);
         public List<CompilerMessage> CompilerMessages { get; private set; }
         public bool CompilerErrors { get; private set; }
-
-        readonly HashSet<string> sourceFiles = new HashSet<string>();
 
         public Assembler()
         {
@@ -138,7 +101,7 @@ namespace Mirage.Weaver
         ///     NOTE: Does not write the weaved assemble to disk
         /// </para>
         /// </summary>
-        public AssemblyDefinition Build(IWeaverLogger logger, IEnumerable<string> sourceFiles)
+        public ICompiledAssembly Build(IEnumerable<string> sourceFiles)
         {
             AssemblyDefinition assembly = null;
 
@@ -149,34 +112,24 @@ namespace Mirage.Weaver
                 referencesOptions = ReferencesOptions.UseEngineModules
             };
 
-            assemblyBuilder.buildFinished += delegate (string assemblyPath, CompilerMessage[] compilerMessages)
-            {
-
-                // assembly builder does not call ILPostProcessor (WTF Unity?),  so we must invoke it ourselves.
-                var compiledAssembly = new CompiledAssembly(assemblyPath)
-                {
-                    Defines = assemblyBuilder.defaultDefines,
-                    References = assemblyBuilder.defaultReferences
-                };
-
-                var weaver = new Weaver(logger);
-
-                assembly = weaver.Weave(compiledAssembly);
-            };
-
             // Start build of assembly
             if (!assemblyBuilder.Build())
             {
-                Debug.LogErrorFormat("Failed to start build of assembly {0}", assemblyBuilder.assemblyPath);
-                return assembly;
+                Debug.LogErrorFormat($"Failed to start build of assembly {assemblyBuilder.assemblyPath}");
+                throw new Exception($"Failed to start build of assembly {assemblyBuilder.assemblyPath}");
             }
 
+            // wait for assemblyBuilder to finish
             while (assemblyBuilder.status != AssemblyBuilderStatus.Finished)
             {
                 System.Threading.Thread.Sleep(10);
             }
 
-            return assembly;
+            return new CompiledAssembly(assemblyBuilder.assemblyPath)
+                {
+                    Defines = assemblyBuilder.defaultDefines,
+                    References = assemblyBuilder.defaultReferences
+                };
         }
     }
 }

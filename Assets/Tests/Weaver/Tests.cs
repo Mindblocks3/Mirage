@@ -108,8 +108,10 @@ namespace Mirage.Weaver
             var sourceFiles = from test in testName
                               select Path.Combine(testSourceDirectory, test + ".cs");
 
-            assembly = assembler.Build(weaverLog, sourceFiles);
+            var compiledAssembly = assembler.Build(sourceFiles);
 
+            var weaver = new Weaver(weaverLog);
+            assembly = weaver.Weave( compiledAssembly);
             Assert.That(assembler.CompilerErrors, Is.False);
             foreach (DiagnosticMessage error in weaverLog.Diagnostics)
             {
