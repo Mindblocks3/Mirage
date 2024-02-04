@@ -69,10 +69,10 @@ namespace Mirage.Weaver
                     continue;
                 }
 
-                MethodReference writeFunc = writers.GetWriteFunc(param.ParameterType, method.DebugInformation.SequencePoints.FirstOrDefault());
+                MethodReference writeFunc = writers.GetWriteFunc(param.ParameterType, method.GetSequencePoint());
                 if (writeFunc == null)
                 {
-                    logger.Error($"{method.Name} has invalid parameter {param}", method, method.DebugInformation.SequencePoints.FirstOrDefault());
+                    logger.Error($"{method.Name} has invalid parameter {param}", method, method.GetSequencePoint());
                     return false;
                 }
 
@@ -115,8 +115,7 @@ namespace Mirage.Weaver
                     continue;
                 }
 
-                SequencePoint sequencePoint = method.DebugInformation.SequencePoints.ElementAtOrDefault(0);
-                MethodReference readFunc = readers.GetReadFunc(param.ParameterType, sequencePoint);
+                MethodReference readFunc = readers.GetReadFunc(param.ParameterType, method.GetSequencePoint());
 
                 if (readFunc == null)
                 {
@@ -171,7 +170,7 @@ namespace Mirage.Weaver
         }
 
         // check if all Command/TargetRpc/Rpc function's parameters are valid for weaving
-        bool ValidateParameters(MethodReference method, RemoteCallType callType)
+        bool ValidateParameters(MethodDefinition method, RemoteCallType callType)
         {
             for (int i = 0; i < method.Parameters.Count; ++i)
             {
@@ -185,17 +184,17 @@ namespace Mirage.Weaver
         }
 
         // validate parameters for a remote function call like Rpc/Cmd
-        bool ValidateParameter(MethodReference method, ParameterDefinition param, RemoteCallType callType, bool firstParam)
+        bool ValidateParameter(MethodDefinition method, ParameterDefinition param, RemoteCallType callType, bool firstParam)
         {
             if (param.IsOut)
             {
-                logger.Error($"{method.Name} cannot have out parameters", method);
+                logger.Error($"{method.Name} cannot have out parameters", method, method.GetSequencePoint());
                 return false;
             }
 
             if (param.ParameterType.IsGenericParameter)
             {
-                logger.Error($"{method.Name} cannot have generic parameters", method);
+                logger.Error($"{method.Name} cannot have generic parameters", method, method.GetSequencePoint());
                 return false;
             }
 
@@ -236,7 +235,7 @@ namespace Mirage.Weaver
             }
             else
             {
-                logger.Error("ServerRPC methods cannot return a value " + func);
+                logger.Error("ServerRPC methods cannot return a value ", func);
                 return;
             }
 

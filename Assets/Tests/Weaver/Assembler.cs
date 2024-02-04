@@ -101,9 +101,8 @@ namespace Mirage.Weaver
         ///     NOTE: Does not write the weaved assemble to disk
         /// </para>
         /// </summary>
-        public ICompiledAssembly Build(IEnumerable<string> sourceFiles)
+        public AssemblyBuilder Build(IEnumerable<string> sourceFiles)
         {
-            AssemblyDefinition assembly = null;
 
             // This will compile scripts with the same references as files in the asset folder.
             // This means that the dll will get references to all asmdef just as if it was the default "Assembly-CSharp.dll"
@@ -125,11 +124,7 @@ namespace Mirage.Weaver
                 System.Threading.Thread.Sleep(10);
             }
 
-            return new CompiledAssembly(assemblyBuilder.assemblyPath)
-                {
-                    Defines = assemblyBuilder.defaultDefines,
-                    References = assemblyBuilder.defaultReferences
-                };
+            return assemblyBuilder;
         }
     }
 }

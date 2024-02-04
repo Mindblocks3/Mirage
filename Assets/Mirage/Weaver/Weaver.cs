@@ -108,7 +108,7 @@ namespace Mirage.Weaver
             }
             catch (Exception ex)
             {
-                logger.Error(ex.ToString());
+                logger.Error(ex.ToString(), null, null);
                 throw;
             }
         }
@@ -165,7 +165,7 @@ namespace Mirage.Weaver
             }
             catch (Exception e)
             {
-                logger.Error("Exception :" + e);
+                logger.Error("Exception :" + e, null, null);
                 return null;
             }
         }

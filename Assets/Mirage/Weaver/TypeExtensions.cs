@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
 namespace Mirage.Weaver
@@ -149,6 +150,50 @@ namespace Mirage.Weaver
             }
 
             return null;
+        }
+
+
+        public static SequencePoint GetSequencePoint(this MethodDefinition methodDefinition)
+        {
+            return methodDefinition.DebugInformation.HasSequencePoints ?
+                methodDefinition.DebugInformation.SequencePoints[0] :
+                methodDefinition.DeclaringType.GetSequencePoint();
+        }
+
+        public static SequencePoint GetSequencePoint(this TypeDefinition type)
+        {
+            // find sequence point of first method
+            foreach (MethodDefinition md in type.Methods)
+            {
+                if (md.DebugInformation.HasSequencePoints)
+                {
+                    return md.DebugInformation.SequencePoints[0];
+                }
+            }
+
+            string url = type.FullName.Replace('.', '/') + ".cs";
+
+            // if that fails, make up a fake Sequence point
+            return new SequencePoint(
+                Instruction.Create(OpCodes.Nop),
+                new Document(url));
+        }
+
+        public static SequencePoint GetSequencePoint(this TypeReference type)
+        {
+            TypeDefinition td = type.Resolve();
+
+            if (td is not null)
+            {
+                return td.GetSequencePoint();
+            }
+
+            string url = type.FullName.Replace('.', '/') + ".cs";
+
+            // if that fails, make up a fake Sequence point
+            return new SequencePoint(
+                Instruction.Create(OpCodes.Nop),
+                new Document(url));
         }
     }
 }

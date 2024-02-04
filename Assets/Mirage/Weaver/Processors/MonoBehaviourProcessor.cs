@@ -27,11 +27,11 @@ namespace Mirage.Weaver
             foreach (FieldDefinition fd in td.Fields)
             {
                 if (fd.HasCustomAttribute<SyncVarAttribute>())
-                    logger.Error($"SyncVar {fd.Name} must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour", fd);
+                    logger.Error($"SyncVar {fd.Name} must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour", fd, td.GetSequencePoint());
 
                 if (SyncObjectProcessor.ImplementsSyncObject(fd.FieldType))
                 {
-                    logger.Error($"{fd.Name} is a SyncObject and must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour", fd);
+                    logger.Error($"{fd.Name} is a SyncObject and must be inside a NetworkBehaviour.  {td.Name} is not a NetworkBehaviour", fd, td.GetSequencePoint());
                 }
             }
         }

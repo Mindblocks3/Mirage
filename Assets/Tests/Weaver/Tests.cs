@@ -10,6 +10,8 @@ using UnityEngine;
 using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor.Compilation;
+using Unity.CompilationPipeline.Common.ILPostProcessing;
 
 namespace Mirage.Weaver
 {
@@ -24,8 +26,9 @@ namespace Mirage.Weaver
         [OneTimeSetUp]
         public virtual void TestsSetup() {
 
+            // compile the code once
             Debug.Log("TestsSetup");
-            var testAdapter = TestContext.CurrentContext.Test;
+            TestContext.TestAdapter testAdapter = TestContext.CurrentContext.Test;
             
             Type testAdapterType = testAdapter.GetType();
             FieldInfo testFieldInfo = testAdapterType.GetField("_test", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -38,22 +41,33 @@ namespace Mirage.Weaver
 
             BuildAndWeaveTestAssembly(className, allTests.Select(t => t.Name).ToArray());
 
-            Debug.Log(assembler.CompilerMessages.Count);
+            Debug.Log($"One time build of {className} compiler messages {assembler.CompilerMessages.Count}");
+            TestSetup();
 
         }
 
-        [SetUp]
         public virtual void TestSetup()
         {
-            string className = TestContext.CurrentContext.Test.ClassName.Split('.').Last();
+            ICompiledAssembly compiledAssembly = LoadAssembly();
 
-            BuildAndWeaveTestAssembly(className, TestContext.CurrentContext.Test.Name);
+            var weaver = new Weaver(weaverLog);
+            assembly = weaver.Weave(compiledAssembly);
+            Assert.That(assembler.CompilerErrors, Is.False);
+            foreach (DiagnosticMessage error in weaverLog.Diagnostics)
+            {
+                // ensure all errors have a location
+                Assert.That(error.MessageData, Does.Match(@"\(at .*\)$"));
+                Assert.That(error.File, Is.Not.Null);
+            }
         }
 
         [AssertionMethod]
         protected void IsSuccess()
         {
-            Assert.That(weaverLog.Diagnostics, Is.Empty);
+            // figure out the class
+            string testName = TestContext.CurrentContext.Test.Name;
+
+            Assert.That(weaverLog.Diagnostics.Where(msg => msg.File.Split(new char[] { '/', '.' }).Contains(testName)), Is.Empty);
         }
 
         [AssertionMethod]
@@ -71,6 +85,13 @@ namespace Mirage.Weaver
                 .Where(d => d.DiagnosticType == DiagnosticType.Warning)
                 .Select(d => d.MessageData), Contains.Item($"{messsage} (at {atType})"));
         }
+
+        [OneTimeTearDown]
+        public void TestCleanup()
+        {
+            assembler.DeleteOutput();
+        }
+
     }
 
     [TestFixture]
@@ -84,14 +105,16 @@ namespace Mirage.Weaver
 
         protected Assembler assembler;
 
+        protected AssemblyBuilder assemblyBuilder;
+
         protected AssemblyDefinition Asemble(string className, params string [] testName)
         {
             weaverLog.Diagnostics.Clear();
             assembler = new Assembler();
 
             string testSourceDirectory = className + "~";
-            var outputFile = Path.Combine(testSourceDirectory, className + ".dll");
-            var sourceFiles = from test in testName
+            string outputFile = Path.Combine(testSourceDirectory, className + ".dll");
+            IEnumerable<string> sourceFiles = from test in testName
                               select Path.Combine(testSourceDirectory, test + ".cs");
 
             return assembler.Assemble(outputFile, sourceFiles);
@@ -105,25 +128,22 @@ namespace Mirage.Weaver
 
             string testSourceDirectory = className + "~";
             assembler.OutputFile = Path.Combine(testSourceDirectory, testName[0] + ".dll");
-            var sourceFiles = from test in testName
+            IEnumerable<string> sourceFiles = from test in testName
                               select Path.Combine(testSourceDirectory, test + ".cs");
 
-            var compiledAssembly = assembler.Build(sourceFiles);
+            assemblyBuilder = assembler.Build(sourceFiles);
 
-            var weaver = new Weaver(weaverLog);
-            assembly = weaver.Weave( compiledAssembly);
-            Assert.That(assembler.CompilerErrors, Is.False);
-            foreach (DiagnosticMessage error in weaverLog.Diagnostics)
-            {
-                // ensure all errors have a location
-                Assert.That(error.MessageData, Does.Match(@"\(at .*\)$"));
-            }
         }
 
-        [TearDown]
-        public void TestCleanup()
+
+        protected ICompiledAssembly LoadAssembly()
         {
-            assembler.DeleteOutput();
+
+            return new CompiledAssembly(assemblyBuilder.assemblyPath)
+            {
+                Defines = assemblyBuilder.defaultDefines,
+                References = assemblyBuilder.defaultReferences
+            };
         }
     }
 }

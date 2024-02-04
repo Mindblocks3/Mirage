@@ -211,25 +211,25 @@ namespace Mirage.Weaver
 
                 if (pd.PropertyType.IsGenericParameter)
                 {
-                    logger.Error($"{pd.Name} cannot be synced since it's a generic parameter", pd);
+                    logger.Error($"{pd.Name} cannot be synced since it's a generic parameter", pd, td.GetSequencePoint());
                     continue;
                 }
 
                 if (!pd.HasThis)
                 {
-                    logger.Error($"{pd.Name} cannot be static", pd);
+                    logger.Error($"{pd.Name} cannot be static", pd, td.GetSequencePoint());
                     continue;
                 }
 
                 if (pd.PropertyType.IsArray)
                 {
-                    logger.Error($"{pd.Name} has invalid type. Use SyncLists instead of arrays", pd);
+                    logger.Error($"{pd.Name} has invalid type. Use SyncLists instead of arrays", pd, td.GetSequencePoint());
                     continue;
                 }
 
                 if (SyncObjectProcessor.ImplementsSyncObject(pd.PropertyType))
                 {
-                    logger.Warning($"{pd.Name} has [SyncVar] attribute. SyncLists should not be marked with SyncVar", pd);
+                    logger.Warning($"{pd.Name} has [SyncVar] attribute. SyncLists should not be marked with SyncVar", pd, td.GetSequencePoint());
                     continue;
                 }
                 syncVars.Add(pd);
@@ -240,7 +240,7 @@ namespace Mirage.Weaver
 
             if (dirtyBitCounter >= SyncVarLimit)
             {
-                logger.Error($"{td.Name} has too many SyncVars. Consider refactoring your class into multiple components", td);
+                logger.Error($"{td.Name} has too many SyncVars. Consider refactoring your class into multiple components", td, td.GetSequencePoint());
             }
 
             td.SetConst(SyncVarCount, syncVars.Count);
@@ -423,14 +423,14 @@ namespace Mirage.Weaver
                 LoadField(worker, syncVar);
             }
 
-            MethodReference writeFunc = writers.GetWriteFunc(type, null);
+            MethodReference writeFunc = writers.GetWriteFunc(type, syncVar.DeclaringType.GetSequencePoint());
             if (writeFunc != null)
             {
                 worker.Append(worker.Create(OpCodes.Call, writeFunc));
             }
             else
             {
-                logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar);
+                logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar, syncVar.DeclaringType.GetSequencePoint());
             }
         }
 
@@ -547,10 +547,10 @@ namespace Mirage.Weaver
 
         private void DeserializeNormalField(PropertyDefinition syncVar, ILProcessor serWorker, MethodDefinition deserialize)
         {
-            MethodReference readFunc = readers.GetReadFunc(syncVar.PropertyType, null);
+            MethodReference readFunc = readers.GetReadFunc(syncVar.PropertyType, deserialize.GetSequencePoint());
             if (readFunc == null)
             {
-                logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar);
+                logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar, deserialize.GetSequencePoint());
                 return;
             }
 
@@ -585,7 +585,7 @@ namespace Mirage.Weaver
             MethodReference readFunc = readers.GetReadFunc(backingField.FieldType, null);
             if (readFunc == null)
             {
-                logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar);
+                logger.Error($"{syncVar.Name} has unsupported type. Use a supported Mirage type instead", syncVar, deserialize.GetSequencePoint());
                 return;
             }
 

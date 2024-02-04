@@ -46,11 +46,11 @@ namespace Mirage.Weaver
                 {
                     if (fd.IsStatic)
                     {
-                        logger.Error($"{fd.Name} cannot be static", fd);
+                        logger.Error($"{fd.Name} cannot be static", fd, td.GetSequencePoint());
                         continue;
                     }
 
-                    GenerateReadersAndWriters(fd.FieldType);
+                    GenerateReadersAndWriters(fd.FieldType, td.GetSequencePoint());
 
                     syncObjects.Add(fd);
                 }
@@ -64,7 +64,7 @@ namespace Mirage.Weaver
         /// </summary>
         /// <param name="td">The synclist class</param>
         /// <param name="mirrorBaseType">the base SyncObject td inherits from</param>
-        void GenerateReadersAndWriters(TypeReference tr)
+        void GenerateReadersAndWriters(TypeReference tr, SequencePoint sequencePoint)
         {
             if (tr is GenericInstanceType genericInstance)
             {
@@ -72,15 +72,15 @@ namespace Mirage.Weaver
                 {
                     if (!argument.IsGenericParameter)
                     {
-                        readers.GetReadFunc(argument, null);
-                        writers.GetWriteFunc(argument, null);
+                        readers.GetReadFunc(argument, sequencePoint);
+                        writers.GetWriteFunc(argument, sequencePoint);
                     }
                 }
             }
 
             if (tr != null)
             {
-                GenerateReadersAndWriters(tr.Resolve().BaseType);
+                GenerateReadersAndWriters(tr.Resolve().BaseType, sequencePoint);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Mirage.Weaver
 
             if (ctor == null)
             {
-                logger.Error($"{netBehaviourSubclass.Name} has invalid constructor", netBehaviourSubclass);
+                logger.Error($"{netBehaviourSubclass.Name} has invalid constructor", netBehaviourSubclass, netBehaviourSubclass.GetSequencePoint());
                 return;
             }
 
